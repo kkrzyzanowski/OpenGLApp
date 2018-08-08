@@ -25,8 +25,28 @@ void Shader::UnBind() const
 		m_ShaderID = CompileShader(ShaderSource, GL_FRAGMENT_SHADER);
 }
 
-  void Shader::SetUniform4f(const std::string & name, float v0, float v1, float v2, float v3)
+  int Shader::GetUniformLocation(const std::string & name, unsigned int programShader)
   {
+	  if (m_uniformLocationCache.find(name) != m_uniformLocationCache.end() && m_uniformLocationCache.empty() == false)
+		 return m_uniformLocationCache[name];
+	  GLCall(int location = glGetUniformLocation(programShader, name.c_str()));
+	  if (location != -1)
+	  {
+		  m_uniformLocationCache[name] = location;
+		  return location;
+	  }
+	  std::cout << "Warning uniform " << name << "doesnt exist." << std::endl;
+	  return -1;
+  }
+
+  void Shader::SetUniform4f(const std::string & name, float v0, float v1, float v2, float v3, unsigned int program)
+  {
+	  GLCall(glUniform4f(GetUniformLocation(name, program), v0, v1, v2, v3));
+  }
+
+  void Shader::SetUniform1i(const std::string & name, int value, unsigned int program)
+  {
+	  GLCall(glUniform1i(GetUniformLocation(name, program), value));
   }
 
   std::string Shader::ParseShader(const std::string & source)

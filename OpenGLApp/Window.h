@@ -12,5 +12,6 @@ public:
 	virtual ~Window();
 private:
 	Shape * shape;
+	Renderer *renderer;
 };
 

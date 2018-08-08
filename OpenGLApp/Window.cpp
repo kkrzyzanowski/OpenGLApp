@@ -39,15 +39,19 @@ Window::Window()
 
 
 	 shape = new Shape(TRIANGLE);
-	 Shader vertexShader("VertexShader.vert");
-	 Shader fragmentShader("FragmentShader.frag");
+	 renderer = new Renderer();
+	 Shader vertexShader("Shaders\\VertexShader.vert");
+	 Shader fragmentShader("Shaders\\FragmentShader.frag");
 	 std::vector<Shader> shaders;
 	 shaders.push_back(vertexShader);
 	 shaders.push_back(fragmentShader);
 	 ShaderManager sm;
 	sm.AddShadersToProgram(shaders);
 	sm.Bind();
-	
+	fragmentShader.SetUniform4f("u_color", 0.9f, 0.4f, 0.6f, 0.8f, sm.GetProgram());
+	 shape->GetTexture()->Bind();
+	//texture.Bind();
+	fragmentShader.SetUniform1i("u_texture", 0, sm.GetProgram());
 	shape->GetVertexArray()->UnBind();
 	shape->GetVertexBuffer()->UnBind();
 	shape->GetIndexBuffer()->UnBind();
@@ -61,13 +65,13 @@ Window::Window()
 	 while (!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
 	 {
 		 /* Render here */
-		 GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
+		 renderer->Clear();
 		// glDrawArrays(GL_TRIANGLES, 0, 4);
-		 sm.Bind();
-			shape->GetVertexArray()->Bind();
-		 shape->GetIndexBuffer()->Bind();
-		 GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+		 renderer->Draw(*shape->GetVertexArray(), *shape->GetIndexBuffer(), sm);
 		
+		
+
+		 
 
 		 /* Swap front and back buffers */
 		 glfwSwapBuffers(window);
@@ -85,5 +89,6 @@ Window::Window()
 Window::~Window()
 {
 	delete shape;
+	delete renderer;
 	delete this;
 }

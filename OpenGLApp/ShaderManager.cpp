@@ -32,12 +32,6 @@ unsigned int ShaderManager::GetProgram()
 	return m_Program;
 }
 
-void ShaderManager::GetUniformLocation(const std::string & name)
- {
-	
-	unsigned int location = glGetUniformLocation(m_Program, name.c_str());
-	SetUniform4f(location, 0.4f, 0.4f, 0.4f, 0.4f);
- }
 
  void ShaderManager::SetUniform4f(unsigned int location,  float v0, float v1, float v2, float v3)
  {

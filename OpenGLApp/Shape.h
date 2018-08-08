@@ -5,6 +5,8 @@
 #include "IndexBuffer.h"
 #include "VertexArray.h"
 #include "VertexBufferLayout.h"
+#include "Texture.h"
+
  enum Shapes
 {
 	TRIANGLE = 9, RECTANGLE = 12
@@ -17,12 +19,14 @@ public:
 	VertexArray* GetVertexArray();
 	VertexBuffer* GetVertexBuffer();
 	IndexBuffer* GetIndexBuffer();
+	Texture* GetTexture();
+
 	~Shape();
 private:
 	VertexArray* va;
 	VertexBuffer*  vb;
 	VertexBufferLayout* layout;
 	IndexBuffer* ib;
-	
+	Texture* texture;
 };
 
