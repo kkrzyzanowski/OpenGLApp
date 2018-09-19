@@ -34,3 +34,10 @@ Debug/*
 .vs/*
 OpenGLApp/.vs/*
 OpenGLApp/Debug/*
+*.zip
+*.html
+*.in
+*.yml
+*.png
+*.js
+*.jpg
