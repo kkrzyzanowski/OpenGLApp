@@ -25,23 +25,23 @@ Shape::Shape(Shapes shape)
 	CreateShape(g_vertex_buffer_data, indexes);
 }
 
-void Shape::CreateShape(const GLfloat* points, unsigned int* orderIndex)
-{
-	GLCall(glEnable(GL_BLEND));
-	GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+//void Shape::CreateShape(const GLfloat* points, unsigned int* orderIndex)
+//{
+//	//GLCall(glEnable(GL_BLEND));
+//	//GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+//
+//	//va = new VertexArray();
+//	// vb = new VertexBuffer(points, sizeof(float) * 8 * 3 * 2);
+//
+//	// layout = new VertexBufferLayout();
+//	//layout->Push<float>(3); // vertexes
+//	//layout->Push<float>(2); //textcoorssd
+//	//va->AddBuffer(*vb, *layout);
+//	// ib = new IndexBuffer(orderIndex, 24);
+//	// texture = new Texture("Images\\BrickMedievalBlocks0129_2_M.jpg");
+//}
 
-	va = new VertexArray();
-	 vb = new VertexBuffer(points, sizeof(float) * 8 * 3 * 2);
-
-	 layout = new VertexBufferLayout();
-	layout->Push<float>(3); // vertexes
-	layout->Push<float>(2); //textcoorssd
-	va->AddBuffer(*vb, *layout);
-	 ib = new IndexBuffer(orderIndex, 24);
-	 texture = new Texture("Images\\BrickMedievalBlocks0129_2_M.jpg");
-}
-
-VertexArray*  Shape::GetVertexArray()
+VertexArray* Shape::GetVertexArray()
 {
 	return va;
 }
@@ -55,6 +55,10 @@ IndexBuffer* Shape::GetIndexBuffer()
 {
 	return ib;
 }
+ShaderManager Shape::GetShaderManager()
+{
+	return sm;
+}
 Texture * Shape::GetTexture()
 {
 	return texture;
@@ -63,3 +67,5 @@ Shape::~Shape()
 {
 	GLCall(glDisableVertexAttribArray(0));
 }
+
+

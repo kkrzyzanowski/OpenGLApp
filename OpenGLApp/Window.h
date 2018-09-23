@@ -11,7 +11,7 @@ public:
 	int CreateWindow();
 	virtual ~Window();
 private:
-	Shape * shape;
+	std::list<Shape*> shapes;
 	Renderer *renderer;
 };
 
