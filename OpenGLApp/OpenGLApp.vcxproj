@@ -132,6 +132,7 @@
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="OpenGL_main.cpp" />
+    <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="VertexArray.cpp" />
@@ -148,6 +149,7 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="Shape.h" />
+    <ClInclude Include="Sphere.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="VertexArray.h" />
@@ -156,9 +158,11 @@
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\FragmentShader.frag" />
+    <None Include="Shaders\FragmentShaderCube.frag" />
+    <None Include="Shaders\FragmentShaderPlane.frag" />
     <None Include="Shaders\shader.vert" />
-    <None Include="Shaders\VertexShader.vert" />
+    <None Include="Shaders\VertexShaderCube.vert" />
+    <None Include="Shaders\VertexShaderPlane.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

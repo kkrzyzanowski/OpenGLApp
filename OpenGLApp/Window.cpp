@@ -11,6 +11,7 @@
 #include "glm\gtc\type_ptr.hpp"
 #include "Cube.h"
 #include "Plane.h"
+#include "Sphere.h"
 #include <vector>
 
 static const unsigned int SCREEN_WIDTH = 1280;
@@ -50,8 +51,8 @@ Window::Window()
 	 glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
 
-	 shapes.push_front(new Cube());
-	 shapes.push_front(new Plane());
+	// shapes.push_front(new Plane());
+	 shapes.push_front(new Sphere());
 	 renderer = new Renderer();
 	
 	 Camera* cam = new Camera();
@@ -78,7 +79,6 @@ Window::Window()
 		 for each (auto shape in shapes)
 		 {
 			 shape->Update(camView);
-			
 			 renderer->Draw(shape->GetIndexBuffer()->GetCount());
 			 shape->TurnOffShapeElements();
 		 }

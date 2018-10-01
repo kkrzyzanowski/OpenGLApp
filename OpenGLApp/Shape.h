@@ -1,6 +1,8 @@
 #pragma once
+#define _USE_MATH_DEFINES
 #include <GL\glew.h>
 #include <GLFW/glfw3.h>
+#include <cmath>
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "VertexArray.h"
@@ -12,7 +14,7 @@
 
  enum Shapes
 {
-	TRIANGLE = 9, RECTANGLE = 12, CUBE = 36
+	TRIANGLE = 9, RECTANGLE = 12, CUBE = 36, SPEHERE = 10
 };
 class Shape
 {

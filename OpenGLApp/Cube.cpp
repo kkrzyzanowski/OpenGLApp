@@ -50,8 +50,8 @@ Cube::~Cube()
 
 void Cube::GenerateShaders()
 {
-	shaders.push_back(new Shader("Shaders\\VertexShader.vert"));
-	shaders.push_back(new Shader("Shaders\\FragmentShader.frag"));
+	shaders.push_back(new Shader("Shaders\\VertexShaderCube.vert"));
+	shaders.push_back(new Shader("Shaders\\FragmentShaderCube.frag"));
 	sm.AddShadersToProgram(shaders);
 	sm.Bind();
 	CreateMVPMatrix();
@@ -66,7 +66,7 @@ void Cube::CreateMVPMatrix()
 	model = glm::translate(model, glm::vec3(0.6f, -0.8f, -.7f));
 	view = glm::mat4(1.0f);
 	view = glm::translate(view, glm::vec3(0.0f, 0.0f, 0.5f));
-	proj = glm::perspective(glm::radians(108.0f), 16.0f / 9.0f, 0.01f, 100.0f);
+	proj = glm::perspective(glm::radians(90.0f), 16.0f / 9.0f, 0.01f, 100.0f);
 	mvp = proj * view * model;
 }
 void Cube::TurnOffShapeElements()

@@ -66,6 +66,9 @@
     <ClCompile Include="Plane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Sphere.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -113,15 +116,24 @@
     <ClInclude Include="Plane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Sphere.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\FragmentShader.frag">
-      <Filter>Source Files\Shaders</Filter>
-    </None>
     <None Include="Shaders\shader.vert">
       <Filter>Source Files\Shaders</Filter>
     </None>
-    <None Include="Shaders\VertexShader.vert">
+    <None Include="Shaders\FragmentShaderCube.frag">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="Shaders\FragmentShaderPlane.frag">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="Shaders\VertexShaderCube.vert">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="Shaders\VertexShaderPlane.vert">
       <Filter>Source Files\Shaders</Filter>
     </None>
   </ItemGroup>
