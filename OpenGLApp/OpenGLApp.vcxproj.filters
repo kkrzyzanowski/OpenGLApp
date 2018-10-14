@@ -69,6 +69,9 @@
     <ClCompile Include="Sphere.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ShapesFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -119,21 +122,21 @@
     <ClInclude Include="Sphere.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ShapesFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\shader.vert">
+    <None Include="Shaders\DiffuseFragmentShader.frag">
       <Filter>Source Files\Shaders</Filter>
     </None>
-    <None Include="Shaders\FragmentShaderCube.frag">
+    <None Include="Shaders\DiffuseVertexShader.vert">
       <Filter>Source Files\Shaders</Filter>
     </None>
-    <None Include="Shaders\FragmentShaderPlane.frag">
+    <None Include="Shaders\LightFragmentShader.frag">
       <Filter>Source Files\Shaders</Filter>
     </None>
-    <None Include="Shaders\VertexShaderCube.vert">
-      <Filter>Source Files\Shaders</Filter>
-    </None>
-    <None Include="Shaders\VertexShaderPlane.vert">
+    <None Include="Shaders\LightVertexShader.vert">
       <Filter>Source Files\Shaders</Filter>
     </None>
   </ItemGroup>

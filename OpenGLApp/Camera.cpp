@@ -17,6 +17,7 @@ Camera::Camera()
 	firstMouse = true;
 	pitch = 0.0f;
 	yaw = -90.0f;
+	camView = glm::mat4(1.0f);
 }
 
 void Camera::CreateView(glm::vec3(&vecArray)[3], float radius, GLFWwindow *window)
@@ -30,22 +31,22 @@ void Camera::CreateView(glm::vec3(&vecArray)[3], float radius, GLFWwindow *windo
 	lastFrame = 0.0f;
 	
 	fov = 100.0f;
+	camView = glm::lookAt(camPos, camPos + camTarget, camDirection);
 	glfwSetCursorPosCallback(window, mouse_callback);
 }
 
-glm::mat4 Camera::Update()
+void Camera::Update()
 {
 	
 	currentFrame = glfwGetTime();
 	float camX = sin(glfwGetTime()) * radius;
 	float camZ = cos(glfwGetTime()) * radius;
 	//camPos = glm::vec3(camX, camPos.y, camZ);
-	glm::mat4 view = glm::mat4(1.0f);
+	
 	CameraMove(10.0f);
-	view = glm::lookAt(camPos, camPos + camTarget, camDirection);
+	camView = glm::lookAt(camPos, camPos + camTarget, camDirection);
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
-	return view;
 	
 }
 
@@ -101,6 +102,11 @@ void Camera::scroll_callback(double xoffset, double yoffset)
 		fov = 1.0f;
 	if (fov >= 45.0f)
 		fov = 45.0f;
+}
+
+glm::mat4 Camera::GetView()
+{
+	return camView;
 }
 
 Camera::~Camera()

@@ -18,7 +18,6 @@ bool GLLogCall(const char* function, const char* file, int line)
 
 void Renderer::Draw(int count) const
 {
-	
 	GLCall(glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr));
 }
 

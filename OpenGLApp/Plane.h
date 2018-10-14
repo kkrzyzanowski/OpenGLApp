@@ -5,10 +5,12 @@ public:
 	Plane();
 	void CreateShape(const GLfloat* points, unsigned int* orderIndex) override;
 	void TurnOffShapeElements() override;
-	void Update(glm::mat4 camView) override;
+	void Update() override;
+	void GenerateShaders() override;
+	void GetSourceLight(glm::vec3 lightSource);
 	~Plane();
 private:
 	void CreateMVPMatrix() override;
-	void GenerateShaders() override;
+	glm::vec3 m_sourceLight;
 };
 

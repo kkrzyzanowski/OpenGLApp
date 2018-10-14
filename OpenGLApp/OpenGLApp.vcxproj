@@ -132,6 +132,7 @@
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="OpenGL_main.cpp" />
+    <ClCompile Include="ShapesFactory.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -149,6 +150,7 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="Shape.h" />
+    <ClInclude Include="ShapesFactory.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="Texture.h" />
@@ -158,11 +160,10 @@
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\FragmentShaderCube.frag" />
-    <None Include="Shaders\FragmentShaderPlane.frag" />
-    <None Include="Shaders\shader.vert" />
-    <None Include="Shaders\VertexShaderCube.vert" />
-    <None Include="Shaders\VertexShaderPlane.vert" />
+    <None Include="Shaders\DiffuseFragmentShader.frag" />
+    <None Include="Shaders\DiffuseVertexShader.vert" />
+    <None Include="Shaders\LightFragmentShader.frag" />
+    <None Include="Shaders\LightVertexShader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

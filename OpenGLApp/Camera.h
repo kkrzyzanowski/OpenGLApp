@@ -16,19 +16,21 @@ class Camera
 public:
 	Camera();
 	void CreateView(glm::vec3(&vecArray)[3], float radius, GLFWwindow* window);
-	glm::mat4 Update();
+	void Update();
 	void MouseMove(float movementSpeed);
 	void CameraMove(float speed);
 	void scroll_callback(double xoffset, double yoffset);
 	
 	inline glm::vec3 GetCamTarget() { return camTarget; };
 	inline void SetCamTarget(glm::vec3 camTarget) { this->camTarget = camTarget; };
+    glm::mat4 GetView();
 	~Camera();
 private:
 	glm::vec3 camPos;
 	glm::vec3 camTarget;
 	glm::vec3 camDirection;
 	GLFWwindow* window;
+	glm::mat4 camView;
 	float radius;
 	float deltaTime;
 	float lastFrame;

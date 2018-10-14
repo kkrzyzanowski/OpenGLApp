@@ -2,17 +2,17 @@
 
 
 
-Cube::Cube(): Shape(Shapes::CUBE)
+Cube::Cube(): Shape()
 {
 	GLfloat g_vertex_buffer_data[] = {
-		-1.0f, -1.0f, 0.5f, 0.0f, 0.0f,//0
-		0.0f, 0.0f, 0.5f, 1.0f, 0.0f, //1
-		-1.0f,  0.0f, 0.5f, 1.0f, 1.0f, //2
-		0.0f, -1.0f, 0.5f, 0.0f, 1.0f, //3
-		-1.0f, -1.0f, -0.5f, 0.0f, 0.0f,// 4
-		0.0f, 0.0f, -0.5f, 1.0f, 0.0f, // 5
-		-1.0f,  0.0f, -0.5f, 1.0f, 1.0f, // 6
-		0.0f, -1.0f, -0.5f, 0.0f, 1.0f };// 7
+		-.5f, -.5f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,//0
+		.5f, .5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,//1
+		-.5f,  0.5f, 0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f,//2
+		.5f, -.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,//3
+		-.5f, -.5f, -0.5f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f,// 4
+		0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f,// 5
+		-.5f,  0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, -1.0f,// 6
+		0.5f, -.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f, };// 7
 	unsigned int indexes[] = { 0, 3, 1,
 		1, 2, 0,
 		0, 4, 2,
@@ -32,11 +32,12 @@ void Cube::CreateShape(const GLfloat * points, unsigned int * orderIndex)
 
 	texture = new Texture("Images\\BrickMedievalBlocks0129_2_M.jpg");
 	va = new VertexArray();
-	vb = new VertexBuffer(points, sizeof(float) * 8 * 3 * 2);
+	vb = new VertexBuffer(points, sizeof(float) * 8 * (3 + 2 + 3));
 
 	layout = new VertexBufferLayout();
 	layout->Push<float>(3); // vertexes
 	layout->Push<float>(2); //textcoorssd
+	layout->Push<float>(3); // normals
 	va->AddBuffer(*vb, *layout);
 	ib = new IndexBuffer(orderIndex, 24); //indexes count
 	GenerateShaders();
@@ -77,10 +78,10 @@ void Cube::TurnOffShapeElements()
 	sm.UnBind();
 }
 
-void Cube::Update(glm::mat4 camView)
+void Cube::Update()
 {
 	sm.Bind();
-	shaders[0]->SetUniformMat4f("u_camView", camView, sm.GetProgram());
+	//shaders[0]->SetUniformMat4f("u_camView", camView, sm.GetProgram());
 	sm.UnBind();
 	sm.Bind();
 	ib->Bind();

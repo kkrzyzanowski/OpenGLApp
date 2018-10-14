@@ -41,7 +41,7 @@ Window::Window()
 
 	 /* Make the window's context current */
 	 glfwMakeContextCurrent(window);
-	 glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	// glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	
 	 GLenum err = glewInit();
 	 if (GLEW_OK != err)
@@ -51,10 +51,6 @@ Window::Window()
 	 glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
 
-	// shapes.push_front(new Plane());
-	 shapes.push_front(new Sphere());
-	 renderer = new Renderer();
-	
 	 Camera* cam = new Camera();
 	 glm::vec3 camProps[3] = {
 		 glm::vec3(0.0f, 0.0f, 3.0f),
@@ -62,10 +58,16 @@ Window::Window()
 		 glm::vec3(0.0f, 1.0f, 0.0f)
 	 };
 	 cam->CreateView(camProps, 5.0f, window);
-	for each (auto shape in shapes)
-	{
-		shape->TurnOffShapeElements();
+	shapes.push_front(new Plane());
+	// shapes.push_front(new Cube());
+	 shapes.push_front(new Sphere());
+	 for each (Shape* shape in shapes)
+	 {
+		 shape->InitializeShapeView(cam->GetView());
+		 shape->GenerateShaders();
+		 shape->TurnOffShapeElements();
 	}
+	 renderer = new Renderer();
 	glEnable(GL_DEPTH_TEST);
 	 /* Loop until the user closes the window */
 	 while (!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
@@ -74,11 +76,12 @@ Window::Window()
 		 /* Render here */
 		 renderer->Clear();
 	
-		auto camView = cam->Update();
+		 cam->Update();
 		int count = 0;
 		 for each (auto shape in shapes)
 		 {
-			 shape->Update(camView);
+			 shape->InitializeShapeView(cam->GetView());
+			 shape->Update();
 			 renderer->Draw(shape->GetIndexBuffer()->GetCount());
 			 shape->TurnOffShapeElements();
 		 }

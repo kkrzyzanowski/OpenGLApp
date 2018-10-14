@@ -6,7 +6,7 @@ public:
 	Cube();
 	void CreateShape(const GLfloat* points, unsigned int* oredrIndex) override;
 	void TurnOffShapeElements() override;
-	void Update(glm::mat4 camView) override;
+	void Update() override;
 	~Cube();
 private:
 	
