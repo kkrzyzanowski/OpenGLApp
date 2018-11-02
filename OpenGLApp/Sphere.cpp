@@ -1,9 +1,18 @@
+//#define GLM_ENABLE_EXPERIMENTAL
 #include "Sphere.h"
+#include "glm\gtx\rotate_vector.hpp"
 
 
-
-Sphere::Sphere() : Shape()
+Sphere::Sphere()
 {
+}
+
+Sphere::Sphere(const ShapesBuilder builder) : Shape()
+{
+	sourceShapeType = builder.m_shapeType;
+	state = builder.m_view;
+	light = builder.m_light;
+	outsideLight = builder.m_pos;
 	const int sectors = 24;
 	const int rings = 12;
 	const int pointsCount = sectors * rings * (3 + 2 + 3);
@@ -72,8 +81,8 @@ Sphere::Sphere() : Shape()
 			}
 		}
 	}
-	state = CamView::STATIC;
 	CreateShape(vertices, sphere_ix);
+	CreateType();
 	
 }
 
@@ -107,7 +116,10 @@ void Sphere::Update()
 {
 	sm.Bind();
 	texture->Bind();
+	model = glm::translate(model, glm::vec3(sin(glm::radians(1.0f)), 0.0f, glm::sin(glm::radians(1.0f))));
+	model = glm::rotate(model, glm::radians(1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	mvp = proj * view * model;
+	insideLightPos = glm::vec3(model[3][0], model[3][1], model[3][2]);
 	shaders[0]->SetUniformMat4f("u_MVP", mvp, sm.GetProgram());
 	sm.UnBind();
 	sm.Bind();
@@ -125,7 +137,11 @@ void Sphere::CreateMVPMatrix()
 	model = glm::mat4(1.0f);
 	insideLightPos = glm::vec3(0.6f, 1.8f, -.7f);
 	model = glm::translate(model, insideLightPos);
-	//view = glm::rotate(view, glm::radians(45.0f), glm::vec3(.4f, 0.0f, 1.0f));
+	model = glm::rotate(model, glm::radians(30.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+	normalLight = glm::vec3(0.0f, -1.0f, 0.0f);
+	normalLight = glm::rotateZ(normalLight, glm::radians(30.0f));
+
 	proj = glm::perspective(glm::radians(90.0f), 16.0f / 9.0f, 0.01f, 100.0f);
 	mvp = proj * view * model;
 }

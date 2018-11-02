@@ -2,8 +2,16 @@
 
 
 
-Plane::Plane(): Shape()
+Plane::Plane()
 {
+}
+
+Plane::Plane(const ShapesBuilder builder): Shape()
+{
+	sourceShapeType = builder.m_shapeType;
+	state = builder.m_view;
+	light = builder.m_light;
+	outsideLight = builder.m_pos;
 	GLfloat g_vertex_buffer_data[] = {
 		-.5f, -.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,//0
 		.5f, -.5f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, //1
@@ -15,6 +23,7 @@ Plane::Plane(): Shape()
 		0, 1, 3,
 	};
 	CreateShape(g_vertex_buffer_data, indexes);
+	CreateType();
 }
 
 void Plane::CreateShape(const GLfloat * points, unsigned int * orderIndex)
@@ -24,6 +33,7 @@ void Plane::CreateShape(const GLfloat * points, unsigned int * orderIndex)
 
 
 	texture = new Texture("Images\\BrickMedievalBlocks0129_2_M.jpg");
+	specularTexture = new Texture("Images\\BrickMedievalBlocks0129_2_M_specular_map.jpg");
 	va = new VertexArray();
 	vb = new VertexBuffer(points, sizeof(float) * 4 * (3 + 2 + 3));
 
@@ -46,13 +56,26 @@ void Plane::GenerateShaders()
 	shaders[0]->SetUniformMat4f("projection", proj, sm.GetProgram());
 	shaders[0]->SetUniformMat4f("view", view, sm.GetProgram());
 	texture->Bind();
-	shaders[1]->SetUniform4f("u_color", 1.0f, 1.0f, 1.0f, 1.0f, sm.GetProgram());
-	shaders[1]->SetUniform1i("u_texture", 0, sm.GetProgram());
-	outsideLight = glm::vec3(0.6f, 1.8f, -.7f);
-	shaders[1]->SetUniform3f("lightPos", outsideLight.x, outsideLight.y, outsideLight.y, sm.GetProgram());
+	shaders[1]->SetUniform1i("material.diffuse", 0, sm.GetProgram());
+	specularTexture->Bind(1);
+	shaders[1]->SetUniform1i("material.specular", 1, sm.GetProgram());
+	shaders[1]->SetUniform3f("light.lightPos", outsideLight.x, outsideLight.y, outsideLight.y, sm.GetProgram());
+	shaders[1]->SetUniform3f("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f), sm.GetProgram());
+	shaders[1]->SetUniform3f("light.diffuse", glm::vec3(1.0f, 1.0f, 1.0f), sm.GetProgram());
+	shaders[1]->SetUniform3f("light.specular", glm::vec3(1.0f, 1.0f, 1.0f), sm.GetProgram());
+
+	shaders[1]->SetUniform1f("light.constant", 1.0f, sm.GetProgram());
+	shaders[1]->SetUniform1f("light.linear", 0.2f, sm.GetProgram());
+	shaders[1]->SetUniform1f("light.quadratic", 0.2f, sm.GetProgram());
+
+	shaders[1]->SetUniform3f("material.ambient", glm::vec3(1.0f, 1.0f, 1.0f), sm.GetProgram());
+	shaders[1]->SetUniform1f("material.shininess", 32.0f, sm.GetProgram());
+
+	shaders[1]->SetUniform3f("camPos", camEyePos, sm.GetProgram());
 	shaders[1]->SetUniform3f("sunLight", 0.99f, 0.71f, 0.32f, sm.GetProgram());
 	shaders[1]->SetUniform3f("skyLight", 0.51f, 0.80f, 0.92f, sm.GetProgram());
 	texture->UnBind();
+	specularTexture->UnBind();
 }
 void Plane::GetSourceLight(glm::vec3 lightSource)
 {
@@ -78,9 +101,12 @@ void Plane::Update()
 {
 	sm.Bind();
 	texture->Bind();
+	specularTexture->Bind(1);
 	shaders[0]->SetUniformMat4f("model", model, sm.GetProgram());
 	shaders[0]->SetUniformMat4f("projection", proj, sm.GetProgram());
 	shaders[0]->SetUniformMat4f("view", view, sm.GetProgram());
+	shaders[1]->SetUniform3f("camPos", camEyePos, sm.GetProgram());
+	shaders[1]->SetUniform3f("light.lightPos", outsideLight.x, outsideLight.y, outsideLight.y, sm.GetProgram());
 	sm.UnBind();
 	sm.Bind();
 	ib->Bind();

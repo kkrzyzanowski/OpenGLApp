@@ -109,6 +109,11 @@ glm::mat4 Camera::GetView()
 	return camView;
 }
 
+glm::vec3 Camera::GetCamPos()
+{
+	return camPos;
+}
+
 Camera::~Camera()
 {
 

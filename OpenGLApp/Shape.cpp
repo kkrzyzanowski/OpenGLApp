@@ -2,9 +2,9 @@
 #include "Renderer.h"
 
 
-Shape::Shape(CamView camView)
+Shape::Shape()
 {
-	state = camView;
+	
 }
 
 VertexArray* Shape::GetVertexArray()
@@ -35,15 +35,74 @@ void Shape::InitializeShapeView(glm::mat4& view)
 }
 void Shape::SetOutsideLight(glm::vec3& light)
 {
-	outsideLight = light;
+	if(sourceShapeType == SourceShapeType::DIFFUSE)
+		outsideLight = light;
 }
-glm::vec3 Shape::GetLight()
+void Shape::SetEyeCamPos(glm::vec3 & pos)
+{
+	camEyePos = pos;
+}
+void Shape::SetSourceShapeType(SourceShapeType shapeType)
+{
+	sourceShapeType = shapeType;
+}
+void Shape::SetShape()
+{
+	switch (sourceShapeType)
+	{
+	case SourceShapeType::DIFFUSE:
+	{
+		type = new DiffuseShape();
+		break;
+	}
+	case SourceShapeType::LIGHT:
+	{
+		type = new LightShape();
+		break;
+	}
+	case SourceShapeType::PARTICLE:
+	{
+		type = new ParticleShape();
+		break;
+	}
+	default:
+	{
+		type = new DiffuseShape();
+		break;
+	}
+	}
+}
+glm::vec3 Shape::GetInsideLight()
 {
 	return insideLightPos;
 }
 Shape::~Shape()
 {
 	GLCall(glDisableVertexAttribArray(0));
+}
+
+void Shape::CreateType()
+{
+	switch (sourceShapeType)
+	{
+	case SourceShapeType::DIFFUSE:
+	{
+		type = new DiffuseShape();
+		break;
+	}
+	case SourceShapeType::LIGHT:
+	{
+		type = new LightShape();
+		break;
+	}
+	case SourceShapeType::PARTICLE:
+	{
+		type = new ParticleShape();
+		break;
+	}
+	default:
+		break;
+	}
 }
 
 

@@ -24,6 +24,7 @@ public:
 	inline glm::vec3 GetCamTarget() { return camTarget; };
 	inline void SetCamTarget(glm::vec3 camTarget) { this->camTarget = camTarget; };
     glm::mat4 GetView();
+	glm::vec3 GetCamPos();
 	~Camera();
 private:
 	glm::vec3 camPos;

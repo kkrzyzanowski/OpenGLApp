@@ -11,15 +11,21 @@
 #include "glm\glm.hpp"
 #include "glm\gtc\matrix_transform.hpp"
 #include "glm\gtc\type_ptr.hpp"
-
+#include "MaterialType.h"
 enum CamView
 {
 	STATIC = 0, DYNAMIC = 1
 };
+enum SourceShapeType
+{
+	DIFFUSE = 0,
+	LIGHT = 1,
+	PARTICLE = 2,
+};
 class Shape
 {
 public:
-	Shape(CamView camView = CamView::DYNAMIC);
+	Shape();
 	virtual void CreateShape(const GLfloat* points, unsigned int* orderIndex) = 0 {};
 	VertexArray* GetVertexArray();
 	VertexBuffer* GetVertexBuffer();
@@ -31,7 +37,10 @@ public:
 	void InitializeShapeView(glm::mat4& view);
 	virtual void GenerateShaders() =  0 {};
 	void SetOutsideLight(glm::vec3& light);
-	glm::vec3 Shape::GetLight();
+	void SetEyeCamPos(glm::vec3& pos);
+	void SetSourceShapeType(SourceShapeType shaderType);
+	void SetShape();
+	glm::vec3 Shape::GetInsideLight();
 	~Shape();
 protected:
 	VertexArray* va;
@@ -42,12 +51,20 @@ protected:
 	std::vector<Shader*> shaders;
 	ShaderManager sm;
 	virtual void CreateMVPMatrix() {};
+	void CreateType();
 	glm::mat4 mvp;
 	glm::mat4 model;
 	glm::mat4 view;
 	glm::mat4 proj;
-	glm::vec3 outsideLight;
+	
 	glm::vec3 insideLightPos;
+	glm::vec3 camEyePos;
+
+
 	CamView state;
+	SourceShapeType sourceShapeType;
+	ShapeType* type;
+	Shape* light;
+	glm::vec3 outsideLight;
 };
 

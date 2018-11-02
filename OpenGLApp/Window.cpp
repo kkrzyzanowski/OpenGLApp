@@ -1,17 +1,12 @@
 #include "Window.h"
 #include "Renderer.h"
 #include "ShaderManager.h"
-#include "VertexBuffer.h"
-#include "IndexBuffer.h"
-#include "VertexArray.h"
-#include "VertexBufferLayout.h"
+#include "ShapesBuilder.h"
 #include "Camera.h"
 #include "glm\glm.hpp"
 #include "glm\gtc\matrix_transform.hpp"
 #include "glm\gtc\type_ptr.hpp"
 #include "Cube.h"
-#include "Plane.h"
-#include "Sphere.h"
 #include <vector>
 
 static const unsigned int SCREEN_WIDTH = 1280;
@@ -58,15 +53,22 @@ Window::Window()
 		 glm::vec3(0.0f, 1.0f, 0.0f)
 	 };
 	 cam->CreateView(camProps, 5.0f, window);
-	shapes.push_front(new Plane());
-	// shapes.push_front(new Cube());
-	 shapes.push_front(new Sphere());
+	 ShapesBuilder shapesBuilder;
+	 shapes.push_back(shapesBuilder.ObjectState(CamView::DYNAMIC)
+		 .SourceType(SourceShapeType::LIGHT)
+		 .CreateShape(Shapes::SPEHERE));
+	 
+	 shapes.push_back(shapesBuilder.ObjectState(CamView::STATIC)
+		 .SourceType(SourceShapeType::DIFFUSE)
+		 .CreateShape(Shapes::RECTANGLE));
 	 for each (Shape* shape in shapes)
 	 {
 		 shape->InitializeShapeView(cam->GetView());
+		 shape->SetEyeCamPos(cam->GetCamPos());
 		 shape->GenerateShaders();
 		 shape->TurnOffShapeElements();
 	}
+	 shapes[1]->SetOutsideLight(shapes[0]->GetInsideLight());
 	 renderer = new Renderer();
 	glEnable(GL_DEPTH_TEST);
 	 /* Loop until the user closes the window */
@@ -81,6 +83,8 @@ Window::Window()
 		 for each (auto shape in shapes)
 		 {
 			 shape->InitializeShapeView(cam->GetView());
+			 shape->SetEyeCamPos(cam->GetCamPos());
+			 shape->SetOutsideLight(shapes[0]->GetInsideLight());
 			 shape->Update();
 			 renderer->Draw(shape->GetIndexBuffer()->GetCount());
 			 shape->TurnOffShapeElements();
