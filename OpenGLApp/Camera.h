@@ -11,6 +11,11 @@ enum View
 {
 	TPP, FPP
 };
+
+enum CameraState
+{
+	INACTIVE, ACTIVE, IN_USE
+};
 class Camera
 {
 public:
@@ -20,9 +25,14 @@ public:
 	void MouseMove(float movementSpeed);
 	void CameraMove(float speed);
 	void scroll_callback(double xoffset, double yoffset);
-	
+	CameraState GetState();
+	void SetActive();
+	void SetInActive();
+
 	inline glm::vec3 GetCamTarget() { return camTarget; };
 	inline void SetCamTarget(glm::vec3 camTarget) { this->camTarget = camTarget; };
+	inline void SetMoving(bool m_isMoving) { this->isMoving = m_isMoving; };
+
     glm::mat4 GetView();
 	glm::vec3 GetCamPos();
 	~Camera();
@@ -32,10 +42,25 @@ private:
 	glm::vec3 camDirection;
 	GLFWwindow* window;
 	glm::mat4 camView;
+	CameraState stateCam;
 	float radius;
 	float deltaTime;
 	float lastFrame;
 	float currentFrame;
 	float fov;
+	bool isMoving;
 };
-
+ class CameraManager
+{
+public:
+	CameraManager(); 
+	static CameraManager* camManager;
+	 void AddCamera(Camera* cam);
+	 void RemoveCamera(Camera* cam);
+	 void SetActiveCamera(Camera* cam);
+	 Camera* GetActiveCamera();
+	static CameraManager* GetInstance();
+	 unsigned int cameraCount;
+	 std::vector<Camera*> Cameras;
+	~CameraManager();
+};

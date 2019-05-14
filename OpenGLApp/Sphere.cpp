@@ -10,7 +10,7 @@ Sphere::Sphere()
 Sphere::Sphere(const ShapesBuilder builder) : Shape()
 {
 	sourceShapeType = builder.m_shapeType;
-	state = builder.m_view;
+	camState = builder.m_view;
 	light = builder.m_light;
 	outsideLight = builder.m_pos;
 	const int sectors = 24;
@@ -81,46 +81,22 @@ Sphere::Sphere(const ShapesBuilder builder) : Shape()
 			}
 		}
 	}
-	CreateShape(vertices, sphere_ix);
+	CreateShape(vertices, sphere_ix, sectors*rings, indexesValue);
 	CreateType();
 	
 }
 
-void Sphere::CreateShape(const GLfloat * points, unsigned int * orderIndex)
-{
-	GLCall(glEnable(GL_BLEND));
-	GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-
-
-	texture = new Texture("Images\\TexturesCom_Metal_RedHotSteel_1K_emissive.jpg");
-	va = new VertexArray();
-	vb = new VertexBuffer(points, sizeof(float) * 12 * 24 * (2+ 3+ 3));
-
-	layout = new VertexBufferLayout();
-	layout->Push<float>(3); // vertexes
-	layout->Push<float>(2); //textcoorssd
-	layout->Push<float>(3);
-	va->AddBuffer(*vb, *layout);
-	ib = new IndexBuffer(orderIndex, 12 * 24 * 6); //indexes count
-}
-
-void Sphere::TurnOffShapeElements()
-{
-	va->UnBind();
-	vb->UnBind();
-	ib->UnBind();
-	sm.UnBind();
-}
 
 void Sphere::Update()
 {
 	sm.Bind();
-	texture->Bind();
-	model = glm::translate(model, glm::vec3(sin(glm::radians(1.0f)), 0.0f, glm::sin(glm::radians(1.0f))));
-	model = glm::rotate(model, glm::radians(1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	mvp = proj * view * model;
-	insideLightPos = glm::vec3(model[3][0], model[3][1], model[3][2]);
-	shaders[0]->SetUniformMat4f("u_MVP", mvp, sm.GetProgram());
+	for each(Texture* texture in textures)
+		texture->Bind();
+	mvp.model = glm::translate(mvp.model, glm::vec3(sin(glm::radians(1.0f)), 0.0f, glm::sin(glm::radians(1.0f))));
+	mvp.model = glm::rotate(mvp.model, glm::radians(1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	mvpResult = mvp.proj * mvp.view * mvp.model;
+	insideLightPos = glm::vec3(mvp.model[3][0], mvp.model[3][1], mvp.model[3][2]);
+	shaders[0]->SetUniformMat4f("u_MVP", mvpResult, sm.GetProgram());
 	sm.UnBind();
 	sm.Bind();
 	ib->Bind();
@@ -134,20 +110,21 @@ Sphere::~Sphere()
 
 void Sphere::CreateMVPMatrix()
 {
-	model = glm::mat4(1.0f);
+	mvp.model = glm::mat4(1.0f);
 	insideLightPos = glm::vec3(0.6f, 1.8f, -.7f);
-	model = glm::translate(model, insideLightPos);
-	model = glm::rotate(model, glm::radians(30.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	mvp.model = glm::translate(mvp.model, insideLightPos);
+	mvp.model = glm::rotate(mvp.model, glm::radians(30.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
 	normalLight = glm::vec3(0.0f, -1.0f, 0.0f);
 	normalLight = glm::rotateZ(normalLight, glm::radians(30.0f));
 
-	proj = glm::perspective(glm::radians(90.0f), 16.0f / 9.0f, 0.01f, 100.0f);
-	mvp = proj * view * model;
+	mvp.proj = glm::perspective(glm::radians(90.0f), 16.0f / 9.0f, 0.01f, 100.0f);
+	mvpResult = mvp.proj * mvp.view * mvp.model;
 }
 
 void Sphere::GenerateShaders()
 {
+	textures.push_back(new Texture("Images\\TexturesCom_Metal_RedHotSteel_1K_emissive.jpg", 0));
 	shaders.push_back(new Shader("Shaders\\LightVertexShader.vert"));
 	shaders.push_back(new Shader("Shaders\\LightFragmentShader.frag"));
 	sm.AddShadersToProgram(shaders);
@@ -156,8 +133,10 @@ void Sphere::GenerateShaders()
 	/*shaders[0]->SetUniformMat4f("model", model, sm.GetProgram());
 	shaders[0]->SetUniformMat4f("view", view, sm.GetProgram());
 	shaders[0]->SetUniformMat4f("projection", proj, sm.GetProgram());*/
-	shaders[0]->SetUniformMat4f("u_MVP", mvp, sm.GetProgram());
-	texture->Bind();
+	shaders[0]->SetUniformMat4f("u_MVP", mvpResult, sm.GetProgram());
+	for each(Texture* texture in textures)
+		texture->Bind();
 	shaders[1]->SetUniform4f("u_color", 1.0f, 1.0f, 1.0f, 1.0f, sm.GetProgram());
 	shaders[1]->SetUniform1i("u_texture", 0, sm.GetProgram());
+	shapeState = ShapeState::EXISTING;
 }

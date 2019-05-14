@@ -7,8 +7,6 @@ class Sphere :
 public:
 	Sphere();
 	Sphere(const ShapesBuilder builder);
-	void CreateShape(const GLfloat* points, unsigned int* orderIndex) override;
-	void TurnOffShapeElements() override;
 	void Update() override;
 	void GenerateShaders() override;
 	~Sphere();

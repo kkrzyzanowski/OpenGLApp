@@ -41,6 +41,15 @@
  uniform vec3 skyLight;
  uniform vec3 camPos;
 
+ float near =0.1;
+ float far = 10;
+
+ float LinearizeDepth(float depth)
+ {
+	float z = depth * 2.0 - 1.0;
+	return (2.0 * near * far)/(far + near - z *(far - near));
+ }
+
  void main()
  {
 	
@@ -57,7 +66,11 @@
 	vec3 reflectDir = reflect(-lightVec, norm);
 
 	float diff = max(dot(norm, lightVec), 0.0);
-	vec3 diffuse = light.diffuse * vec3(texture(material.diffuse, v_TexCoord)) * diff * sunLight * skyLight;
+
+	vec4 diffuseColor = texture(material.diffuse, v_TexCoord);
+	if(diffuseColor.a <= 0.01)
+		discard;
+	vec4 diffuse = vec4(light.diffuse, 1.0) * diffuseColor * diff * vec4(sunLight,1.0) * vec4(skyLight, 1.0);
 
 	float spec =  pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 	vec3 specular = light.specular * vec3(texture(material.specular, v_TexCoord)) * spec * sunLight;
@@ -66,5 +79,6 @@
 	diffuse *= attenaution;
 	specular *= attenaution;
 
- 	color = vec4(diffuse + ambient + specular, 1.0); 
+	//float depth = LinearizeDepth(gl_FragCoord.z)/far;
+ 	color = diffuse + vec4(ambient + specular, 1.0); 
  };

@@ -2,6 +2,8 @@
 #include "Cube.h"
 #include "Plane.h"
 #include "Sphere.h"
+#include "SkyBoxCube.h"
+#include "CustomShape.h"
 ShapesBuilder::ShapesBuilder()
 {
 
@@ -23,9 +25,13 @@ ShapesBuilder::ShapesBuilder()
 	 {
 		 return new Sphere(*this);
 	 }
-	 case Shapes::TRIANGLE:
+	 case Shapes::CUSTOM:
 	 {
-		 break;
+		 return new CustomShape(*this);
+	 }
+	 case Shapes::CUBEBOX:
+	 {
+		 return	new SkyBoxCube(*this);
 	 }
 	 }
 	 return new Plane(*this);
@@ -63,6 +69,12 @@ ShapesBuilder  ShapesBuilder::LightCast(LightType lightType)
 	else
 		m_lightType = LightType::NONELIGHT;
 
+	return *this;
+}
+
+ShapesBuilder ShapesBuilder::PathModel(std::string path)
+{
+	m_path = path;
 	return *this;
 }
 

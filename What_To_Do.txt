@@ -1,0 +1,6 @@
+1. Kolizje
+2. Rodzaje shaderów(przezroczystoœæ itd)
+3. Fizyka
+4. Interfejs
+5. Normal mapy
+6. Skybox

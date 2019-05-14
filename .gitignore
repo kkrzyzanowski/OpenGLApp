@@ -41,3 +41,5 @@ OpenGLApp/Debug/*
 *.png
 *.js
 *.jpg
+assimp-4.1.0/
+assimp-3.1.1-win-binaries/

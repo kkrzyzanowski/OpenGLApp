@@ -1,10 +1,25 @@
 #include "Shape.h"
 #include "Renderer.h"
-
+#include <algorithm>
 
 Shape::Shape()
 {
+	shapeState = ShapeState::CREATING;
+}
+
+void Shape::CreateShape(const GLfloat * points, unsigned int * orderIndex, unsigned int countVertices, unsigned int countIndexes)
+{
+	GLCall(glEnable(GL_BLEND));
+	GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 	
+	va = new VertexArray();
+	vb = new VertexBuffer(points, sizeof(float) * countVertices * (3 + 2 + 3));
+	layout = new VertexBufferLayout();
+	layout->Push<float>(3); // vertexes
+	layout->Push<float>(2); //textcoorssd
+	layout->Push<float>(3); // normals
+	va->AddBuffer(*vb, *layout);
+	ib = new IndexBuffer(orderIndex, countIndexes); //indexes count
 }
 
 VertexArray* Shape::GetVertexArray()
@@ -25,13 +40,21 @@ ShaderManager Shape::GetShaderManager()
 {
 	return sm;
 }
-Texture * Shape::GetTexture()
+Texture * Shape::GetTexture(std::string name)
 {
-	return texture;
+	auto it = std::find_if(textures.begin(), textures.end(), [&name](Texture* tex) {return tex->GetTextureName() == name; });
+	return *it;
+}
+void Shape::TurnOffShapeElements()
+{
+	va->UnBind();
+	vb->UnBind();
+	ib->UnBind();
+	sm.UnBind();
 }
 void Shape::InitializeShapeView(glm::mat4& view)
 {
-	this->view = view;
+	this->mvp.view = view;
 }
 void Shape::SetOutsideLight(glm::vec3& light)
 {
@@ -75,6 +98,10 @@ void Shape::SetShape()
 glm::vec3 Shape::GetInsideLight()
 {
 	return insideLightPos;
+}
+ShapeState Shape::GetState()
+{
+	return shapeState;
 }
 Shape::~Shape()
 {

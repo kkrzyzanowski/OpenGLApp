@@ -5,8 +5,6 @@ class Cube: public Shape
 {
 public:
 	Cube(const ShapesBuilder builder);
-	void CreateShape(const GLfloat* points, unsigned int* oredrIndex) override;
-	void TurnOffShapeElements() override;
 	void Update() override;
 	~Cube();
 private:

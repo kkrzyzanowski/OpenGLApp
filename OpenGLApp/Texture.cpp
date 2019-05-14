@@ -1,14 +1,17 @@
 #include "Texture.h"
-#include "ImageLoader\stb_image.h"
 
 
-Texture::Texture(const std::string& path) : m_path(path), m_rendererId(0), m_localBuffer(nullptr), 
+
+Texture::Texture(const std::string& path, unsigned int slot) : m_path(path), m_slot(slot), m_TextureID(0), m_localBuffer(nullptr),
 m_width(0), m_height(0), m_BPP(0)
 {
 	//stbi_set_flip_vertically_on_load(1);
+
+	name = path.substr(path.find_last_of('/\\') + 1);
+	name = path.substr(0, path.find_last_of('.'));
 	m_localBuffer = stbi_load(path.c_str(), &m_width, &m_height, &m_BPP, 4);
-	GLCall(glGenTextures(1, &m_rendererId));
-	GLCall(glBindTexture(GL_TEXTURE_2D, m_rendererId));
+	GLCall(glGenTextures(1, &m_TextureID));
+	GLCall(glBindTexture(GL_TEXTURE_2D, m_TextureID));
 
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
@@ -22,19 +25,24 @@ m_width(0), m_height(0), m_BPP(0)
 
 }
 
+Texture::Texture()
+{
+	
+}
 
 Texture::~Texture()
 {
-	GLCall(glDeleteTextures(1, &m_rendererId));
+	GLCall(glDeleteTextures(1, &m_TextureID));
 }
 
-void Texture::Bind(unsigned int slot) const
+void Texture::Bind() const
 {
-	GLCall(glActiveTexture(GL_TEXTURE0 + slot));
-	GLCall(glBindTexture(GL_TEXTURE_2D, m_rendererId));
+	GLCall(glActiveTexture(GL_TEXTURE0 + m_slot));
+	GLCall(glBindTexture(GL_TEXTURE_2D, m_TextureID));
 }
 
 void Texture::UnBind() const
 {
 	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 }
+

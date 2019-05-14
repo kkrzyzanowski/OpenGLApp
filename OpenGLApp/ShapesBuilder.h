@@ -3,7 +3,7 @@
 
 enum Shapes
 {
-		TRIANGLE = 9, RECTANGLE = 12, CUBE = 36, SPEHERE = 10
+		TRIANGLE, RECTANGLE, CUBE, SPEHERE, CUBEBOX, CUSTOM
 };
 static class ShapesBuilder
 {
@@ -15,10 +15,14 @@ public:
 	 ShapesBuilder ObjectState(CamView view);
 	 ShapesBuilder OutLight(glm::vec3 pos);
 	 ShapesBuilder LightCast(LightType lightType);
+	 ShapesBuilder PathModel(std::string path);
+	 ShapesBuilder Position(glm::vec3 position);
+	 ShapesBuilder Rotation(glm::vec3 position);
 	Shape* m_shape;
 	SourceShapeType m_shapeType;
 	Shape* m_light;
 	CamView m_view;
 	glm::vec3 m_pos;
 	LightType m_lightType;
+	std::string m_path;
 };

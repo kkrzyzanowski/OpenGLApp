@@ -1,7 +1,8 @@
 #include "Camera.h"
 #include <math.h>
-
+#include <algorithm>
 Camera* camInstance;
+CameraManager* CameraManager::camManager;
 float lastX;
 float lastY;
 bool firstMouse;
@@ -18,6 +19,7 @@ Camera::Camera()
 	pitch = 0.0f;
 	yaw = -90.0f;
 	camView = glm::mat4(1.0f);
+	stateCam = CameraState::INACTIVE;
 }
 
 void Camera::CreateView(glm::vec3(&vecArray)[3], float radius, GLFWwindow *window)
@@ -39,8 +41,8 @@ void Camera::Update()
 {
 	
 	currentFrame = glfwGetTime();
-	float camX = sin(glfwGetTime()) * radius;
-	float camZ = cos(glfwGetTime()) * radius;
+	//float camX = sin(glfwGetTime()) * radius;
+	//float camZ = cos(glfwGetTime()) * radius;
 	//camPos = glm::vec3(camX, camPos.y, camZ);
 	
 	CameraMove(10.0f);
@@ -80,8 +82,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	xoffset *= sensivity;
 	yoffset *= sensivity;
 
-	pitch += yoffset;
-	yaw -= xoffset;
+	pitch -= yoffset;
+	yaw += xoffset;
 
 	if (pitch > 89.0f)
 	pitch = 89.0f;
@@ -104,6 +106,21 @@ void Camera::scroll_callback(double xoffset, double yoffset)
 		fov = 45.0f;
 }
 
+CameraState Camera::GetState()
+{
+	return stateCam;
+}
+
+void Camera::SetActive()
+{
+	stateCam = CameraState::ACTIVE;
+}
+
+void Camera::SetInActive()
+{
+	stateCam = CameraState::INACTIVE;
+}
+
 glm::mat4 Camera::GetView()
 {
 	return camView;
@@ -117,4 +134,56 @@ glm::vec3 Camera::GetCamPos()
 Camera::~Camera()
 {
 
+}
+
+CameraManager::CameraManager()
+{
+	
+	if (camManager == nullptr)
+	{
+		camManager = this;
+	}
+}
+void CameraManager::AddCamera(Camera * cam)
+{
+	//cam.setId() itd jfdsajgk
+	Cameras.push_back(cam);
+}
+
+void CameraManager::RemoveCamera(Camera * cam)
+{
+	std::vector<Camera*>::iterator it = std::find_if(Cameras.begin(), Cameras.end(), [&cam](const Camera* lcam) { return lcam == cam; });
+	Cameras.erase(it);
+}
+
+void CameraManager::SetActiveCamera(Camera * cam)
+{
+	if (cam->GetState() != CameraState::ACTIVE)
+		cam->SetActive();
+	for each (Camera* cm in Cameras)
+	{
+		if (cm != cam)
+		{
+			cm->SetInActive();
+		}
+	}
+}
+
+Camera * CameraManager::GetActiveCamera()
+{
+	for each (Camera* cam in Cameras)
+	{
+		if (cam->GetState() == CameraState::ACTIVE)
+			return cam;
+	}
+	return nullptr;
+}
+
+CameraManager * CameraManager::GetInstance()
+{
+	return camManager;
+}
+
+CameraManager::~CameraManager()
+{
 }
