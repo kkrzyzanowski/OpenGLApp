@@ -54,6 +54,22 @@ ShaderTypeGenerator::ShaderTypeGenerator()
 	 shaders[1]->SetUniform1i("cubemap", 0, program);
  }
 
+ void ShaderTypeGenerator::PostProcesingShaderGenerator(std::vector<Shader*> &shaders, unsigned int program)
+ {
+	 shaders[1]->SetUniform1i("screenTexture", 0, program);
+ }
+
+ void ShaderTypeGenerator::ShaderPrimitiveGenerator(std::vector<Shader*> &shaders, glm::mat4 mvpResult, unsigned int program)
+ {
+	 shaders[0]->SetUniformMat4f("mvpResult", mvpResult, program);
+ }
+
+ void ShaderTypeGenerator::PickedShaderGenerator(std::vector<Shader*>& shaders, glm::vec3& color, glm::mat4& mvpResult, unsigned int program)
+ {
+	 shaders[0]->SetUniformMat4f("mvpResult", mvpResult, program);
+	 shaders[1]->SetUniform3f("PickingColor", color, program);
+ }
+
  ShaderTypeGenerator::~ShaderTypeGenerator()
 {
 }

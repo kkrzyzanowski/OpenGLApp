@@ -72,7 +72,6 @@ void SkyBoxCube::CreateMVPMatrix()
 {
 	//mvp.model = glm::mat4(0.0f);
 	//mvp.model = glm::scale(mvp.model, glm::vec3(1.0f, 1.0f, 1.0f));
-	mvp.proj = glm::perspective(glm::radians(90.0f), 16.0f / 9.0f, 0.01f, 100.0f);
 }
 
 void SkyBoxCube::Update()
@@ -103,6 +102,10 @@ void SkyBoxCube::InitializeShapeView(glm::mat4 & view)
 	{
 		this->mvp.view = view;
 	}
+}
+glm::vec3 SkyBoxCube::GetNormal()
+{
+	return glm::vec3();
 }
 SkyBoxCube::~SkyBoxCube()
 {

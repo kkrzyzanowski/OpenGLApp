@@ -1,9 +1,12 @@
 #include "ShaderManager.h"
 #include "Renderer.h"
 
+#define PROGRAM_NAME "ShapeShader"
 
-ShaderManager::ShaderManager(): m_Program(glCreateProgram())
+ShaderManager::ShaderManager() 
 {
+	m_Program.insert({ PROGRAM_NAME, glCreateProgram() });
+	activeProgram = PROGRAM_NAME;
 }
 
 
@@ -11,25 +14,33 @@ ShaderManager::~ShaderManager()
 {
 }
 
-unsigned int ShaderManager::AddShadersToProgram(std::vector<Shader*> Shaders)
+void ShaderManager::AddShadersToProgram(std::vector<Shader*> Shaders)
 {
 	for each  (Shader* s in Shaders)
 	{
-		GLCall(glAttachShader(m_Program, s->GetShaderID()));
+		GLCall(glAttachShader(m_Program.at(activeProgram), s->GetShaderID()));
 	}
-	GLCall(glLinkProgram(m_Program));
-	GLCall(glValidateProgram(m_Program));
+	GLCall(glLinkProgram(m_Program.at(activeProgram)));
+	GLCall(glValidateProgram(m_Program.at(activeProgram)));
 	for each  (Shader* s in Shaders)
 	{
 		GLCall(glDeleteShader(s->GetShaderID()));
 	}
+}
 
-	return m_Program;
+void ShaderManager::CreateProgram(const char* name)
+{
+	m_Program.insert({ name, glCreateProgram() });
+}
+
+unsigned int ShaderManager::GetProgram(const char* name)
+{
+	return m_Program.at(name);
 }
 
 unsigned int ShaderManager::GetProgram()
 {
-	return m_Program;
+	return m_Program.at(PROGRAM_NAME);
 }
 
 
@@ -40,10 +51,15 @@ unsigned int ShaderManager::GetProgram()
 
  void ShaderManager::Bind()
  {
-	 GLCall(glUseProgram(m_Program));
+	 GLCall(glUseProgram(m_Program.at(activeProgram)));
  }
 
  void ShaderManager::UnBind()
  {
 	 GLCall(glUseProgram(0));
+ }
+
+ void ShaderManager::ActivateProgram(const char * programName)
+ {
+	 activeProgram = programName;
  }

@@ -4,6 +4,7 @@
 #include "Sphere.h"
 #include "SkyBoxCube.h"
 #include "CustomShape.h"
+#include "Line.h"
 ShapesBuilder::ShapesBuilder()
 {
 
@@ -32,6 +33,10 @@ ShapesBuilder::ShapesBuilder()
 	 case Shapes::CUBEBOX:
 	 {
 		 return	new SkyBoxCube(*this);
+	 }
+	 case Shapes::LINE:
+	 {
+		 return new Line();
 	 }
 	 }
 	 return new Plane(*this);

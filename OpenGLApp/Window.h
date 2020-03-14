@@ -4,14 +4,15 @@
 #include <iostream>
 #include "Shape.h"
 #include "Shader.h"
+#include "ShapeManager.h"
 class Window
 {
 public:
 	Window();
 	int CreateWindow();
-	virtual ~Window();
+	~Window();
 private:
-	std::vector<Shape*> shapes;
+	
 	Renderer *renderer;
 };
 

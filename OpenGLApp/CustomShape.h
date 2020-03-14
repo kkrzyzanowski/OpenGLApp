@@ -29,6 +29,7 @@ private:
 	void SetTextures(aiMaterial* mat, aiTextureType type);
 	void ProcessNode(aiNode* node, const aiScene* scene);
 	void CreateMVPMatrix() override;
+	glm::vec3 GetNormal() override;
 };
 
 struct Vertex

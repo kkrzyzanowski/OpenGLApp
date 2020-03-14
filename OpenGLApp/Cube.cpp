@@ -55,10 +55,9 @@ void Cube::GenerateShaders()
 void Cube::CreateMVPMatrix()
 {
 	mvp.model = glm::mat4(1.0f);
-	mvp.model = glm::translate(mvp.model, glm::vec3(0.6f, -0.8f, -.7f));
+	mvp.model = glm::translate(mvp.model, glm::vec3(0.6f, -0.8f, .7f));
 	mvp.view = glm::mat4(1.0f);
 	mvp.view = glm::translate(mvp.view, glm::vec3(0.0f, 0.0f, 0.5f));
-	mvp.proj = glm::perspective(glm::radians(90.0f), 16.0f / 9.0f, 0.01f, 100.0f);
 	mvpResult = mvp.proj * mvp.view * mvp.model;
 }
 
@@ -77,6 +76,10 @@ void Cube::Update()
 	sm.Bind();
 	ib->Bind();
 	va->Bind();
+}
+glm::vec3 Cube::GetNormal()
+{
+	return glm::vec3();
 }
 //template <typename Matrix, typename ... glm::mat4>
 //void Cube::TransformateShape(Matrix arg, glm::mat4&... rest)

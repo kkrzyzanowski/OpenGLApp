@@ -8,3 +8,9 @@
 	glm::mat4 view;
 	glm::mat4 proj;
 };
+ struct RGB
+ {
+	 int r;
+	 int g; 
+	 int b;
+ };

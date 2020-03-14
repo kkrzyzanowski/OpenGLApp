@@ -1,22 +1,27 @@
 #include "Plane.h"
+#include <iostream>
 
-
-
+std::vector<glm::vec3> planeDefaultNormals = { glm::vec3(0.0f, 1.0f, 0.0f),
+									glm::vec3(0.0f, 1.0f, 0.0f),
+									glm::vec3(0.0f, 1.0f, 0.0f),
+									glm::vec3(0.0f, 1.0f, 0.0f) };
 Plane::Plane()
 {
 }
 
 Plane::Plane(const ShapesBuilder builder): Shape()
 {
+	normals = planeDefaultNormals;
 	sourceShapeType = builder.m_shapeType;
 	camState = builder.m_view;
 	light = builder.m_light;
 	outsideLight = builder.m_pos;
+	ShapeName = "Plane";
 	GLfloat g_vertex_buffer_data[] = {
-		-.5f, -.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,//0
-		.5f, -.5f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, //1
-		-.5f,  -.5f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,//2
-		.5f, -.5f, 1.0f, 1.0f, 1.0f,  0.0f, 1.0f, 0.0f//3
+		-.5f, -.5f, -1.0f, 0.0f, 0.0f, normals[0].x, normals[0].y, normals[0].z,//0
+		.5f, -.5f, -1.0f, 1.0f, 0.0f, normals[1].x, normals[1].y, normals[1].z,//1
+		-.5f,  -.5f, 1.0f, 0.0f, 1.0f, normals[2].x, normals[2].y, normals[2].z,//2
+		.5f, -.5f, 1.0f, 1.0f, 1.0f,  normals[3].x, normals[3].y, normals[3].z,//3
 	};
 	unsigned int indexes[] = {
 		0, 2, 3,
@@ -42,19 +47,31 @@ void Plane::GenerateShaders()
 	ShaderTypeGenerator::ShaderDiffuseGenerator(shaders, mvp, outsideLight, sm.GetProgram());
 	for each(Texture* texture in textures)
 		texture->UnBind();
+	sm.UnBind();
+	GeneratePickedShaders();
 	shapeState = ShapeState::EXISTING;
 }
 void Plane::GetSourceLight(glm::vec3 lightSource)
 {
 	m_sourceLight = lightSource;
 }
+glm::vec3 Plane::GetNormal()
+{
+	return normals[0];
+}
+
 void Plane::CreateMVPMatrix()
 {
 	mvp.model = glm::mat4(1.0f);
-	mvp.model = glm::translate(mvp.model, glm::vec3(0.0f, 0.0f, 0.0f));
-	mvp.model = glm::scale(mvp.model, glm::vec3(50.0f, 1.0f, 5.0f));
-	mvp.proj = glm::perspective(glm::radians(90.0f), 16.0f / 9.0f, 0.01f, 100.0f);
-	//mvp = proj * view * model;
+	mvp.model = glm::translate(mvp.model, glm::vec3(5.0f, 0.0f, 10.0f));
+	mvp.model = glm::rotate(mvp.model, glm::radians(30.0f), glm::vec3(0.0f, 0.0f, -1.0f));
+	mvp.model = glm::scale(mvp.model, glm::vec3(5.0f, 1.0f, 1.0f));
+	mvpResult = mvp.proj * mvp.view * mvp.model;
+	shapeCoords = mvpResult[3];
+	std::cout << "hfg " << mvpResult[3][0] << " " << mvpResult[3][1] << " " 
+		<< mvpResult[3][2] << std::endl;
+	RotateNormals(30.0f);
+	//glm::
 }
 
 void Plane::Update()
@@ -72,6 +89,7 @@ void Plane::Update()
 	sm.Bind();
 	ib->Bind();
 	va->Bind();
+	UpdatePickedShape();
 }
 
 

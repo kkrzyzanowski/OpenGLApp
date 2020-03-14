@@ -8,6 +8,7 @@ public:
 	void Update() override;
 	void GenerateShaders() override;
 	void GetSourceLight(glm::vec3 lightSource);
+	glm::vec3 GetNormal() override;
 	~Plane();
 private:
 	void CreateMVPMatrix() override;

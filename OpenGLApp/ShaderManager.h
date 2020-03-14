@@ -7,12 +7,16 @@ class ShaderManager
 public:
 	ShaderManager();
 	~ShaderManager();
-	unsigned int AddShadersToProgram(std::vector<Shader*> shader);
+	void AddShadersToProgram(std::vector<Shader*> shader);
+	void CreateProgram(const char* name);
+	unsigned int GetProgram(const char* name);
 	unsigned int GetProgram();
 	void SetUniform4f(unsigned int location, float v0, float v1, float v2, float v3);
 	void Bind();
 	void UnBind();
+	void ActivateProgram(const char* programName);
 private:
-	unsigned int m_Program;
+	std::unordered_map<const char*, unsigned int> m_Program;
+	const char* activeProgram;
 };
 

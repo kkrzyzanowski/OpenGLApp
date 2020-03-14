@@ -9,6 +9,7 @@ public:
 	Sphere(const ShapesBuilder builder);
 	void Update() override;
 	void GenerateShaders() override;
+	glm::vec3 GetNormal() override;
 	~Sphere();
 private:
 	void CreateMVPMatrix() override;

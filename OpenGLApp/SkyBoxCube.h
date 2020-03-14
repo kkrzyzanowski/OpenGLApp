@@ -11,6 +11,7 @@ public:
 	void GenerateShaders() override;
 	void Update() override;
 	void InitializeShapeView(glm::mat4& view);
+	glm::vec3 GetNormal() override;
 	~SkyBoxCube();
 protected:
 	CubeMapTexture* cubeMapTexture;

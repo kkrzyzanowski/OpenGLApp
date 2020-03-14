@@ -1,9 +1,14 @@
 #include "Controls.h"
 
 
-
-Controls::Controls()
+Controls::Controls(GLFWwindow *window)
 {
+	this->window = window;
+}
+
+void Controls::MouseLeftButtonClick()
+{
+	//if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == 
 }
 
 

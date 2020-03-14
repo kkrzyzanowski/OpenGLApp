@@ -98,11 +98,14 @@ void CustomShape::ProcessNode(aiNode* node, const aiScene* scene)
 void CustomShape::CreateMVPMatrix()
 {
 	mvp.model = glm::mat4(1.0f);
-	insideLightPos = glm::vec3(1.0f, 1.2f, -1.0f);
+	insideLightPos = glm::vec3(1.0f, 1.2f, 1.0f);
 	mvp.model = glm::translate(mvp.model, insideLightPos);
-
-	mvp.proj = glm::perspective(glm::radians(90.0f), 16.0f / 9.0f, 0.01f, 100.0f);
 	mvpResult = mvp.proj * mvp.view * mvp.model;
+}
+
+glm::vec3 CustomShape::GetNormal()
+{
+	return glm::vec3();
 }
 
 CustomShape::CustomShape()

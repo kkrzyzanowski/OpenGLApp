@@ -21,7 +21,15 @@ void Renderer::Draw(int count) const
 	GLCall(glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr));
 }
 
+void Renderer::DrawLine(glm::vec3 start, glm::vec3 end)
+{
+	glBegin(GL_LINES);
+		glVertex3f(start.x, start.y, start.z);
+		glVertex3f(end.x, end.y, end.z);
+	glEnd();
+}
+
 void Renderer::Clear() const
 {
-	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
+	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }

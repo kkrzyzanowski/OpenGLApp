@@ -111,14 +111,13 @@ Sphere::~Sphere()
 void Sphere::CreateMVPMatrix()
 {
 	mvp.model = glm::mat4(1.0f);
-	insideLightPos = glm::vec3(0.6f, 1.8f, -.7f);
+	insideLightPos = glm::vec3(0.6f, 1.8f, .7f);
 	mvp.model = glm::translate(mvp.model, insideLightPos);
 	mvp.model = glm::rotate(mvp.model, glm::radians(30.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
 	normalLight = glm::vec3(0.0f, -1.0f, 0.0f);
 	normalLight = glm::rotateZ(normalLight, glm::radians(30.0f));
 
-	mvp.proj = glm::perspective(glm::radians(90.0f), 16.0f / 9.0f, 0.01f, 100.0f);
 	mvpResult = mvp.proj * mvp.view * mvp.model;
 }
 
@@ -139,4 +138,9 @@ void Sphere::GenerateShaders()
 	shaders[1]->SetUniform4f("u_color", 1.0f, 1.0f, 1.0f, 1.0f, sm.GetProgram());
 	shaders[1]->SetUniform1i("u_texture", 0, sm.GetProgram());
 	shapeState = ShapeState::EXISTING;
+}
+
+glm::vec3 Sphere::GetNormal()
+{
+	return glm::vec3();
 }

@@ -6,6 +6,7 @@ class Cube: public Shape
 public:
 	Cube(const ShapesBuilder builder);
 	void Update() override;
+	glm::vec3 GetNormal() override;
 	~Cube();
 private:
 	
