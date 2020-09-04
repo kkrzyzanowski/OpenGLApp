@@ -18,7 +18,7 @@ enum DrawMode
 class Renderer
 {
 public:
-	void Draw(int count) const;
+	void Draw(int count, GLenum mode) const;
 	void DrawLine(glm::vec3 start, glm::vec3 end);
 	void Clear() const;
 };

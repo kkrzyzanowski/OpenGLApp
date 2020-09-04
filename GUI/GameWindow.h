@@ -1,10 +1,9 @@
-#pragma once
-#include <GL\glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include "Shape.h"
-#include "Shader.h"
-#include "ShapeManager.h"
+//#include "Shape.h"
+//#include "Shader.h"
+//#include "ShapeManager.h"
+
 class GameWindow
 {
 public:
@@ -12,7 +11,6 @@ public:
 	int CreateWindow();
 	~GameWindow();
 private:
-	
-	Renderer *renderer;
-};
 
+	//Renderer *renderer;
+};

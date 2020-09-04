@@ -6,16 +6,20 @@
 #include <GLFW/glfw3.h>
 
 				//pos		//texture
-float quad[] = {-1.0f, 1.0f, 0.0f, 1.0f,
-				-1.0f, -1.0f, 0.0f, 0.0f,
-				1.0f, -1.0f, 1.0f, 0.0f,
-				1.0f, 1.0f, 1.0f, 1.0f};
+float quad[] = { 
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		-1.0f, -1.0f,  0.0f, 0.0f,
+		 1.0f, -1.0f,  1.0f, 0.0f,
+
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		 1.0f, -1.0f,  1.0f, 0.0f,
+		 1.0f,  1.0f,  1.0f, 1.0f };
 float indexes[] = { 0, 1, 2,
-					2, 3, 0 };
+					3, 4, 5 };
 FrameBuffer::FrameBuffer()
 {
 	GLCall(glGenFramebuffers(1, &fbo));
-	InitializePostProcessing();
+	InitializeFrameBufferCoords();
 }
 
 void FrameBuffer::Bind()
@@ -29,37 +33,24 @@ void FrameBuffer::UnBind()
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
 
-void FrameBuffer::GenerateTextureColorBuffer()
-{
-	GLCall(glGenTextures(1, &texColorBuffer));
-	GLCall(glBindTexture(GL_TEXTURE_2D, texColorBuffer));
-	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
-	//GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 
-	GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texColorBuffer, 0));
-	
-}
-
-void FrameBuffer::GenerateRenderBuffer()
+void FrameBuffer::GenerateTexture()
 {
-	rbo = new RenderBuffer();
-	rbo->Bind();
-	rbo->GenerateRenderBuffer();
-	//rbo->UnBind();
-	GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo->GetRenderBuffer()));
+	fbTexture = new Texture();
+	fbTexture->CreateFrameBufferTexture();
 }
 
 bool FrameBuffer::CheckFrameBuffer()
 {
-	return (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) ? false : true;
+	bool status = (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
+	return status;
 }
 
-void FrameBuffer::InitializePostProcessing()
+void FrameBuffer::InitializeFrameBufferCoords()
 {	
 	va = new VertexArray();
-	vb = new VertexBuffer(quad, sizeof(float) * 4 *(2+2));
+	unsigned int vaCount = sizeof(float) * 6 * (2 + 2);
+	vb = new VertexBuffer(quad, vaCount);
 	layout = new VertexBufferLayout();
 	layout->Push<float>(2);
 	layout->Push<float>(2);
@@ -70,18 +61,18 @@ void FrameBuffer::InitializePostProcessing()
 
 void FrameBuffer::TurnOffFrameBufferElements()
 {
+	sm.UnBind();
 	va->UnBind();
 	vb->UnBind();
 	ib->UnBind();
-	sm.UnBind();
 }
 
 void FrameBuffer::TurnOnFrameBufferElements()
 {
+	sm.Bind();
 	va->Bind();
 	vb->Bind();
 	ib->Bind();
-	sm.Bind();
 }
 
 void FrameBuffer::InitializePostProcessingShaders()
@@ -90,19 +81,16 @@ void FrameBuffer::InitializePostProcessingShaders()
 	shaders.push_back(new Shader("Shaders\\PostProcesingShader.frag"));
 	sm.AddShadersToProgram(shaders);
 	sm.Bind();
-	BindTexture();
+	fbTexture->Bind();
 	ShaderTypeGenerator::PostProcesingShaderGenerator(shaders, sm.GetProgram());
-	UnBindTexture();
+	//fbTexture->UnBind();
+	//sm.UnBind();
 }
 
-void FrameBuffer::BindTexture()
-{
-	GLCall(glBindTexture(GL_TEXTURE_2D, texColorBuffer));
-}
 
-void FrameBuffer::UnBindTexture()
+Texture* FrameBuffer::GetFramebufferTexture()
 {
-	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
+	return fbTexture;
 }
 
 IndexBuffer * FrameBuffer::GetIndexBuffer()

@@ -23,7 +23,7 @@ Sphere::Sphere(const ShapesBuilder builder) : Shape()
 	unsigned int sphere_vbo[4] = { -1, -1, -1, -1 };
 	unsigned int sphere_vao[4] = { -1, -1, -1, -1 };
 	
-	float radius = 1.0f;
+	radius = 1.0f;
 	float const S = 1. / (float)(sectors);
 	float const R = 1. / (float)(rings-1);
 	 int r, s;
@@ -81,6 +81,9 @@ Sphere::Sphere(const ShapesBuilder builder) : Shape()
 			}
 		}
 	}
+
+	physics = { 1.0f, glm::vec3(0.0f, -.01f, 0.0f),
+		1.0f, 0.0f, true, glm::vec3(.0f, 10.0f, .0f) };
 	CreateShape(vertices, sphere_ix, sectors*rings, indexesValue);
 	CreateType();
 	
@@ -92,7 +95,7 @@ void Sphere::Update()
 	sm.Bind();
 	for each(Texture* texture in textures)
 		texture->Bind();
-	mvp.model = glm::translate(mvp.model, glm::vec3(sin(glm::radians(1.0f)), 0.0f, glm::sin(glm::radians(1.0f))));
+	mvp.model = glm::translate(mvp.model, physics.velocity);
 	mvp.model = glm::rotate(mvp.model, glm::radians(1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	mvpResult = mvp.proj * mvp.view * mvp.model;
 	insideLightPos = glm::vec3(mvp.model[3][0], mvp.model[3][1], mvp.model[3][2]);
@@ -111,7 +114,7 @@ Sphere::~Sphere()
 void Sphere::CreateMVPMatrix()
 {
 	mvp.model = glm::mat4(1.0f);
-	insideLightPos = glm::vec3(0.6f, 1.8f, .7f);
+	insideLightPos = glm::vec3(0.0f, 1.8f, -10.7f);
 	mvp.model = glm::translate(mvp.model, insideLightPos);
 	mvp.model = glm::rotate(mvp.model, glm::radians(30.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
@@ -143,4 +146,9 @@ void Sphere::GenerateShaders()
 glm::vec3 Sphere::GetNormal()
 {
 	return glm::vec3();
+}
+
+float Sphere::GetRadius()
+{
+	return radius;
 }

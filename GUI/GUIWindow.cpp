@@ -110,10 +110,10 @@ void GUIWindow::RunGUIWindow(short int x, short int y)
 		{ 
 			MenuGUI::ShowTopMenu(&topMenu);
 		}
-		//if (demo)
-		//{
-		//	ImGui::ShowDemoWindow(&demo);
-		//}
+		if (demo)
+		{
+			ImGui::ShowDemoWindow(&demo);
+		}
 		// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
 		{
 			//ImGui::Checkbox("Another Window", &show_another_window);

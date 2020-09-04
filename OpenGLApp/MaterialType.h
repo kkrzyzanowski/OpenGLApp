@@ -3,11 +3,11 @@
 #include "glm\gtc\matrix_transform.hpp"
 #include "glm\gtc\type_ptr.hpp"
 #pragma once
-class ShapeType
+class ShapeStateType
 {
 public:
-	ShapeType();
-	~ShapeType();
+	ShapeStateType();
+	~ShapeStateType();
 protected:
 
 };
@@ -42,7 +42,7 @@ public:
 	float cutOff;
 	float outerCutOff;
 };
-class LightShape : public ShapeType
+class LightShape : public ShapeStateType
 {
 public:
 	LightShape();
@@ -53,12 +53,12 @@ private:
 	Light* light;
 };
 
-class DiffuseShape : public ShapeType
+class DiffuseShape : public ShapeStateType
 {
 private:
 	LightShape * m_SourceLight;
 };
-class ParticleShape : public ShapeType
+class ParticleShape : public ShapeStateType
 {
 
 };
@@ -66,7 +66,7 @@ class ParticleShape : public ShapeType
 class MaterialTypeCreator
 {
 public:
-	ShapeType * GetType();
+	ShapeStateType * GetType();
 private:
-	ShapeType* type;
+	ShapeStateType* type;
 };

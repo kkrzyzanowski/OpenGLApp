@@ -16,9 +16,9 @@ bool GLLogCall(const char* function, const char* file, int line)
 	return true;
 }
 
-void Renderer::Draw(int count) const
+void Renderer::Draw(int count, GLenum mode) const
 {
-	GLCall(glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr));
+	GLCall(glDrawElements(mode, count, GL_UNSIGNED_INT, nullptr));
 }
 
 void Renderer::DrawLine(glm::vec3 start, glm::vec3 end)

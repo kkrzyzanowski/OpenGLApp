@@ -16,7 +16,7 @@ float yaw;
 float pitch; 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mode);
-bool RayCastDetection(glm::vec3 rayOrigin, glm::vec3 normal, glm::vec3 shapePoint, float &distance);
+bool RayCastDetection(glm::vec3 rayOrigin, glm::vec3 rayDirection, glm::mat4 shapeModel, Triangles& triangles, float distance);
 void ObjectPicking(int mx, int my, std::vector<Shape*>& shapes);
 Camera::Camera()
 {
@@ -42,9 +42,9 @@ void Camera::CreateView(glm::vec3(&vecArray)[3], float radius, GLFWwindow *windo
 	
 	deltaTime = 0.0f;
 	lastFrame = 0.0f;
-	fov = 1000.0f;
+	fov = glm::radians(90.0f);
 
-	projection = glm::perspective(glm::radians(90.0f), 16.0f / 9.0f, .01f, 1000.0f);
+	projection = glm::perspective(fov, 16.0f / 9.0f, .01f, 1000.0f);
 	camView = glm::lookAt(camPos, camPos + camTarget, camDirection);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetMouseButtonCallback(window, mouseButtonCallback);
@@ -80,20 +80,19 @@ void Camera::CameraMove()
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {	
+
+	//RAYCAS failed to-do
 	float distance = 1000.0f;
 	camInstance->mouseRayCast = new Raycast(xpos, ypos, distance, camInstance->GetProjection(), camInstance->GetView());
-	camInstance->mouseRayCast->CalculateMouseRay();
+	
+
 	for each ( auto shape in ShapeManager::shapes)
 	{
-		Plane* p = dynamic_cast<Plane*>(shape);
-		if(p != nullptr)
-		{
-			glm::vec3 startPoint = glm::vec3(camInstance->mouseRayCast->GetWorldRay().x,
-				camInstance->mouseRayCast->GetWorldRay().y,
-				camInstance->camPos.z - camInstance->camTarget.z );
-			RayCastDetection(startPoint,
-			shape->GetNormal(), shape->GetShapeCenterPoint(), distance);
-		}
+			glm::vec3 startPoint = camInstance->mouseRayCast->GetRayOrigin();
+			glm::vec3 startDir = camInstance->mouseRayCast->GetWorldRayDirection();
+			glm::vec3 aabbMin = glm::vec3(-.5f, -.5f, -4.5f);
+			glm::vec3 aabbMax = glm::vec3(.5f, .5f, -4.5f);
+			RayCastDetection(startPoint, startDir, shape->GetModel(), shape->GetTriangles(), 1000.0f);
 	}
 	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
 	{
@@ -129,6 +128,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	{
 		firstMouse = true;
 	}
+	delete camInstance->mouseRayCast;
 }
 
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mode)
@@ -274,53 +274,45 @@ void ObjectPicking(int mx, int my, std::vector<Shape*>& shapes)
 }
 
 
-bool RayCastDetection(glm::vec3 rayOrigin, glm::vec3 normal, glm::vec3 shapePoint, float &distance)
+bool RayCastDetection(glm::vec3 rayOrigin, glm::vec3 rayDirection, glm::mat4 shapeModel, Triangles& triangles, float distance)
 {
-	glm::vec3 rayDirection = glm::vec3(0.0f, 0.0f, -distance);
-	glm::vec3 rayPoint = rayOrigin + rayDirection;
-	glm::vec3 halfRayPoint = glm::vec3(rayPoint.x, rayPoint.y, rayPoint.z/2.0f);
-	float denominator = glm::dot(normal, rayDirection);
-	if (denominator >= 0.0f)
+	for each (Triangle triangle in triangles)
 	{
-		if (distance < 1e-6)
+		glm::vec3 v0 = triangle[0];
+		glm::vec3 v1 = triangle[1];
+		glm::vec3 v2 = triangle[2];
+
+		glm::vec3 edge1, edge2;
+		glm::vec3 h, s, q;
+
+		edge1 = v1 - v0;
+		edge2 = v2 - v0;
+
+		h = glm::cross(rayDirection, edge2);
+		float a = glm::dot(edge1, h);
+		if (fabs(a) < 0.0001f)
+			continue;
+
+		float f = 1.0 / a;
+
+		s = rayOrigin - v0;
+		float u = f * glm::dot(s, h);
+		if (u < 0.0f || u > 1.0f)
+			continue;
+		
+		q = glm::cross(s, edge1);
+		float v = f * glm::dot(rayDirection, q);
+		if (v < 0.0f || v + u > 1.0f)
+			continue;
+
+		float t = f * glm::dot(edge2, q);
+
+		if (t > 0.0001f)
 		{
-			std::cout << "Plane not found - distance: " << std::endl;
+			glm::vec3 intersectedPoint = rayOrigin + rayDirection * t;
+			std::cout << "Detected!!!" << std::endl;
 			return true;
 		}
-		float t = - (glm::dot(normal, rayOrigin) + distance)/ glm::dot(rayDirection, normal);
-		std::cout << "Distance left: " << distance <<  " T variable: " << t << std::endl;
-		if (t < -1e-4)
-		{
-			return false;
-		}
-		else if(t > 1e-4)
-		{
-			distance = distance / 2.0f;
-			RayCastDetection(rayOrigin, normal, shapePoint, distance);
-		}
-		else
-		{
-			std::cout << "Plane found - distance: " << distance << std::endl;
-			return true;
-		}
 	}
-	else
-	{
-		std::cout << "Plane not found: "  << distance << std::endl;
-		return false;
-	}
-	return true;
-	if (rayPoint.z > shapePoint.z)
-	{
-		std::cout << "Point is in a distance: " << distance << " " << std::endl;
-		RayCastDetection(rayOrigin, normal, shapePoint, distance);
-		//glm::vec3 v_sub = shapePoint - rayOrigin;
-		//distance = 
-	}
-	else if(rayPoint.z < shapePoint.z)
-	{
-
-	}
-
 	return false;
 }

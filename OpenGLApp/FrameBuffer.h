@@ -4,6 +4,7 @@
 #include "RenderBuffer.h"
 #include "Shader.h"
 #include "VertexBufferLayout.h"
+#include "Texture.h"
 
 class FrameBuffer
 {
@@ -11,20 +12,23 @@ public:
 	FrameBuffer();
 	void Bind();
 	void UnBind();
-	void GenerateTextureColorBuffer();
-	void GenerateRenderBuffer();
+	void GenerateRenderBuffer(RenderBuffer* rbo);
+	void GenerateTexture();
 	bool CheckFrameBuffer();
 	void TurnOffFrameBufferElements();
 	void TurnOnFrameBufferElements();
 	void InitializePostProcessingShaders();
-	void BindTexture();
-	void UnBindTexture();
+
+	Texture* GetFramebufferTexture();
 	IndexBuffer* GetIndexBuffer();
 	~FrameBuffer();
 private:
-	void InitializePostProcessing();
+	void InitializeFrameBufferCoords();
 	unsigned int texColorBuffer;
 	unsigned int fbo;
+	unsigned int ftbo;
+
+	Texture* fbTexture;
 	RenderBuffer* rbo;
 	std::vector<Shader*> shaders;
 	ShaderManager sm;

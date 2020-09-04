@@ -70,6 +70,12 @@ ShaderTypeGenerator::ShaderTypeGenerator()
 	 shaders[1]->SetUniform3f("PickingColor", color, program);
  }
 
+ void ShaderTypeGenerator::TerrainShaderGenerator(std::vector<Shader*>& shaders, glm::mat4 &mvp, unsigned int program)
+ {
+	 shaders[0]->SetUniformMat4f("mvpResult", mvp, program);
+	 shaders[1]->SetUniform1i("terrainTexture", 0, program);
+ }
+
  ShaderTypeGenerator::~ShaderTypeGenerator()
 {
 }

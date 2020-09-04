@@ -11,7 +11,8 @@ public:
 	void CalculateMouseRay();
 	bool IntersectionInRange(float start, float end);
 	glm::vec3 GetPointFromRay(glm::vec3 ray, float distance);
-	glm::vec3 GetWorldRay();
+	glm::vec3 GetWorldRayDirection();
+	glm::vec3 GetRayOrigin();
 
 	~Raycast();
 private:
@@ -20,11 +21,17 @@ private:
 	glm::mat4 view;
 	float x;
 	float y;
+	float z;
 	glm::vec3 ray_nds;
-	glm::vec4 ray_clip;
-	glm::vec4 rayEye;
-	glm::vec3 rayWorld;
-	glm::vec3 worldRay;
+	glm::vec4 rayStartClip;
+	glm::vec4 rayEndClip;
+	glm::vec4 rayStartCamera;
+	glm::vec4 rayStartWorld;
+	glm::vec4 rayEndCamera;
+	glm::vec4 rayEndWorld;
+	glm::vec4 rayDirWorld;
+	glm::vec3 origin;
+	glm::vec3 worldRayNormalized;
 };
 
 

@@ -5,38 +5,45 @@
 #include "SkyBoxCube.h"
 #include "CustomShape.h"
 #include "Line.h"
+#include "Terrain.h"
+
 ShapesBuilder::ShapesBuilder()
 {
 
 }
 
- Shape* ShapesBuilder::CreateShape(const Shapes shapeType)
+ Shape* ShapesBuilder::CreateShape(const ShapeType shapeType)
 {
 	 switch (shapeType)
 	 {
-	 case Shapes::CUBE:
+	 case ShapeType::CUBE:
 	 {
 		 return new Cube(*this);
 	 }
-	 case Shapes::RECTANGLE:
+	 case ShapeType::RECTANGLE:
 	 {
 		 return new Plane(*this);
 	 }
-	 case Shapes::SPEHERE:
+	 case ShapeType::SPEHERE:
 	 {
 		 return new Sphere(*this);
 	 }
-	 case Shapes::CUSTOM:
+	 case ShapeType::CUSTOM:
 	 {
 		 return new CustomShape(*this);
 	 }
-	 case Shapes::CUBEBOX:
+	 case ShapeType::SKYBOX:
 	 {
 		 return	new SkyBoxCube(*this);
 	 }
-	 case Shapes::LINE:
+	 case ShapeType::LINE:
 	 {
 		 return new Line();
+	 }
+
+	 case ShapeType::TERRAIN:
+	 {
+		 return new Terrain(*this);
 	 }
 	 }
 	 return new Plane(*this);
@@ -80,6 +87,12 @@ ShapesBuilder  ShapesBuilder::LightCast(LightType lightType)
 ShapesBuilder ShapesBuilder::PathModel(std::string path)
 {
 	m_path = path;
+	return *this;
+}
+
+ShapesBuilder ShapesBuilder::CustomProperties(TerrainProperties& tp)
+{
+	this->props = tp;
 	return *this;
 }
 

@@ -1,5 +1,5 @@
-d:\projectscpp\openglapp\gui\debug\vc141.pdb
-d:\projectscpp\openglapp\gui\debug\vc141.idb
+d:\projectscpp\openglapp\gui\debug\vc142.pdb
+d:\projectscpp\openglapp\gui\debug\vc142.idb
 d:\projectscpp\openglapp\gui\debug\topmenugui.obj
 d:\projectscpp\openglapp\gui\debug\imgui_widgets.obj
 d:\projectscpp\openglapp\gui\debug\imgui_impl_opengl3.obj
@@ -9,6 +9,7 @@ d:\projectscpp\openglapp\gui\debug\imgui_demo.obj
 d:\projectscpp\openglapp\gui\debug\imgui.obj
 d:\projectscpp\openglapp\gui\debug\guiwindow.obj
 d:\projectscpp\openglapp\gui\debug\guimain.obj
+d:\projectscpp\openglapp\gui\debug\gamewindow.obj
 d:\projectscpp\openglapp\debug\gui.ilk
 d:\projectscpp\openglapp\debug\gui.exe
 d:\projectscpp\openglapp\debug\gui.pdb

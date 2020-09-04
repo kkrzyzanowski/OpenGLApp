@@ -10,10 +10,12 @@ public:
 	void Update() override;
 	void GenerateShaders() override;
 	glm::vec3 GetNormal() override;
+	float GetRadius();
 	~Sphere();
 private:
 	void CreateMVPMatrix() override;
 	glm::vec3 normalLight;
+	float radius;
 	/*GLfloat* vertices;
 	unsigned int* sphere_ix;*/
 };

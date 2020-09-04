@@ -1,15 +1,16 @@
 #pragma once
 #include "Shape.h"
+#include "CustomProperties.h"
 
-enum Shapes
+enum ShapeType
 {
-		TRIANGLE, RECTANGLE, CUBE, SPEHERE, CUBEBOX, LINE, CUSTOM
+		TRIANGLE, RECTANGLE, CUBE, SPEHERE, SKYBOX, LINE, TERRAIN, CUSTOM
 };
 static class ShapesBuilder
 {
 public:
 	ShapesBuilder();
-	 Shape* CreateShape(const Shapes shapeType);
+	 Shape* CreateShape(const ShapeType shapeType);
 	 ShapesBuilder Light(Shape* light);
 	 ShapesBuilder SourceType(SourceShapeType shapeType);
 	 ShapesBuilder ObjectState(CamView view);
@@ -18,6 +19,7 @@ public:
 	 ShapesBuilder PathModel(std::string path);
 	 ShapesBuilder Position(glm::vec3 position);
 	 ShapesBuilder Rotation(glm::vec3 position);
+	 ShapesBuilder CustomProperties(TerrainProperties& tp);
 	Shape* m_shape;
 	SourceShapeType m_shapeType;
 	Shape* m_light;
@@ -25,4 +27,5 @@ public:
 	glm::vec3 m_pos;
 	LightType m_lightType;
 	std::string m_path;
+	TerrainProperties props;
 };

@@ -37,10 +37,10 @@ LightShape::~LightShape()
 {
 }
 
-ShapeType::ShapeType()
+ShapeStateType::ShapeStateType()
 {
 }
 
-ShapeType::~ShapeType()
+ShapeStateType::~ShapeStateType()
 {
 }

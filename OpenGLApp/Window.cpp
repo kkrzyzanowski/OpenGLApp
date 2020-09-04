@@ -16,17 +16,20 @@
 #include "ShapeManager.h"
 #include "RayDrawer.h"
 #include "Primitive.h"
+#include "Collision.h"
+#include "CustomProperties.h"
+#include "Terrain.h"
 
 bool RayCastDetection(glm::vec3 rayOrigin, glm::vec3 rayDirection, glm::vec3 normal, glm::vec3 shapePoint, float &distance);
 
 RayDrawer* rayDrawer;
 
-Window::Window()
+GameWindow::GameWindow()
 {
 	CreateWindow();
 }
 
- int Window::CreateWindow()
+ int GameWindow::CreateWindow()
 {
 	 // Creation window
 	 if (!glfwInit())
@@ -64,7 +67,7 @@ Window::Window()
 
 	 Camera* cam = new Camera ();
 	 glm::vec3 camProps[3] = {
-		 glm::vec3(0.0f, 0.0f, 15.0f), // position
+		 glm::vec3(0.0f, 0.0f, 0.0f), // position
 		 glm::vec3(0.0f, 0.0f, -1.0f), // looking
 		 glm::vec3(0.0f, 1.0f, 0.0f) // up direction
 	 };
@@ -73,37 +76,41 @@ Window::Window()
 	 camManager.AddCamera(cam);
 	 camManager.SetActiveCamera(cam);
 
-	 glScalef(1.0f, 1.0f, 1.0f);
-
+	 
 	 Controls* control = new Controls(window);
 	 /* Creation all objects in scene */
 	 ShapesBuilder shapesBuilder;
 	 
 	 ShapeManager::shapes.push_back(shapesBuilder.ObjectState(CamView::DYNAMIC)
 		 .SourceType(SourceShapeType::LIGHT)
-		 .CreateShape(Shapes::SPEHERE));
-
-	 ShapeManager::shapes.push_back(shapesBuilder.ObjectState(CamView::STATIC)
-		 .SourceType(SourceShapeType::DIFFUSE)
-		 .CreateShape(Shapes::RECTANGLE));
+		 .CreateShape(ShapeType::SPEHERE));
 
 	 ShapeManager::shapes.push_back(shapesBuilder.ObjectState(CamView::DYNAMIC)
 		 .SourceType(SourceShapeType::DIFFUSE)
-		 .CreateShape(Shapes::CUBE));
-
-	 ShapeManager::shapes.push_back(shapesBuilder.ObjectState(CamView::DYNAMIC)
-		 .SourceType(SourceShapeType::LIGHT)
-		 .PathModel("Models\\Hammer.obj")
-		 .CreateShape(Shapes::CUSTOM));
+		 .CreateShape(ShapeType::RECTANGLE));
 
 	 ShapeManager::shapes.push_back(shapesBuilder.ObjectState(CamView::DYNAMIC)
 		 .SourceType(SourceShapeType::DIFFUSE)
-		 .CreateShape(Shapes::CUBEBOX));
+		 .CreateShape(ShapeType::CUBE));
 
-	 ShapeManager::shapes.push_back(shapesBuilder.ObjectState(CamView::MOVABLE)
+	 //ShapeManager::shapes.push_back(shapesBuilder.ObjectState(CamView::DYNAMIC)
+		// .SourceType(SourceShapeType::LIGHT)
+		// .PathModel("Models\\Hammer.obj")
+		// .CreateShape(ShapeType::CUSTOM));
+
+	 ShapeManager::shapes.push_back(shapesBuilder.ObjectState(CamView::DYNAMIC)
 		 .SourceType(SourceShapeType::DIFFUSE)
-		 .CreateShape(Shapes::LINE));
+		 .CreateShape(ShapeType::SKYBOX));
 
+	 //ShapeManager::shapes.push_back(shapesBuilder.ObjectState(CamView::MOVABLE)
+		// .SourceType(SourceShapeType::DIFFUSE)
+		// .CreateShape(ShapeType::LINE));
+
+	 //TerrainProperties tp = { -4.0f, 1.0f, 12, 12, glm::vec3(0.0f, -4.0f, 0.0f) };
+	 //ShapeManager::shapes.push_back(shapesBuilder.ObjectState(CamView::DYNAMIC)
+		// .SourceType(SourceShapeType::DIFFUSE)
+		// .CustomProperties(tp)
+		// .CreateShape(ShapeType::TERRAIN));
 
 	 for each (Shape* shape in   ShapeManager::shapes)
 	 {
@@ -112,18 +119,30 @@ Window::Window()
 		 shape->SetEyeCamPos(cam->GetCamPos());
 		 shape->GenerateShaders();
 		 shape->TurnOffShapeElements();
-		 if (shape->GetState() == CamView::MOVABLE)
+		 if (shape->GetCreationState() == CamView::MOVABLE)
 			 cam->movableShapes.push_back(shape);
 	}
-	 ShapeManager::shapes[1]->SetOutsideLight(ShapeManager::shapes[0]->GetInsideLight());
+	//ShapeManager::shapes[1]->SetOutsideLight(ShapeManager::shapes[0]->GetInsideLight());
 
 	FrameBuffer* frameBuffer = new FrameBuffer();
+	RenderBuffer* renderBuffer = new RenderBuffer();
+	
 	frameBuffer->Bind();
-	frameBuffer->GenerateTextureColorBuffer();
-	frameBuffer->GenerateRenderBuffer();
-	bool isFrameBufferLoaded = frameBuffer->CheckFrameBuffer();
+	frameBuffer->GenerateTexture();
+	
 	frameBuffer->InitializePostProcessingShaders();
+	renderBuffer->Bind();
+	renderBuffer->GenerateRenderBuffer();
+	renderBuffer->GenerateFrameRenderBuffer();
+	if (!frameBuffer->CheckFrameBuffer())
+		return -1;
+
 	frameBuffer->UnBind();
+
+
+	//Collision initialization
+	Collision* collision = new Collision();
+	collision->objects = ShapeManager::shapes;
 
 	renderer = new Renderer();
 	rayDrawer = new RayDrawer();
@@ -146,8 +165,9 @@ Window::Window()
 		/* Render here */
 		//frameBuffer->Bind();
 		glEnable(GL_DEPTH_TEST);
-		renderer->Clear();
+		//glDepthFunc(GL_LEQUAL);
 		glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
+		renderer->Clear();
 		//glStencilFunc(GL_ALWAYS, 1, 0xFF);
 		//glStencilMask(0xFF);
 		cam->Update();
@@ -157,53 +177,67 @@ Window::Window()
 		{
 			shape->InitializeShapeView(cam->GetView());
 			shape->SetEyeCamPos(cam->GetCamPos()); 
-			shape->TurnOffShapeElements();
 			shape->SetOutsideLight(ShapeManager::shapes[0]->GetInsideLight());
 			shape->Update();
-			if(shape->GetSourceShapeType() != SourceShapeType::PRIMITIVE)
-				renderer->Draw(shape->GetIndexBuffer()->GetCount());
-			else
+			if (shape->GetSourceShapeType() != SourceShapeType::PRIMITIVE)
 			{
+				auto terr = dynamic_cast<Terrain*>(shape);
+				if(terr == nullptr)
+					renderer->Draw(shape->GetIndexBuffer()->GetCount(), GL_TRIANGLES);
+				else
+					renderer->Draw(shape->GetIndexBuffer()->GetCount(), GL_TRIANGLE_FAN);
+
+			}
+			shape->TurnOffShapeElements();
+			//Check collision - for now on main loop
+			collision->CheckCollision();
+
 				/*if (dynamic_cast<Primitive*>(shape) != nullptr)
 				{
 					Primitive* p = dynamic_cast<Primitive*>(shape);
 					delete p;
 				}*/
-			}
+			
 		}
-			if(cam->mouseRayCast != nullptr)
-			{ 
-				//glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
-				//glClearColor(1.0f, 0.2f, 0.3f, 1.0f);
-				//glClear(GL_COLOR_BUFFER_BIT);
-				glm::vec3 tempvec = glm::vec3(
-					cam->mouseRayCast->GetWorldRay().x,
-					cam->mouseRayCast->GetWorldRay().y,
-					cam->mouseRayCast->GetWorldRay().z + 15.0f);
-				rayDrawer->DrawRay(tempvec, tempvec, -1000.0f, renderer);
-				
-			}
+
+		// Draw ray
+		if(cam->mouseRayCast != nullptr)
+		{ 
+			//glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+			//glClearColor(1.0f, 0.2f, 0.3f, 1.0f);
+			//glClear(GL_COLOR_BUFFER_BIT);
+			glm::vec3 tempvec = glm::vec3(
+				cam->mouseRayCast->GetWorldRayDirection().x,
+				cam->mouseRayCast->GetWorldRayDirection().y,
+				cam->mouseRayCast->GetWorldRayDirection().z + 15.0f);
+			rayDrawer->DrawRay(tempvec, tempvec, 1000.0f, renderer);
+			
+		}
+
 		//frameBuffer->TurnOffFrameBufferElements();
+		////Post-procesing
 		//frameBuffer->UnBind();
 		//glDisable(GL_DEPTH_TEST);
-		////glClear(GL_COLOR_BUFFER_BIT);
+
+		//glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		//glClear(GL_COLOR_BUFFER_BIT);
+
 		//frameBuffer->TurnOnFrameBufferElements();
-		//frameBuffer->BindTexture();
+		//frameBuffer->GetFramebufferTexture()->Bind();
 		//renderer->Draw(frameBuffer->GetIndexBuffer()->GetCount());
-		 /* Swap front and back buffers */
+
+		/* Swap front and back buffers */
 		 glfwSwapBuffers(window);
 
 		 /* Poll for and process events */
 		 glfwPollEvents();
 	 }
 	
-
-//	 sm.UnBind();
 	 glfwTerminate();
 	
 	 return 0;
 }
-Window::~Window()
+GameWindow::~GameWindow()
 {
 	delete renderer;
 	delete this;
