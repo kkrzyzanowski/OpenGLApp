@@ -12,6 +12,6 @@ public:
 	bool CheckShapeCollision();
 	~Collision();
 
-	std::vector<Shape*> objects;
+	std::vector<std::shared_ptr<Shape>> objects;
 };
 

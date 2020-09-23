@@ -49,7 +49,7 @@ public:
 	glm::mat4 camView;
 
 
-	std::vector<Shape*> movableShapes;
+	std::vector<std::shared_ptr<Shape>> movableShapes;
 	
 	~Camera();
 private:

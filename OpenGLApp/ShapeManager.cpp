@@ -1,6 +1,6 @@
 #include "ShapeManager.h"
 
-std::vector<Shape*> ShapeManager::shapes;
+std::vector<std::shared_ptr<Shape>> ShapeManager::shapes;
 ShapesBuilder shapesBuilder;
 
 ShapeManager::ShapeManager()

@@ -21,10 +21,10 @@ bool Collision::CheckCollision()
 	{
 		for (int j = 0; j < objects.size(); j++)
 		{
-			if (dynamic_cast<Sphere*>(objects[i]) != nullptr && dynamic_cast<Plane*>(objects[j]) != nullptr && i != j)
+			if (dynamic_cast<Sphere*>(objects[i].get()) != nullptr && dynamic_cast<Plane*>(objects[j].get()) != nullptr && i != j)
 			{
-				Sphere* sphere = dynamic_cast<Sphere*>(objects[i]);
-				Plane* plane = dynamic_cast<Plane*>(objects[j]);
+				Sphere* sphere = dynamic_cast<Sphere*>(objects[i].get());
+				Plane* plane = dynamic_cast<Plane*>(objects[j].get());
 
 				glm::vec3 spherePos = glm::vec3(sphere->GetPosition()[0], sphere->GetPosition()[1], sphere->GetPosition()[2]);
 				glm::vec3 planePos = glm::vec3(plane->GetPosition()[0], plane->GetPosition()[1], plane->GetPosition()[2]);

@@ -11,7 +11,9 @@
 #include "ShaderTypeGenerator.h"
 #include "MaterialType.h"
 #include "DataStructures.h"
+#include "StencilOutline.h"
 #include "Physics.h"
+#include "ShapeList.h"
 
 static std::vector<long> shape_ids;
 unsigned long GenerateId(RGB &rgb);
@@ -41,6 +43,8 @@ class Shape
 {
 public:
 	Shape();
+	Shape(const Shape&) = default;
+	Shape(ShapeType t);
 	Shape(SourceShapeType sourceType);
 	virtual void CreateShape(const GLfloat* points, unsigned int* orderIndex, unsigned int countVertices, unsigned int countIndexes = 0);
 	virtual void CreateShapev2(const GLfloat*& points, unsigned int*& orderIndex, unsigned int countVertices, unsigned int countIndexes = 0);
@@ -66,7 +70,6 @@ public:
 	void SetOutsideLight(glm::vec3& light);
 	void SetEyeCamPos(glm::vec3& pos);
 	SourceShapeType GetSourceShapeType();
-	void SetShape();
 	void RotateNormals(float rotation, glm::vec3 rotationAxis);
 	virtual void Translate(Direction dir, float value);
 	void Scale(float value);
@@ -74,6 +77,10 @@ public:
 	glm::vec3 Shape::GetInsideLight();
 	ShapeState GetCreationState();
 	std::array<float, 3> GetPosition();
+
+	ShapeType GetType();
+
+	void InitializePickedShape();
 	void UpdatePickedShape();
 
 	std::vector<glm::vec3> GetVertices(GLfloat* objectData, size_t elements);
@@ -90,7 +97,8 @@ public:
 
 	glm::mat4 GetModel() const { return mvp.model; };
 
-	~Shape();
+	bool Selected;
+	virtual ~Shape() = default;
 protected:
 	virtual void CreateMVPMatrix() {};
 	void CreateType();
@@ -127,5 +135,8 @@ protected:
 	glm::vec3 outsideLight;
 	RGB rgbCheck;
 
+	StencilOutline* stencilOutline;
+
+	ShapeType shapeType;
 
 };

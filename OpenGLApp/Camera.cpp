@@ -17,7 +17,7 @@ float pitch;
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mode);
 bool RayCastDetection(glm::vec3 rayOrigin, glm::vec3 rayDirection, glm::mat4 shapeModel, Triangles& triangles, float distance);
-void ObjectPicking(int mx, int my, std::vector<Shape*>& shapes);
+void ObjectPicking(int mx, int my, std::vector<std::shared_ptr<Shape>>& shapes);
 Camera::Camera()
 {
 	if(camInstance == NULL)
@@ -81,19 +81,6 @@ void Camera::CameraMove()
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {	
 
-	//RAYCAS failed to-do
-	float distance = 1000.0f;
-	camInstance->mouseRayCast = new Raycast(xpos, ypos, distance, camInstance->GetProjection(), camInstance->GetView());
-	
-
-	for each ( auto shape in ShapeManager::shapes)
-	{
-			glm::vec3 startPoint = camInstance->mouseRayCast->GetRayOrigin();
-			glm::vec3 startDir = camInstance->mouseRayCast->GetWorldRayDirection();
-			glm::vec3 aabbMin = glm::vec3(-.5f, -.5f, -4.5f);
-			glm::vec3 aabbMax = glm::vec3(.5f, .5f, -4.5f);
-			RayCastDetection(startPoint, startDir, shape->GetModel(), shape->GetTriangles(), 1000.0f);
-	}
 	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
 	{
 		if (firstMouse)
@@ -128,7 +115,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	{
 		firstMouse = true;
 	}
-	delete camInstance->mouseRayCast;
+
+	
 }
 
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mode)
@@ -137,7 +125,29 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mode)
 	{
 		double mx, my;
 		glfwGetCursorPos(window, &mx, &my);
-		ObjectPicking(mx, my, ShapeManager::shapes);
+		//RAYCAS failed to-do
+		float distance = 1000.0f;
+		camInstance->mouseRayCast = new Raycast(mx, my, distance, camInstance->GetProjection(), camInstance->GetView());
+
+
+		for each (auto & shape in ShapeManager::shapes)
+		{
+			glm::vec3 startPoint = camInstance->mouseRayCast->GetRayOrigin();
+			glm::vec3 startDir = camInstance->mouseRayCast->GetWorldRayDirection();
+			glm::vec3 aabbMin = glm::vec3(-.5f, -.5f, -4.5f);
+			glm::vec3 aabbMax = glm::vec3(.5f, .5f, -4.5f);
+			bool detected = RayCastDetection(startPoint, startDir, shape->GetModel(), shape->GetTriangles(), 1000.0f);
+			if (detected)
+			{
+				shape->Selected = true;
+			}
+			else
+			{
+				shape->Selected = false;
+			}
+		}
+		//ObjectPicking(mx, my, ShapeManager::shapes);
+		delete camInstance->mouseRayCast;
 	}
 }
 void Camera::scroll_callback(double xoffset, double yoffset)
@@ -152,7 +162,7 @@ void Camera::scroll_callback(double xoffset, double yoffset)
 
 void Camera::MoveShapeWithCamera(Direction dir)
 {
-	for (Shape* shape : movableShapes)
+	for (auto& shape : movableShapes)
 	{
 		shape->Translate(dir, speed*deltaTime);
 	}
@@ -258,7 +268,7 @@ long ConvertToId(unsigned char* data)
 	return std::stol(id);
 }
 
-void ObjectPicking(int mx, int my, std::vector<Shape*>& shapes)
+void ObjectPicking(int mx, int my, std::vector<std::shared_ptr<Shape>>& shapes)
 {
 	unsigned char data[4];
 	long colorId;
@@ -266,7 +276,7 @@ void ObjectPicking(int mx, int my, std::vector<Shape*>& shapes)
 		glReadPixels(mx, my, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &data);
 		data[3] = '\0';
 		colorId = ConvertToId(data);
-		for each (Shape* shape in shapes)
+		for each (auto& shape in shapes)
 		{
 			if (colorId == shape->Id)
 				std::cout << "Selected Shape " << std::endl;

@@ -8,6 +8,7 @@
 static bool RandomInitializer = false;
 Shape::Shape()
 {
+	
 	shapeState = ShapeState::CREATING;
 	sourceShapeType = SourceShapeType::NO_TYPE;
 	do
@@ -15,7 +16,13 @@ Shape::Shape()
 		this->Id = GenerateId(this->rgbCheck);
 	} while (std::find(shape_ids.begin(), shape_ids.end(), this->Id) != shape_ids.end());
 	sm.ActivateProgram("ShapeShader");
+	Selected = false;
 	
+}
+
+Shape::Shape(ShapeType t):Shape()
+{
+	shapeType = t;
 }
 
 Shape::Shape(SourceShapeType sourceType)
@@ -104,32 +111,7 @@ SourceShapeType Shape::GetSourceShapeType()
 {
 	return sourceShapeType;
 }
-void Shape::SetShape()
-{
-	switch (sourceShapeType)
-	{
-	case SourceShapeType::DIFFUSE:
-	{
-		type = new DiffuseShape();
-		break;
-	}
-	case SourceShapeType::LIGHT:
-	{
-		type = new LightShape();
-		break;
-	}
-	case SourceShapeType::PARTICLE:
-	{
-		type = new ParticleShape();
-		break;
-	}
-	default:
-	{
-		type = new DiffuseShape();
-		break;
-	}
-	}
-}
+
 void Shape::RotateNormals(float rotation, glm::vec3 rotationAxis)
 {
 	for(glm::vec3& normal : normals)
@@ -183,20 +165,38 @@ std::array<float, 3> Shape::GetPosition()
 {
 	return std::array<float, 3>({mvpResult[3][0], mvpResult[3][1], mvpResult[3][2]});
 }
+
+ShapeType Shape::GetType()
+{
+	return ShapeType();
+}
+
+
+
+void Shape::InitializePickedShape()
+{
+	if (stencilOutline != nullptr)
+	{
+		stencilOutline = new StencilOutline();
+	}
+
+	stencilOutline->InitializePerspective(this->mvp.proj);
+	stencilOutline->InitializeView(this->mvp.view);
+	stencilOutline->CalculateMvpResult();
+	stencilOutline->UseShader();
+}
 void Shape::UpdatePickedShape()
 {
-	sm.ActivateProgram("picked");
-	sm.Bind();
-	pickedShaders[0]->SetUniformMat4f("mvpResult", mvpResult, sm.GetProgram("picked"));
-	sm.UnBind();
-	sm.Bind();
-	sm.ActivateProgram("ShapeShader");
+	stencilOutline->InitializeView(mvp.view);
+	stencilOutline->Update();
+	ib->Bind();
+	va->Bind();
 	
 }
-Shape::~Shape()
-{
-	GLCall(glDisableVertexAttribArray(0));
-}
+//Shape::~Shape()
+//{
+//	GLCall(glDisableVertexAttribArray(0));
+//}
 
 void Shape::CreateType()
 {

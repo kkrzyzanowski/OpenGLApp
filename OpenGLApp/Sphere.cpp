@@ -2,7 +2,13 @@
 #include "Sphere.h"
 #include "glm\gtx\rotate_vector.hpp"
 
+int sectors = 24;
+int rings = 12;
+int pointsCount = sectors * rings * (3 + 2 + 3);
+int indexesValue = (rings-1) * (sectors) * 6;
 
+GLfloat* vertices = new GLfloat[pointsCount];
+unsigned int* sphere_ix = new unsigned int[indexesValue];
 Sphere::Sphere()
 {
 }
@@ -13,13 +19,10 @@ Sphere::Sphere(const ShapesBuilder builder) : Shape()
 	camState = builder.m_view;
 	light = builder.m_light;
 	outsideLight = builder.m_pos;
-	const int sectors = 24;
-	const int rings = 12;
-	const int pointsCount = sectors * rings * (3 + 2 + 3);
-	const int indexesValue = (rings) * (sectors ) * 6;
-	GLfloat vertices[pointsCount];
 
-	 unsigned int sphere_ix [indexesValue];
+
+
+
 	unsigned int sphere_vbo[4] = { -1, -1, -1, -1 };
 	unsigned int sphere_vao[4] = { -1, -1, -1, -1 };
 	
@@ -85,6 +88,9 @@ Sphere::Sphere(const ShapesBuilder builder) : Shape()
 	physics = { 1.0f, glm::vec3(0.0f, -.01f, 0.0f),
 		1.0f, 0.0f, true, glm::vec3(.0f, 10.0f, .0f) };
 	CreateShape(vertices, sphere_ix, sectors*rings, indexesValue);
+	shapeElements.vertices = GetVertices(vertices, pointsCount);
+	shapeElements.triangles = GetTriangles(shapeElements.vertices, sphere_ix, indexesValue);
+	shapeElements.faces = GetFaces(shapeElements.triangles);
 	CreateType();
 	
 }
@@ -107,10 +113,6 @@ void Sphere::Update()
 }
 
 
-Sphere::~Sphere()
-{
-}
-
 void Sphere::CreateMVPMatrix()
 {
 	mvp.model = glm::mat4(1.0f);
@@ -122,6 +124,10 @@ void Sphere::CreateMVPMatrix()
 	normalLight = glm::rotateZ(normalLight, glm::radians(30.0f));
 
 	mvpResult = mvp.proj * mvp.view * mvp.model;
+
+	TranslatePoints(mvp.model, shapeElements.vertices);
+	shapeElements.triangles = GetTriangles(shapeElements.vertices, sphere_ix, indexesValue);
+	shapeCoords = mvpResult[3];
 }
 
 void Sphere::GenerateShaders()
@@ -151,4 +157,11 @@ glm::vec3 Sphere::GetNormal()
 float Sphere::GetRadius()
 {
 	return radius;
+}
+
+
+Sphere::~Sphere()
+{
+	delete[] vertices;
+	delete[] sphere_ix;
 }

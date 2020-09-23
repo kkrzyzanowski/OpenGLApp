@@ -78,6 +78,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)assimp-4.1.0\include;$(SolutionDir)glfw-3.2.1.bin.WIN32\include;$(SolutionDir)glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GLEW_STATIC;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>glfw3.lib;opengl32.lib;glew32s.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -151,6 +152,7 @@
     <ClCompile Include="SkyBoxCube.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="stb_image.cpp" />
+    <ClCompile Include="StencilOutline.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="VertexArray.cpp" />
@@ -184,11 +186,13 @@
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="ShaderTypeGenerator.h" />
     <ClInclude Include="Shape.h" />
+    <ClInclude Include="ShapeList.h" />
     <ClInclude Include="ShapeManager.h" />
     <ClInclude Include="ShapesBuilder.h" />
     <ClInclude Include="SkyBoxCube.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="StencilOutline.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="VertexArray.h" />

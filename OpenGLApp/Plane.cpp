@@ -14,7 +14,7 @@ Plane::Plane()
 {
 }
 
-Plane::Plane(const ShapesBuilder builder): Shape()
+Plane::Plane(const ShapesBuilder builder) : Shape(builder.m_type)
 {
 	shapeParams.normals = normals = planeDefaultNormals;
 	sourceShapeType = builder.m_shapeType;
@@ -31,7 +31,6 @@ Plane::Plane(const ShapesBuilder builder): Shape()
 
 	CreateShape(g_vertex_buffer_data, indexes, 4, 6);
 
-	//verts = GetVertices(g_vertex_buffer_data, 4 * 8);
 	shapeElements.vertices = GetVertices(g_vertex_buffer_data, 4 * 8);
 	shapeElements.triangles = GetTriangles(shapeElements.vertices, indexes, 6);
 	shapeElements.faces = GetFaces(shapeElements.triangles);

@@ -12,69 +12,72 @@ ShapesBuilder::ShapesBuilder()
 
 }
 
- Shape* ShapesBuilder::CreateShape(const ShapeType shapeType)
+
+ std::shared_ptr<Shape> ShapesBuilder::CreateShape(const ShapeType shapeType)
 {
+	 m_type = shapeType;
 	 switch (shapeType)
 	 {
 	 case ShapeType::CUBE:
 	 {
-		 return new Cube(*this);
+		 return std::make_shared<Cube>(*this);
 	 }
 	 case ShapeType::RECTANGLE:
 	 {
-		 return new Plane(*this);
+		 return std::make_shared<Plane>(*this); 
 	 }
 	 case ShapeType::SPEHERE:
 	 {
-		 return new Sphere(*this);
+		 return std::make_shared<Sphere>(*this);
 	 }
 	 case ShapeType::CUSTOM:
 	 {
-		 return new CustomShape(*this);
+		 return std::make_shared<CustomShape>(*this);
 	 }
 	 case ShapeType::SKYBOX:
 	 {
-		 return	new SkyBoxCube(*this);
+		 return std::make_shared<SkyBoxCube>(*this);
 	 }
 	 case ShapeType::LINE:
 	 {
-		 return new Line();
+		 return std::make_shared<Line>();
 	 }
 
 	 case ShapeType::TERRAIN:
 	 {
-		 return new Terrain(*this);
+		 return std::make_shared<Terrain>(*this);
 	 }
 	 }
-	 return new Plane(*this);
+	 return std::make_shared<Plane>(*this);
+
 }
 
-ShapesBuilder  ShapesBuilder::Light(Shape * light)
+ShapesBuilder ShapesBuilder::Light(Shape * light)
 {
 	m_light = light;
 	return *this;
 }
 
-ShapesBuilder  ShapesBuilder::SourceType(SourceShapeType shapeType)
+ShapesBuilder ShapesBuilder::SourceType(SourceShapeType shapeType)
 {
 	m_shapeType = shapeType;
 	return *this;
 }
 
-ShapesBuilder  ShapesBuilder::ObjectState(CamView view)
+ShapesBuilder ShapesBuilder::ObjectState(CamView view)
 {
 	m_view = view;
 	return *this;
 }
 
 
-ShapesBuilder  ShapesBuilder::OutLight(glm::vec3 pos)
+ShapesBuilder ShapesBuilder::OutLight(glm::vec3 pos)
 {
 	m_pos = pos;
 	return *this;
 }
 
-ShapesBuilder  ShapesBuilder::LightCast(LightType lightType)
+ShapesBuilder ShapesBuilder::LightCast(LightType lightType)
 {
 	if (m_shapeType == SourceShapeType::LIGHT)
 		m_lightType = lightType;
@@ -87,6 +90,18 @@ ShapesBuilder  ShapesBuilder::LightCast(LightType lightType)
 ShapesBuilder ShapesBuilder::PathModel(std::string path)
 {
 	m_path = path;
+	return *this;
+}
+
+ShapesBuilder ShapesBuilder::Position(glm::vec3 position)
+{
+	// TODO: insert return statement here
+	return *this;
+}
+
+ShapesBuilder ShapesBuilder::Rotation(glm::vec3 position)
+{
+	// TODO: insert return statement here
 	return *this;
 }
 

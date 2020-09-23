@@ -1,10 +1,5 @@
 #include "Cube.h"
 
-
-
-
-Cube::Cube(const ShapesBuilder builder) : Shape()
-{
 	GLfloat g_vertex_buffer_data[] = {
 		// front
 		-.5f, -.5f, .5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f / sqrt(3.0f),//0
@@ -61,7 +56,7 @@ Cube::Cube(const ShapesBuilder builder) : Shape()
 		.5f, -.5f, -.5f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f / sqrt(3.0f),// 22
 		.5f, -.5f, .5f, 1.0f, 1.0f, 0.0f, 0.0f, -1.0f / sqrt(3.0f)// 23
 	};
-	unsigned int indexes[] = { 0, 1, 2,
+	unsigned int cubeIndexes[] = { 0, 1, 2,
 		3, 4, 5, // front
 		6, 7, 8,
 		9, 10, 11, // left
@@ -74,11 +69,14 @@ Cube::Cube(const ShapesBuilder builder) : Shape()
 		30, 31, 32,
 		33, 34, 35, 
 	}; // bottom
+
+Cube::Cube(const ShapesBuilder builder) : Shape(builder.m_type)
+{
 	
 	shapeElements.vertices = GetVertices(g_vertex_buffer_data, 36*8);
-	shapeElements.triangles = GetTriangles(shapeElements.vertices, indexes, 36);
+	shapeElements.triangles = GetTriangles(shapeElements.vertices, cubeIndexes, 36);
 	shapeElements.faces = GetFaces(shapeElements.triangles);
-	CreateShape(g_vertex_buffer_data, indexes, 36, 36);
+	CreateShape(g_vertex_buffer_data, cubeIndexes, 36, 36);
 }
 
 
@@ -106,9 +104,10 @@ void Cube::GenerateShaders()
 void Cube::CreateMVPMatrix()
 {
 	mvp.model = glm::mat4(1.0f);
-	mvp.model = glm::translate(mvp.model, glm::vec3(0.6f, -0.8f, .7f));
-	mvp.view = glm::mat4(1.0f);
-	mvp.view = glm::translate(mvp.view, glm::vec3(0.0f, 0.0f, 0.5f));
+	mvp.model = glm::translate(mvp.model, glm::vec3(0.6f, -0.8f, -.7f));
+	
+	TranslatePoints(mvp.model, shapeElements.vertices);
+	shapeElements.triangles = GetTriangles(shapeElements.vertices, cubeIndexes, 36);
 	mvpResult = mvp.proj * mvp.view * mvp.model;
 }
 

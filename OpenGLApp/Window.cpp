@@ -19,9 +19,11 @@
 #include "Collision.h"
 #include "CustomProperties.h"
 #include "Terrain.h"
+#include "StencilOutline.h"
 
 bool RayCastDetection(glm::vec3 rayOrigin, glm::vec3 rayDirection, glm::vec3 normal, glm::vec3 shapePoint, float &distance);
-
+void OutlineObject();
+void DisableOutline();
 RayDrawer* rayDrawer;
 
 GameWindow::GameWindow()
@@ -81,15 +83,15 @@ GameWindow::GameWindow()
 	 /* Creation all objects in scene */
 	 ShapesBuilder shapesBuilder;
 	 
-	 ShapeManager::shapes.push_back(shapesBuilder.ObjectState(CamView::DYNAMIC)
-		 .SourceType(SourceShapeType::LIGHT)
-		 .CreateShape(ShapeType::SPEHERE));
+	 //ShapeManager::shapes.emplace_back(shapesBuilder.ObjectState(CamView::DYNAMIC)
+		// .SourceType(SourceShapeType::LIGHT)
+		// .CreateShape(ShapeType::SPEHERE));
 
-	 ShapeManager::shapes.push_back(shapesBuilder.ObjectState(CamView::DYNAMIC)
+	 ShapeManager::shapes.emplace_back(shapesBuilder.ObjectState(CamView::DYNAMIC)
 		 .SourceType(SourceShapeType::DIFFUSE)
 		 .CreateShape(ShapeType::RECTANGLE));
 
-	 ShapeManager::shapes.push_back(shapesBuilder.ObjectState(CamView::DYNAMIC)
+	 ShapeManager::shapes.emplace_back(shapesBuilder.ObjectState(CamView::DYNAMIC)
 		 .SourceType(SourceShapeType::DIFFUSE)
 		 .CreateShape(ShapeType::CUBE));
 
@@ -112,13 +114,14 @@ GameWindow::GameWindow()
 		// .CustomProperties(tp)
 		// .CreateShape(ShapeType::TERRAIN));
 
-	 for each (Shape* shape in   ShapeManager::shapes)
+	 for each (auto& shape in  ShapeManager::shapes)
 	 {
 		 shape->InitializeShapeView(cam->GetView());
 		 shape->ApplyProjectionMatrix(cam->GetProjection());
 		 shape->SetEyeCamPos(cam->GetCamPos());
 		 shape->GenerateShaders();
 		 shape->TurnOffShapeElements();
+		 shape->InitializePickedShape();
 		 if (shape->GetCreationState() == CamView::MOVABLE)
 			 cam->movableShapes.push_back(shape);
 	}
@@ -172,16 +175,24 @@ GameWindow::GameWindow()
 		//glStencilMask(0xFF);
 		cam->Update();
 		int count = 0;
-
-		for each (auto shape in   ShapeManager::shapes)
+		for each (auto& shape in  ShapeManager::shapes)
 		{
+			if (shape->Selected && shape->GetType() != ShapeType::SKYBOX)
+			{
+				OutlineObject();
+				shape->UpdatePickedShape();
+			}
+			else 
+			{
+				//DisableOutline();
+			}
 			shape->InitializeShapeView(cam->GetView());
 			shape->SetEyeCamPos(cam->GetCamPos()); 
 			shape->SetOutsideLight(ShapeManager::shapes[0]->GetInsideLight());
 			shape->Update();
 			if (shape->GetSourceShapeType() != SourceShapeType::PRIMITIVE)
 			{
-				auto terr = dynamic_cast<Terrain*>(shape);
+				auto terr = dynamic_cast<Terrain*>(shape.get());
 				if(terr == nullptr)
 					renderer->Draw(shape->GetIndexBuffer()->GetCount(), GL_TRIANGLES);
 				else
@@ -199,7 +210,7 @@ GameWindow::GameWindow()
 				}*/
 			
 		}
-
+		
 		// Draw ray
 		if(cam->mouseRayCast != nullptr)
 		{ 
@@ -243,3 +254,18 @@ GameWindow::~GameWindow()
 	delete this;
 }
 
+void OutlineObject()
+{
+	glEnable(GL_STENCIL_TEST);
+	glDisable(GL_DEPTH_TEST);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+	glStencilFunc(GL_ALWAYS, 1, 0xFF);
+	glStencilMask(0xFF);
+}
+
+void DisableOutline()
+{
+	glStencilFunc(GL_NOTEQUAL, 1, 0x00);
+	glStencilMask(0x00);
+	glEnable(GL_DEPTH_TEST);
+}
