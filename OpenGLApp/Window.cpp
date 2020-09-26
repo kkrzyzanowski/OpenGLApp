@@ -24,6 +24,10 @@
 bool RayCastDetection(glm::vec3 rayOrigin, glm::vec3 rayDirection, glm::vec3 normal, glm::vec3 shapePoint, float &distance);
 void OutlineObject();
 void DisableOutline();
+void TurnOnStencilBufferMask();
+void TurnOffStencilBufferMask();
+void TurnOnNormalMask();
+
 RayDrawer* rayDrawer;
 
 GameWindow::GameWindow()
@@ -152,8 +156,11 @@ GameWindow::GameWindow()
 	
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 	glEnable(GL_STENCIL_TEST);
+	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
 	float distance = 1000.0f;
@@ -171,21 +178,14 @@ GameWindow::GameWindow()
 		//glDepthFunc(GL_LEQUAL);
 		glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 		renderer->Clear();
-		//glStencilFunc(GL_ALWAYS, 1, 0xFF);
-		//glStencilMask(0xFF);
+
 		cam->Update();
 		int count = 0;
+		glStencilMask(0x00);
 		for each (auto& shape in  ShapeManager::shapes)
 		{
-			if (shape->Selected && shape->GetType() != ShapeType::SKYBOX)
-			{
-				OutlineObject();
-				shape->UpdatePickedShape();
-			}
-			else 
-			{
-				//DisableOutline();
-			}
+			if(shape->Selected)
+				TurnOnStencilBufferMask();
 			shape->InitializeShapeView(cam->GetView());
 			shape->SetEyeCamPos(cam->GetCamPos()); 
 			shape->SetOutsideLight(ShapeManager::shapes[0]->GetInsideLight());
@@ -193,13 +193,29 @@ GameWindow::GameWindow()
 			if (shape->GetSourceShapeType() != SourceShapeType::PRIMITIVE)
 			{
 				auto terr = dynamic_cast<Terrain*>(shape.get());
-				if(terr == nullptr)
+				if (terr == nullptr)
+				{
 					renderer->Draw(shape->GetIndexBuffer()->GetCount(), GL_TRIANGLES);
+				}
 				else
 					renderer->Draw(shape->GetIndexBuffer()->GetCount(), GL_TRIANGLE_FAN);
 
 			}
 			shape->TurnOffShapeElements();
+			if (shape->Selected && shape->GetType() != ShapeType::SKYBOX)
+			{
+				TurnOnNormalMask();
+				glDisable(GL_DEPTH_TEST);
+				shape->UpdatePickedShape();
+				renderer->Draw(shape->GetIndexBuffer()->GetCount(), GL_TRIANGLES);
+				shape->TurnOffShapeElements();
+				TurnOnStencilBufferMask();
+				glEnable(GL_DEPTH_TEST);
+			}
+			else 
+			{
+				//DisableOutline();
+			}
 			//Check collision - for now on main loop
 			collision->CheckCollision();
 
@@ -254,18 +270,21 @@ GameWindow::~GameWindow()
 	delete this;
 }
 
-void OutlineObject()
+void TurnOnStencilBufferMask()
 {
-	glEnable(GL_STENCIL_TEST);
-	glDisable(GL_DEPTH_TEST);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 	glStencilFunc(GL_ALWAYS, 1, 0xFF);
 	glStencilMask(0xFF);
 }
 
-void DisableOutline()
+void TurnOffStencilBufferMask()
 {
-	glStencilFunc(GL_NOTEQUAL, 1, 0x00);
-	glStencilMask(0x00);
-	glEnable(GL_DEPTH_TEST);
+	glStencilFunc(GL_ALWAYS, 0, 0xFF);
+	glStencilMask(0xFF);
 }
+
+void TurnOnNormalMask()
+{
+	//glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+	glStencilMask(0x00);
+}
+
