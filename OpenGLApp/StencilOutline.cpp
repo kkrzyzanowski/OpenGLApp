@@ -18,6 +18,12 @@ void StencilOutline::InitializePerspective(glm::mat4& perspective)
 {
 	mvpOutline.proj = perspective;
 }
+void StencilOutline::InitializeModel(glm::mat4& model)
+{
+	mvpOutline.model = model;
+	float scale = 1.01f;
+	mvpOutline.model = glm::scale(mvpOutline.model, glm::vec3(scale));
+}
 
 void StencilOutline::CalculateMvpResult()
 {
@@ -31,8 +37,6 @@ void StencilOutline::UseShader()
 
 void StencilOutline::Update()
 {
-	float scale = 1.1f;
-	mvpOutline.model = glm::scale(mvpOutline.model, glm::vec3(scale));
 	CalculateMvpResult();
 	sm.Bind();
 	UseShader();

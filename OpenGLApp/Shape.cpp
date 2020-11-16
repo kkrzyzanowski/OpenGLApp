@@ -182,6 +182,7 @@ void Shape::InitializePickedShape()
 
 	stencilOutline->InitializePerspective(this->mvp.proj);
 	stencilOutline->InitializeView(this->mvp.view);
+	stencilOutline->InitializeModel(this->mvp.model);
 	stencilOutline->CalculateMvpResult();
 	stencilOutline->UseShader();
 }

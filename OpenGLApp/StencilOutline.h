@@ -14,6 +14,7 @@ public:
 	StencilOutline();
 	void InitializeView(glm::mat4& camView);
 	void InitializePerspective(glm::mat4& perspective);
+	void InitializeModel(glm::mat4& model);
 	void CalculateMvpResult();
 	void UseShader();
 	void Update();
