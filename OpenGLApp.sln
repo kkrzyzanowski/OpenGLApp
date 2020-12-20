@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2027
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenGLApp", "OpenGLApp\OpenGLApp.vcxproj", "{479996DD-08D2-4089-9815-8FB12BB5FCC9}"
 EndProject
@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GUI", "GUI\GUI.vcxproj", "{720B4818-CDA6-4C4C-94E3-50DD28D43DED}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXApp", "DirectXApp\DirectXApp.vcxproj", "{76300A4C-9835-4818-ACE5-D9E208B34E4B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,16 @@ Global
 		{720B4818-CDA6-4C4C-94E3-50DD28D43DED}.Release|x64.Build.0 = Release|x64
 		{720B4818-CDA6-4C4C-94E3-50DD28D43DED}.Release|x86.ActiveCfg = Release|Win32
 		{720B4818-CDA6-4C4C-94E3-50DD28D43DED}.Release|x86.Build.0 = Release|Win32
+		{76300A4C-9835-4818-ACE5-D9E208B34E4B}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{76300A4C-9835-4818-ACE5-D9E208B34E4B}.Debug|x64.ActiveCfg = Debug|x64
+		{76300A4C-9835-4818-ACE5-D9E208B34E4B}.Debug|x64.Build.0 = Debug|x64
+		{76300A4C-9835-4818-ACE5-D9E208B34E4B}.Debug|x86.ActiveCfg = Debug|Win32
+		{76300A4C-9835-4818-ACE5-D9E208B34E4B}.Debug|x86.Build.0 = Debug|Win32
+		{76300A4C-9835-4818-ACE5-D9E208B34E4B}.Release|Any CPU.ActiveCfg = Release|Win32
+		{76300A4C-9835-4818-ACE5-D9E208B34E4B}.Release|x64.ActiveCfg = Release|x64
+		{76300A4C-9835-4818-ACE5-D9E208B34E4B}.Release|x64.Build.0 = Release|x64
+		{76300A4C-9835-4818-ACE5-D9E208B34E4B}.Release|x86.ActiveCfg = Release|Win32
+		{76300A4C-9835-4818-ACE5-D9E208B34E4B}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

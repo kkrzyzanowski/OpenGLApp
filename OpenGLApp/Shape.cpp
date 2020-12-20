@@ -121,31 +121,9 @@ void Shape::RotateNormals(float rotation, glm::vec3 rotationAxis)
 			<< normal.z << std::endl;
 	}
 }
-void Shape::Translate(Direction dir, float value)
+void Shape::Translate(glm::vec3 valueToMove)
 {
-	switch (dir)
-	{
-	case UP:
-		mvp.model = glm::translate(mvp.model, glm::vec3(0.0f, value, 0.0f));
-		break;
-	case DOWN:
-		mvp.model = glm::translate(mvp.model, glm::vec3(0.0f, -value, 0.0f));
-		break;
-	case LEFT:
-		mvp.model = glm::translate(mvp.model, glm::vec3(-value , 0.0f, 0.0f));
-		break;
-	case RIGHT:
-		mvp.model = glm::translate(mvp.model, glm::vec3(value, 0.0f, 0.0f));
-		break;
-	case FORWARD:
-		mvp.model = glm::translate(mvp.model, glm::vec3(0.0f, 0.0f, value));
-		break;
-	case BACKWARD:
-		mvp.model = glm::translate(mvp.model, glm::vec3(0.0f, 0.0f, -value));
-		break;
-	default:
-		break;
-	}
+	mvp.model = glm::translate(mvp.model, valueToMove);
 }
 void Shape::Scale(float value)
 {
@@ -189,6 +167,7 @@ void Shape::InitializePickedShape()
 void Shape::UpdatePickedShape()
 {
 	stencilOutline->InitializeView(mvp.view);
+	stencilOutline->InitializeModel(mvp.model);
 	stencilOutline->Update();
 	ib->Bind();
 	va->Bind();

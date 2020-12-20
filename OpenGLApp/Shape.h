@@ -71,7 +71,7 @@ public:
 	void SetEyeCamPos(glm::vec3& pos);
 	SourceShapeType GetSourceShapeType();
 	void RotateNormals(float rotation, glm::vec3 rotationAxis);
-	virtual void Translate(Direction dir, float value);
+	virtual void Translate(glm::vec3 valueToMove);
 	void Scale(float value);
 	void Rotate(float value);
 	glm::vec3 Shape::GetInsideLight();

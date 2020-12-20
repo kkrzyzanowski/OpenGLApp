@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "Config.h"
 #include "Plane.h"
+#include "MousePoint.h"
 
 Camera* camInstance;
 CameraManager* CameraManager::camManager;
@@ -14,8 +15,13 @@ float speed = 10.0f;
 bool firstMouse;
 float yaw;
 float pitch; 
+glm::vec2 previousPos;
+bool lbuttonDown;
+double mx, my;
+
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mode);
+
 bool RayCastDetection(glm::vec3 rayOrigin, glm::vec3 rayDirection, glm::mat4 shapeModel, Triangles& triangles, float distance);
 void ObjectPicking(int mx, int my, std::vector<std::shared_ptr<Shape>>& shapes);
 Camera::Camera()
@@ -28,6 +34,7 @@ Camera::Camera()
 	pitch = 0.0f;
 	yaw = -90.0f;
 	camView = glm::mat4(1.0f);
+	lbuttonDown = false;
 	stateCam = CameraState::INACTIVE;
 }
 
@@ -80,7 +87,8 @@ void Camera::CameraMove()
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {	
-
+	mx = xpos;
+	my = ypos;
 	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
 	{
 		if (firstMouse)
@@ -115,16 +123,42 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	{
 		firstMouse = true;
 	}
-
-	
+	if (lbuttonDown)
+	{
+		double offset_x = mx;
+		double offset_x2 = previousPos.x;
+		double offset_y = my;
+		double offset_y2 = previousPos.y;
+		MousePoint mp, mp2;
+		mp.proj = camInstance->GetProjection();
+		mp.view = camInstance->GetView();
+		mp.SetMousePoint(offset_x, offset_y);
+		//std::cout << "Offset_x: " << offset_x << " Offset y: " << offset_y << std::endl;
+		mp.CalculateScaledMousePoint();
+		mp2.proj = camInstance->GetProjection();
+		mp2.view = camInstance->GetView();
+		mp2.SetMousePoint(offset_x2, offset_y2);
+		mp2.CalculateScaledMousePoint();
+		glm::vec3 valueToMove = (mp.GetPerspectivePoint() - mp2.GetPerspectivePoint()) * 400.0f;
+		std::cout << "Offset_x: " << valueToMove.x << " Offset y: " << valueToMove.y << 
+			" z value: " << valueToMove.z << std::endl;
+		for each (auto & shape in ShapeManager::shapes)
+		{
+			if (shape->Selected)
+			{
+				shape->Translate(valueToMove);
+			}
+		}
+	}
+	previousPos.x = mx;
+	previousPos.y = my;
 }
 
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mode)
 {
+	glfwGetCursorPos(window, &mx, &my);
 	if (button == GLFW_MOUSE_BUTTON_LEFT)
 	{
-		double mx, my;
-		glfwGetCursorPos(window, &mx, &my);
 		//RAYCAS failed to-do
 		float distance = 1000.0f;
 		camInstance->mouseRayCast = new Raycast(mx, my, distance, camInstance->GetProjection(), camInstance->GetView());
@@ -146,8 +180,19 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mode)
 				shape->Selected = false;
 			}
 		}
+		if (action == GLFW_PRESS)
+		{
+			lbuttonDown = true;
+		}
+		else if (action == GLFW_RELEASE)
+		{
+			lbuttonDown = false;
+		}
+		previousPos.x = mx;
+		previousPos.y = my;
 		//ObjectPicking(mx, my, ShapeManager::shapes);
 		delete camInstance->mouseRayCast;
+
 	}
 }
 void Camera::scroll_callback(double xoffset, double yoffset)
@@ -162,10 +207,10 @@ void Camera::scroll_callback(double xoffset, double yoffset)
 
 void Camera::MoveShapeWithCamera(Direction dir)
 {
-	for (auto& shape : movableShapes)
+	/*for (auto& shape : movableShapes)
 	{
 		shape->Translate(dir, speed*deltaTime);
-	}
+	}*/
 }
 
 CameraState Camera::GetState()
@@ -326,3 +371,4 @@ bool RayCastDetection(glm::vec3 rayOrigin, glm::vec3 rayDirection, glm::mat4 sha
 	}
 	return false;
 }
+

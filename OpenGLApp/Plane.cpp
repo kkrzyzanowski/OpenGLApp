@@ -70,8 +70,8 @@ void Plane::CreateMVPMatrix()
 {
 	mvp.model = glm::mat4(1.0f);
 	mvp.model = glm::translate(mvp.model, glm::vec3(0.0f, 0.0f, -5.0f));
-	mvp.model = glm::rotate(mvp.model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	RotateNormals(-90.0f, glm::vec3(1.0f, 0.0f, .0f));
+	//mvp.model = glm::rotate(mvp.model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+	//RotateNormals(-90.0f, glm::vec3(1.0f, 0.0f, .0f));
 	//mvp.model = glm::scale(mvp.model, glm::vec3(1.0f, 1.0f, 1.0f));
 
 	mvpResult = mvp.proj * mvp.view * mvp.model;

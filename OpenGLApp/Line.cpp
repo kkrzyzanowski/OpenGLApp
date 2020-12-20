@@ -39,50 +39,54 @@ void Line::Update()
 	sm.Bind();
 }
 
-void Line::Translate(Direction dir, float value)
+void Line::Translate(glm::vec3 valueToMove)
 {
-	switch (dir)
-	{
-	case UP:
-		for (glm::vec3& point : points)
-		{
-			point += glm::vec3(0.0f, value, 0.0f);
-		}
-		break;
-	case DOWN:
-		for (glm::vec3& point : points)
-		{
-			point -= glm::vec3(0.0f, value, 0.0f);
-		}
-		break;
-	case LEFT:
-		for (glm::vec3& point : points)
-		{
-			point -= glm::vec3(value, 0.0f, 0.0f);
-		}
-		break;
-	case RIGHT:
-		for (glm::vec3& point : points)
-		{
-			point += glm::vec3(value, 0.0f, 0.0f);
-		}
-		break;
-	case FORWARD:
-		for (glm::vec3& point : points)
-		{
-			point += glm::vec3(0.0f, 0.0f, value);
-		}
-		break;
-	case BACKWARD:
-		for (glm::vec3& point : points)
-		{
-			point -= glm::vec3(0.0f, 0.0f, value);
-		}
-		break;
-	default:
-		break;
-	}
 }
+
+//void Line::Translate(Direction dir, float value)
+//{
+//	switch (dir)
+//	{
+//	case UP:
+//		for (glm::vec3& point : points)
+//		{
+//			point += glm::vec3(0.0f, value, 0.0f);
+//		}
+//		break;
+//	case DOWN:
+//		for (glm::vec3& point : points)
+//		{
+//			point -= glm::vec3(0.0f, value, 0.0f);
+//		}
+//		break;
+//	case LEFT:
+//		for (glm::vec3& point : points)
+//		{
+//			point -= glm::vec3(value, 0.0f, 0.0f);
+//		}
+//		break;
+//	case RIGHT:
+//		for (glm::vec3& point : points)
+//		{
+//			point += glm::vec3(value, 0.0f, 0.0f);
+//		}
+//		break;
+//	case FORWARD:
+//		for (glm::vec3& point : points)
+//		{
+//			point += glm::vec3(0.0f, 0.0f, value);
+//		}
+//		break;
+//	case BACKWARD:
+//		for (glm::vec3& point : points)
+//		{
+//			point -= glm::vec3(0.0f, 0.0f, value);
+//		}
+//		break;
+//	default:
+//		break;
+//	}
+//}
 
 void Line::SetPoints(std::vector<glm::vec3> points)
 {

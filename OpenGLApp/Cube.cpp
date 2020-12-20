@@ -104,7 +104,7 @@ void Cube::GenerateShaders()
 void Cube::CreateMVPMatrix()
 {
 	mvp.model = glm::mat4(1.0f);
-	mvp.model = glm::translate(mvp.model, glm::vec3(0.6f, -0.8f, -.7f));
+	mvp.model = glm::translate(mvp.model, glm::vec3(0.6f, -.9f, -3.0f));
 	
 	TranslatePoints(mvp.model, shapeElements.vertices);
 	shapeElements.triangles = GetTriangles(shapeElements.vertices, cubeIndexes, 36);

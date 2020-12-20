@@ -1,7 +1,7 @@
 #include <vector>
 #include <typeinfo>
 
-#include "Window.h"
+#include "OpenGLGameWindow.h"
 #include "Renderer.h"
 #include "ShapesBuilder.h"
 #include "ShaderManager.h"
@@ -30,12 +30,12 @@ void TurnOnNormalMask();
 
 RayDrawer* rayDrawer;
 
-GameWindow::GameWindow()
+OpenGLGameWindow::OpenGLGameWindow()
 {
 	CreateWindow();
 }
 
-int GameWindow::CreateWindow()
+int OpenGLGameWindow::CreateWindow()
 {
 	// Creation window
 	if (!glfwInit())
@@ -278,7 +278,7 @@ int GameWindow::CreateWindow()
 
 	return 0;
 }
-GameWindow::~GameWindow()
+OpenGLGameWindow::~OpenGLGameWindow()
 {
 	delete renderer;
 	delete this;

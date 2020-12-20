@@ -78,7 +78,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)assimp-4.1.0\include;$(SolutionDir)glfw-3.2.1.bin.WIN32\include;$(SolutionDir)glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GLEW_STATIC;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>glfw3.lib;opengl32.lib;glew32s.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -129,11 +129,14 @@
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="CubeMapTexture.cpp" />
     <ClCompile Include="CustomShape.cpp" />
+    <ClCompile Include="DirectXGameWindow.cpp" />
     <ClCompile Include="FPSCounter.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
+    <ClCompile Include="GameWindow.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="MaterialType.cpp" />
+    <ClCompile Include="MousePoint.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Primitive.cpp" />
@@ -157,7 +160,7 @@
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="VertexArray.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
-    <ClCompile Include="Window.cpp" />
+    <ClCompile Include="OpenGLGameWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -169,12 +172,15 @@
     <ClInclude Include="CustomProperties.h" />
     <ClInclude Include="CustomShape.h" />
     <ClInclude Include="DataStructures.h" />
+    <ClInclude Include="DirectXGameWindow.h" />
     <ClInclude Include="FPSCounter.h" />
     <ClInclude Include="FrameBuffer.h" />
+    <ClInclude Include="GameWindow.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="LightShape.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="MaterialType.h" />
+    <ClInclude Include="MousePoint.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Primitive.h" />
@@ -198,7 +204,7 @@
     <ClInclude Include="VertexArray.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="VertexBufferLayout.h" />
-    <ClInclude Include="Window.h" />
+    <ClInclude Include="OpenGLGameWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\DiffuseFragmentShader.frag" />

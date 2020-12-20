@@ -2,17 +2,19 @@
 #include <GL\glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include "GameWindow.h"
 #include "Shape.h"
 #include "Shader.h"
 #include "ShapeManager.h"
-class GameWindow
+class OpenGLGameWindow: public GameWindow
 {
 public:
-	GameWindow();
-	int CreateWindow();
-	~GameWindow();
+	OpenGLGameWindow();
+	int CreateWindow() override;
+	~OpenGLGameWindow();
 private:
 	
 	Renderer *renderer;
 };
+
 

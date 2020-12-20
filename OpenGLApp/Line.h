@@ -11,7 +11,7 @@ public:
 	glm::vec3 GetNormal()  override;
 	void GenerateShaders() override;
 	void Update() override;
-	void Translate(Direction dir, float value) override;
+	void Translate(glm::vec3 valueToMove) override;
 	void SetPoints(std::vector<glm::vec3> points) override;
 	~Line();
 

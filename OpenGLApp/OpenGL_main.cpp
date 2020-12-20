@@ -1,6 +1,7 @@
-#include "Window.h"
+#include "OpenGLGameWindow.h"
+
 int main(void)
 {
-	GameWindow* window = new GameWindow();
+	GameWindow* window = new OpenGLGameWindow();
 	return 0;
 }
