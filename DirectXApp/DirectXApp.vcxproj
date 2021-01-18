@@ -140,6 +140,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DirectXAppMain.cpp" />
+    <ClCompile Include="DirectXWindow.cpp" />
+    <ClCompile Include="MessageController.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DirectXWindow.h" />
+    <ClInclude Include="MessageController.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

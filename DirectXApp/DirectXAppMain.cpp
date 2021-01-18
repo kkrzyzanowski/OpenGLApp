@@ -1,29 +1,29 @@
 #include <Windows.h>
-
-LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-	switch (msg)
-	{
-	case WM_CLOSE:
-
-		PostQuitMessage(69);
-		break;
-	case WM_KEYDOWN:
-		if (wParam == 'W')
-		{
-			//do something
-		}
-		break;
-	case WM_KEYUP:
-		break;
-	
-	case WM_LBUTTONDOWN:
-	
-		POINTS point = MAKEPOINTS(lParam);
-		break;
-	}
-	return DefWindowProc(hWnd, msg, wParam, lParam);
-}
+#include "DirectXWindow.h"
+//LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+//{
+//	switch (msg)
+//	{
+//	case WM_CLOSE:
+//
+//		PostQuitMessage(69);
+//		break;
+//	case WM_KEYDOWN:
+//		if (wParam == 'W')
+//		{
+//			//do something
+//		}
+//		break;
+//	case WM_KEYUP:
+//		break;
+//	
+//	case WM_LBUTTONDOWN:
+//	
+//		POINTS point = MAKEPOINTS(lParam);
+//		break;
+//	}
+//	return DefWindowProc(hWnd, msg, wParam, lParam);
+//}
 
 int CALLBACK WinMain(
 	HINSTANCE hInstance,
@@ -31,7 +31,9 @@ int CALLBACK WinMain(
 	LPSTR lpCmdLine,
 	int nCmdShow)
 {
-	const auto sClassName = L"DirectXApp";
+	DirectXWindow* window = new DirectXWindow(hInstance);
+	return 0;
+	/*const auto sClassName = L"DirectXApp";
 	WNDCLASSEX wc = { 0 };
 	wc.cbSize = sizeof(wc);
 	wc.style = CS_OWNDC;
@@ -63,5 +65,5 @@ int CALLBACK WinMain(
 		return -1;
 	}
 	else
-		return 0;
+		return 0;*/
 }
