@@ -1,10 +1,10 @@
 #include "ShapesBuilder.h"
-#include "Cube.h"
-#include "Plane.h"
-#include "Sphere.h"
+#include "Shapes\Cube.h"
+#include "Shapes\Plane.h"
+#include "Shapes\Sphere.h"
 #include "SkyBoxCube.h"
-#include "CustomShape.h"
-#include "Line.h"
+#include "Shapes\CustomShape.h"
+#include "Shapes\Line.h"
 #include "Terrain.h"
 
 ShapesBuilder::ShapesBuilder()

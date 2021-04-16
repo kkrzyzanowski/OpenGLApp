@@ -39,7 +39,7 @@ void Line::Update()
 	sm.Bind();
 }
 
-void Line::Translate(glm::vec3 valueToMove)
+void Line::Translate(const glm::vec3& valueToMove)
 {
 }
 

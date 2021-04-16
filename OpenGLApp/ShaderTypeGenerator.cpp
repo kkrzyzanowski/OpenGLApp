@@ -64,7 +64,7 @@ ShaderTypeGenerator::ShaderTypeGenerator()
 	 shaders[0]->SetUniformMat4f("mvpResult", mvpResult, program);
  }
 
- void ShaderTypeGenerator::PickedShaderGenerator(std::vector<Shader*>& shaders, glm::vec3& color, glm::mat4& mvpResult, unsigned int program)
+ void ShaderTypeGenerator::PickedShaderGenerator(std::vector<Shader*>& shaders,const glm::vec3& color,const glm::mat4& mvpResult, unsigned int program)
  {
 	 shaders[0]->SetUniformMat4f("mvpResult", mvpResult, program);
 	 shaders[1]->SetUniform3f("PickingColor", color, program);

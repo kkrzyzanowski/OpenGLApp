@@ -86,7 +86,7 @@ void Shape::TurnOffShapeElements()
 	ib->UnBind();
 	sm.UnBind();
 }
-void Shape::InitializeShapeView(glm::mat4& view)
+void Shape::InitializeShapeView(const glm::mat4& view)
 {
 	this->mvp.view = view;
 }
@@ -98,12 +98,12 @@ void Shape::ApplyProjectionMatrix(glm::mat4 proj)
 {
 	this->mvp.proj = proj;
 }
-void Shape::SetOutsideLight(glm::vec3& light)
+void Shape::SetOutsideLight(const glm::vec3& light)
 {
 	if(sourceShapeType == SourceShapeType::DIFFUSE)
 		outsideLight = light;
 }
-void Shape::SetEyeCamPos(glm::vec3 & pos)
+void Shape::SetEyeCamPos(const glm::vec3& pos)
 {
 	camEyePos = pos;
 }
@@ -121,9 +121,12 @@ void Shape::RotateNormals(float rotation, glm::vec3 rotationAxis)
 			<< normal.z << std::endl;
 	}
 }
-void Shape::Translate(glm::vec3 valueToMove)
+void Shape::Translate(const glm::vec3& valueToMove)
 {
+	glm::mat4 deltaModel = mvp.model;
 	mvp.model = glm::translate(mvp.model, valueToMove);
+	deltaModel[3] = { valueToMove.x, valueToMove.y, valueToMove.z, mvp.model[3][3]};
+	TranslatePoints(deltaModel, shapeElements.vertices);
 }
 void Shape::Scale(float value)
 {
@@ -239,11 +242,11 @@ std::vector<std::vector<std::array<glm::vec3, 3>>> Shape::GetFaces(std::vector<s
 {
 	std::vector<std::vector<std::array<glm::vec3, 3>>> faces;
 	std::vector<std::array<glm::vec3, 3>> triangleUnused;
-	for each (std::array<glm::vec3, 3> triangle in triangles)
+	for(std::array<glm::vec3, 3> triangle: triangles)
 	{
 		bool match = false;
 		size_t matchedIndex = 0;
-		for each (std::array<glm::vec3, 3> ut in triangleUnused)
+		for(std::array<glm::vec3, 3> ut: triangleUnused)
 		{
 			for (int i = 0; i < 3; i++)
 			{
@@ -368,6 +371,8 @@ std::vector<std::array<glm::vec3, 2>> Shape::GetEdges(GLfloat* objectData)
 	}
 	return edges;
 }
+
+
 
 void Shape::TranslatePoints(glm::mat4& mvp, Vertices& verts)
 {

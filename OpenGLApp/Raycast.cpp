@@ -2,7 +2,7 @@
 #include "Raycast.h"
 #include "Config.h"
 
-Raycast::Raycast(double xPos, double yPos, unsigned int distance, glm::mat4 projection, glm::mat4 view)
+Raycast::Raycast(double xPos, double yPos, float distance, glm::mat4 projection, glm::mat4 view)
 {
 	this->proj = projection;
 	this->view = view;
@@ -35,6 +35,7 @@ void Raycast::InverseToWorldCoords()
 	worldRay = glm::vec3(-worldCoords.x, -worldCoords.y, worldCoords.z);*/
 	rayDirWorld = (rayEndWorld - rayStartWorld);
 	origin = glm::vec3(rayStartWorld);
+	worldRay = (glm::vec3)rayDirWorld;
 	worldRayNormalized = glm::normalize(glm::vec3(rayDirWorld.x, rayDirWorld.y, rayDirWorld.z));
 	std::cout << "Ray Direciton: " << worldRayNormalized.x << " y: " <<
 		worldRayNormalized.y << " z: " << worldRayNormalized.z << std::endl;
@@ -59,6 +60,10 @@ glm::vec3 Raycast::GetPointFromRay(glm::vec3 ray, float distance)
 	return glm::vec3();
 }
 
+glm::vec3 Raycast::GetUnnormalizedWorldDirection()
+{
+	return worldRay;
+}
 glm::vec3 Raycast::GetWorldRayDirection()
 {
 	return worldRayNormalized;

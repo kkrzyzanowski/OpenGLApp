@@ -94,10 +94,10 @@ void Cube::GenerateShaders()
 	sm.Bind();
 	CreateMVPMatrix();
 
-	for each(Texture* texture in textures)
+	for(Texture* texture: textures)
 		texture->Bind();
 	ShaderTypeGenerator::ShaderDiffuseGenerator(shaders, mvp, outsideLight, sm.GetProgram());
-	for each(Texture* texture in textures)
+	for(Texture* texture: textures)
 		texture->UnBind();
 	shapeState = ShapeState::EXISTING;
 }
@@ -115,7 +115,7 @@ void Cube::CreateMVPMatrix()
 void Cube::Update()
 {
 	sm.Bind();
-	for each(Texture* texture in textures)
+	for(Texture* texture: textures)
 		texture->Bind();
 	shaders[0]->SetUniformMat4f("model", mvp.model, sm.GetProgram());
 	shaders[0]->SetUniformMat4f("projection", mvp.proj, sm.GetProgram());

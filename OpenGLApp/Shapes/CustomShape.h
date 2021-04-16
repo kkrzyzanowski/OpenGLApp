@@ -3,8 +3,8 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <vector>
-#include "Shape.h"
-#include "ShapesBuilder.h"
+#include "../Shape.h"
+#include "../ShapesBuilder.h"
 struct MeshObject
 {
 	std::vector<float> vertices;
@@ -16,7 +16,7 @@ class CustomShape :
 {
 public:
 	CustomShape();
-	CustomShape::CustomShape(const ShapesBuilder builder);
+	CustomShape(const ShapesBuilder builder);
 	//void CreateShape(const GLfloat* points, unsigned int* orderIndex, unsigned int countVertices) override;
 	void Update() override;
 	void GenerateShaders() override;

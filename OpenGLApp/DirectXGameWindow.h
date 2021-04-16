@@ -4,6 +4,6 @@
 class DirectXGameWindow :
     public GameWindow
 {
-    int DirectXGameWindow::CreateWindow() override;
+    int CreateWindow() override;
 };
 

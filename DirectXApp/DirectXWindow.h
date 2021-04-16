@@ -1,6 +1,7 @@
 #pragma once
 #include <Windows.h>
 #include "MessageController.h"
+
 class DirectXWindow
 {
 public:

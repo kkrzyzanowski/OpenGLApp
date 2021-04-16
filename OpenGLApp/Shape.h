@@ -63,18 +63,18 @@ public:
 	virtual glm::vec3 GetNormal() = 0 {};
 	virtual void TurnOffShapeElements();
 	virtual void Update() = 0 {};
-	virtual void InitializeShapeView(glm::mat4& view);
+	virtual void InitializeShapeView(const glm::mat4& view);
 	virtual void GenerateShaders() =  0 {};
 	 glm::vec3 GetShapeCenterPoint();
-	void ApplyProjectionMatrix(glm::mat4 proj);
-	void SetOutsideLight(glm::vec3& light);
-	void SetEyeCamPos(glm::vec3& pos);
+	void ApplyProjectionMatrix(const glm::mat4 proj);
+	void SetOutsideLight(const glm::vec3& light);
+	void SetEyeCamPos(const glm::vec3& pos);
 	SourceShapeType GetSourceShapeType();
 	void RotateNormals(float rotation, glm::vec3 rotationAxis);
-	virtual void Translate(glm::vec3 valueToMove);
+	virtual void Translate(const glm::vec3& valueToMove);
 	void Scale(float value);
 	void Rotate(float value);
-	glm::vec3 Shape::GetInsideLight();
+	glm::vec3 GetInsideLight();
 	ShapeState GetCreationState();
 	std::array<float, 3> GetPosition();
 
@@ -86,7 +86,7 @@ public:
 	std::vector<glm::vec3> GetVertices(GLfloat* objectData, size_t elements);
 	std::vector<std::array<glm::vec3, 3>> GetTriangles(std::vector<glm::vec3>& vertices, size_t* indices, int indices_count);
 	std::vector<std::vector<std::array<glm::vec3, 3>>> GetFaces(std::vector<std::array<glm::vec3, 3>>& triangles);
-	std::vector<std::array<glm::vec3, 2>> Shape::GetEdges(GLfloat* objectData);
+	std::vector<std::array<glm::vec3, 2>> GetEdges(GLfloat* objectData);
 	void TranslatePoints(glm::mat4& mvp, Vertices& verts);
 
 	std::vector<std::array<glm::vec3, 3>> GetTriangles();

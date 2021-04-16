@@ -1,7 +1,7 @@
 #include <cmath>
 #include "Collision.h"
-#include "Sphere.h"
-#include "Plane.h"
+#include "Shapes\Sphere.h"
+#include "Shapes\Plane.h"
 
 Collision::Collision()
 {

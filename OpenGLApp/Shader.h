@@ -27,7 +27,7 @@ public:
 	void SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3, unsigned int program);
 	void SetUniform4f(const std::string & name, glm::vec4 & vec, unsigned int program);
 	void SetUniform3f(const std::string& name, float v0, float v1, float v2, unsigned int program);
-	void SetUniform3f(const std::string& name, glm::vec3 &vec, unsigned int program);
+	void SetUniform3f(const std::string& name, glm::vec3 vec, unsigned int program);
 	void SetUniform2f(const std::string & name, float v0, float v1, unsigned int program);
 	void SetUniformMat4f(const std::string& name, const glm::mat4& mat, unsigned int program);
 	void SetUniform1i(const std::string& name, int value, unsigned int program);

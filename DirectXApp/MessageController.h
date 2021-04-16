@@ -1,5 +1,7 @@
 #pragma once
 #include <Windows.h>
+#include "KeyboardController.h"
+#include "MouseController.h"
 class MessageController
 {
 public:
@@ -12,5 +14,7 @@ private:
 	WNDCLASSEX wc;
 	HINSTANCE hInstance;
 	const wchar_t* sClassName;
+	KeyboardController keyboard;
+	MouseController mouse;
 };
 

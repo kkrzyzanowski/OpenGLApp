@@ -8,19 +8,56 @@ LRESULT  MessageController::MessageHandler(HWND hWnd, UINT msg, WPARAM wParam, L
 
 		PostQuitMessage(69);
 		break;
+	case WM_KILLFOCUS:
+		keyboard.ClearState();
+		break;
 	case WM_KEYDOWN:
+	case WM_SYSKEYDOWN:
+		if (!lParam & 0x40000000 || keyboard.IsRepeating())
+		{
+
+		keyboard.OnKeyPressed(static_cast<unsigned char>(wParam));
 		if (wParam == 'W')
 		{
 			//do something
 		}
+		keyboard.ChangeRepeating();
+		}
 		break;
 	case WM_KEYUP:
+		keyboard.OnKeyReleased(static_cast<unsigned char>(wParam));
+		keyboard.ChangeRepeating();
 		break;
-
+	case WM_MOUSEMOVE:
+		const POINTS pt = MAKEPOINTS(lParam);
+		mouse.OnMouseMove(pt.x, pt.y);
+		break;
 	case WM_LBUTTONDOWN:
-
-		POINTS point = MAKEPOINTS(lParam);
+	{
+		const POINTS point = MAKEPOINTS(lParam);
+		mouse.OnMouseButtonPressed(point.x, point.y, MouseController::Event::MouseButton::LEFT);
 		break;
+	}
+	case WM_RBUTTONDOWN:
+	{
+		const POINTS point = MAKEPOINTS(lParam);
+		mouse.OnMouseButtonPressed(point.x, point.y, MouseController::Event::MouseButton::RIGHT);
+		break;
+	}
+	case WM_LBUTTONUP:
+	{
+
+		const POINTS point = MAKEPOINTS(lParam);
+		mouse.OnMouseButtonReleased(point.x, point.y, MouseController::Event::MouseButton::LEFT);
+		break;
+	}
+	case WM_RBUTTONUP:
+	{
+
+		const POINTS point = MAKEPOINTS(lParam);
+		mouse.OnMouseButtonReleased(point.x, point.y, MouseController::Event::MouseButton::RIGHT);
+		break;
+	}
 	}
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }

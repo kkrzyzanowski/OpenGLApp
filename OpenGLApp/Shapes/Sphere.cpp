@@ -1,6 +1,6 @@
 //#define GLM_ENABLE_EXPERIMENTAL
 #include "Sphere.h"
-#include "glm\gtx\rotate_vector.hpp"
+#include "..\glm\gtx\rotate_vector.hpp"
 
 int sectors = 24;
 int rings = 12;
@@ -99,7 +99,7 @@ Sphere::Sphere(const ShapesBuilder builder) : Shape()
 void Sphere::Update()
 {
 	sm.Bind();
-	for each(Texture* texture in textures)
+	for(Texture* texture: textures)
 		texture->Bind();
 	mvp.model = glm::translate(mvp.model, physics.velocity);
 	mvp.model = glm::rotate(mvp.model, glm::radians(1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -142,7 +142,7 @@ void Sphere::GenerateShaders()
 	shaders[0]->SetUniformMat4f("view", view, sm.GetProgram());
 	shaders[0]->SetUniformMat4f("projection", proj, sm.GetProgram());*/
 	shaders[0]->SetUniformMat4f("u_MVP", mvpResult, sm.GetProgram());
-	for each(Texture* texture in textures)
+	for(Texture* texture: textures)
 		texture->Bind();
 	shaders[1]->SetUniform4f("u_color", 1.0f, 1.0f, 1.0f, 1.0f, sm.GetProgram());
 	shaders[1]->SetUniform1i("u_texture", 0, sm.GetProgram());

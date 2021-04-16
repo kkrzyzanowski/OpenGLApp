@@ -17,7 +17,7 @@ public:
 	static void ShaderSkyBoxGenerator(std::vector<Shader*> &shaders, MVP &mvp, unsigned int program);
 	static void PostProcesingShaderGenerator(std::vector<Shader*> &shaders, unsigned int program);
 	static void ShaderPrimitiveGenerator(std::vector<Shader*> &shaders, glm::mat4 mvpResult, unsigned int program);
-	static void PickedShaderGenerator(std::vector<Shader*> &shaders, glm::vec3& color, glm::mat4& mvpResult, unsigned int program);
+	static void PickedShaderGenerator(std::vector<Shader*> &shaders,const glm::vec3& color,const glm::mat4& mvpResult, unsigned int program);
 	static void TerrainShaderGenerator(std::vector<Shader*>& shaders, glm::mat4 &mvp, unsigned int program);
 	~ShaderTypeGenerator();
 };

@@ -120,7 +120,7 @@ CustomShape::~CustomShape()
 void CustomShape::Update()
 {
 	sm.Bind();
-	for each(Texture* texture in textures)
+	for(Texture* texture: textures)
 		texture->Bind();
 	mvpResult = mvp.proj * mvp.view * mvp.model;
 	shaders[0]->SetUniformMat4f("u_MVP", mvpResult, sm.GetProgram());

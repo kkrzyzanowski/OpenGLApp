@@ -38,9 +38,9 @@ void Terrain::CreateTerrain()
 		}
 	}
 
-	for each  (std::array<GLfloat,8> coords  in coordsContainer)
+	for(std::array<GLfloat,8> coords: coordsContainer)
 	{
-		for each (float data in coords)
+		for(float data: coords)
 		{
 			coordsData.push_back(data);
 		}
@@ -64,7 +64,7 @@ void Terrain::CreateTerrain()
 void Terrain::Update()
 {
 	sm.Bind();
-	for each (Texture * texture in textures)
+	for(Texture * texture: textures)
 		texture->Bind();
 	mvpResult = mvp.proj * mvp.view * mvp.model;
 	shaders[0]->SetUniformMat4f("mvpResult", mvpResult, sm.GetProgram());
@@ -89,10 +89,10 @@ void Terrain::GenerateShaders()
 	sm.Bind();
 	CreateMVPMatrix();
 
-	for each (Texture * texture in textures)
+	for(Texture * texture: textures)
 		texture->Bind();
 	ShaderTypeGenerator::TerrainShaderGenerator(shaders, mvpResult, sm.GetProgram());
-	for each (Texture * texture in textures)
+	for(Texture * texture: textures)
 		texture->UnBind();
 	shapeState = ShapeState::EXISTING;
 }

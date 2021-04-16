@@ -16,13 +16,13 @@ ShaderManager::~ShaderManager()
 
 void ShaderManager::AddShadersToProgram(std::vector<Shader*> Shaders)
 {
-	for each  (Shader* s in Shaders)
+	for(Shader* s: Shaders)
 	{
 		GLCall(glAttachShader(m_Program.at(activeProgram), s->GetShaderID()));
 	}
 	GLCall(glLinkProgram(m_Program.at(activeProgram)));
 	GLCall(glValidateProgram(m_Program.at(activeProgram)));
-	for each  (Shader* s in Shaders)
+	for(Shader* s: Shaders)
 	{
 		GLCall(glDeleteShader(s->GetShaderID()));
 	}

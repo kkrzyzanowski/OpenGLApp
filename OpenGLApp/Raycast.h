@@ -5,18 +5,19 @@
 class Raycast
 {
 public:
-	Raycast(double xPos, double yPos, unsigned int distance, glm::mat4 projection, glm::mat4 view);
+	Raycast(double xPos, double yPos, float distance, glm::mat4 projection, glm::mat4 view);
 	void InverseToEyeCoords();
 	void InverseToWorldCoords();
 	void CalculateMouseRay();
 	bool IntersectionInRange(float start, float end);
 	glm::vec3 GetPointFromRay(glm::vec3 ray, float distance);
+	glm::vec3 GetUnnormalizedWorldDirection();
 	glm::vec3 GetWorldRayDirection();
 	glm::vec3 GetRayOrigin();
 
 	~Raycast();
 private:
-	unsigned int rayDistance;
+	float rayDistance;
 	glm::mat4 proj;
 	glm::mat4 view;
 	float x;
@@ -32,6 +33,7 @@ private:
 	glm::vec4 rayDirWorld;
 	glm::vec3 origin;
 	glm::vec3 worldRayNormalized;
+	glm::vec3 worldRay;
 };
 
 

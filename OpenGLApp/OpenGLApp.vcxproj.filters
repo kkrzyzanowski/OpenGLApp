@@ -57,13 +57,13 @@
     <ClCompile Include="Controls.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Cube.cpp">
+    <ClCompile Include="Shapes\Cube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Plane.cpp">
+    <ClCompile Include="Shapes\Plane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sphere.cpp">
+    <ClCompile Include="Shapes\Sphere.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ShapesFactory.cpp">
@@ -75,7 +75,7 @@
     <ClCompile Include="ShapesBuilder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CustomShape.cpp">
+    <ClCompile Include="Shapes\CustomShape.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ShaderTypeGenerator.cpp">
@@ -102,7 +102,7 @@
     <ClCompile Include="RayDrawer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Line.cpp">
+    <ClCompile Include="Shapes\Line.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Primitive.cpp">
@@ -123,7 +123,7 @@
     <ClCompile Include="StencilOutline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MousePoint.cpp">
+    <ClCompile Include="PointTranslator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="OpenGLGameWindow.cpp">
@@ -173,13 +173,13 @@
     <ClInclude Include="Controls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Cube.h">
+    <ClInclude Include="Shapes\Cube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Plane.h">
+    <ClInclude Include="Shapes\Plane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sphere.h">
+    <ClInclude Include="Shapes\Sphere.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MaterialType.h">
@@ -191,7 +191,7 @@
     <ClInclude Include="ShapesBuilder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CustomShape.h">
+    <ClInclude Include="Shapes\CustomShape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ShaderTypeGenerator.h">
@@ -224,7 +224,7 @@
     <ClInclude Include="RayDrawer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Line.h">
+    <ClInclude Include="Shapes\Line.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Primitive.h">
@@ -251,7 +251,7 @@
     <ClInclude Include="ShapeList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MousePoint.h">
+    <ClInclude Include="PointTranslator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="OpenGLGameWindow.h">

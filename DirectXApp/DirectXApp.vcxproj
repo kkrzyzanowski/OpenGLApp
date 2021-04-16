@@ -140,12 +140,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DirectXAppMain.cpp" />
+    <ClCompile Include="DirectXException.cpp" />
     <ClCompile Include="DirectXWindow.cpp" />
+    <ClCompile Include="DirectXWindowException.cpp" />
+    <ClCompile Include="KeyboardController.cpp" />
     <ClCompile Include="MessageController.cpp" />
+    <ClCompile Include="MouseController.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DirectXException.h" />
     <ClInclude Include="DirectXWindow.h" />
+    <ClInclude Include="DirectXWindowException.h" />
+    <ClInclude Include="KeyboardController.h" />
     <ClInclude Include="MessageController.h" />
+    <ClInclude Include="MouseController.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

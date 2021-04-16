@@ -118,7 +118,7 @@ int OpenGLGameWindow::CreateWindow()
 	   // .CustomProperties(tp)
 	   // .CreateShape(ShapeType::TERRAIN));
 
-	for each (auto & shape in  ShapeManager::shapes)
+	for(auto& shape: ShapeManager::shapes)
 	{
 		shape->InitializeShapeView(cam->GetView());
 		shape->ApplyProjectionMatrix(cam->GetProjection());
@@ -187,7 +187,7 @@ int OpenGLGameWindow::CreateWindow()
 		int count = 0;
 
 		glStencilMask(0x00);
-		for each (auto & shape in  ShapeManager::shapes)
+		for(auto& shape: ShapeManager::shapes)
 		{
 			if (shape->Selected)
 			{
@@ -220,7 +220,7 @@ int OpenGLGameWindow::CreateWindow()
 			}*/
 
 		}
-		for each (auto & sShape in selectedShapes)
+		for(auto& sShape: selectedShapes)
 		{
 			TurnOnStencilBufferMask();
 			sShape->InitializeShapeView(cam->GetView());

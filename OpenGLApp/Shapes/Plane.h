@@ -1,5 +1,5 @@
-#include "Shape.h"
-#include "ShapesBuilder.h"
+#include "../Shape.h"
+#include "../ShapesBuilder.h"
 class Plane: public Shape
 {
 public:
@@ -8,6 +8,7 @@ public:
 	void Update() override;
 	void GenerateShaders() override;
 	void GetSourceLight(glm::vec3 lightSource);
+	void Translate(const glm::vec3& valueToMove);
 	glm::vec3 GetNormal() override;
 	~Plane();
 private:

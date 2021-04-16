@@ -48,10 +48,10 @@ void Plane::GenerateShaders()
 	sm.AddShadersToProgram(shaders);
 	sm.Bind();
 	CreateMVPMatrix();
-	for each(Texture* texture in textures)
+	for(Texture* texture: textures)
 		texture->Bind();
 	ShaderTypeGenerator::ShaderDiffuseGenerator(shaders, mvp, outsideLight, sm.GetProgram());
-	for each(Texture* texture in textures)
+	for(Texture* texture: textures)
 		texture->UnBind();
 	sm.UnBind();
 	//GeneratePickedShaders();
@@ -61,6 +61,11 @@ void Plane::GetSourceLight(glm::vec3 lightSource)
 {
 	m_sourceLight = lightSource;
 }
+void Plane::Translate(const glm::vec3& valueToMove)
+{
+	Shape::Translate(valueToMove);
+	shapeElements.triangles = GetTriangles(shapeElements.vertices, indexes, 6);
+}
 glm::vec3 Plane::GetNormal()
 {
 	return normals[0];
@@ -69,7 +74,7 @@ glm::vec3 Plane::GetNormal()
 void Plane::CreateMVPMatrix()
 {
 	mvp.model = glm::mat4(1.0f);
-	mvp.model = glm::translate(mvp.model, glm::vec3(0.0f, 0.0f, -5.0f));
+	mvp.model = glm::translate(mvp.model, glm::vec3(-3.0f, 0.0f, -5.0f));
 	//mvp.model = glm::rotate(mvp.model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 	//RotateNormals(-90.0f, glm::vec3(1.0f, 0.0f, .0f));
 	//mvp.model = glm::scale(mvp.model, glm::vec3(1.0f, 1.0f, 1.0f));
@@ -83,9 +88,10 @@ void Plane::CreateMVPMatrix()
 void Plane::Update()
 {
 	sm.Bind();
-	for each(Texture* texture in textures)
+	for(Texture* texture: textures)
 		texture->Bind();
 	//specularTexture->Bind(1); // slotss
+	mvpResult = mvp.proj * mvp.view * mvp.model;
 	shaders[0]->SetUniformMat4f("model", mvp.model, sm.GetProgram());
 	shaders[0]->SetUniformMat4f("projection", mvp.proj, sm.GetProgram());
 	shaders[0]->SetUniformMat4f("view", mvp.view, sm.GetProgram());

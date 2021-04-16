@@ -25,7 +25,7 @@ public:
 	void Update();
 	void MouseMove(float movementSpeed);
 	void CameraMove();
-	void scroll_callback(double xoffset, double yoffset);
+	void scroll_callback(float xoffset, float yoffset);
 	void MoveShapeWithCamera(Direction dir);
 	CameraState GetState();
 
