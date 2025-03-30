@@ -29,26 +29,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -76,13 +76,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)assimp-4.1.0\include;$(SolutionDir)glfw-3.2.1.bin.WIN32\include;$(SolutionDir)glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>GLEW_STATIC;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\DyskD\ProjectsCpp\OpenGLApp\assimp-4.1.0\include;C:\DyskD\ProjectsCpp\OpenGLApp\Stb_image_reader;$(SolutionDir)glfw-3.2.1.bin.WIN32\include;$(SolutionDir)glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>GLEW_STATIC;_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;glew32s.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)assimp-4.1.0\lib;$(SolutionDir)glfw-3.2.1.bin.WIN32\lib-vc2015;$(SolutionDir)glew-2.1.0\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;glew32s.lib;assimp-vc140-mt.lib;Stbimagereader.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(IntDir);C:\DyskD\ProjectsCpp\OpenGLApp\assimp-4.1.0\lib;$(SolutionDir)glfw-3.2.1.bin.WIN32\lib-vc2015;$(SolutionDir)glew-2.1.0\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -123,93 +124,134 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Collision.cpp" />
+    <ClCompile Include="Builders\FrameBufferBuilder.cpp" />
+    <ClCompile Include="Managers\FrameBufferManager.cpp" />
+    <ClCompile Include="Managers\LightManager.cpp" />
+    <ClCompile Include="Managers\BitManager.cpp" />
+    <ClCompile Include="Managers\BufferManager.cpp" />
+    <ClCompile Include="Camera\Camera.cpp" />
+    <ClCompile Include="MVPManager.cpp" />
+    <ClCompile Include="Physics\Collision.cpp" />
     <ClCompile Include="Controls.cpp" />
+    <ClCompile Include="Lights\Light.cpp" />
+    <ClCompile Include="Builders\LightBuilder.cpp" />
+    <ClCompile Include="Buffers\ObjectBuffer.cpp" />
+    <ClCompile Include="Shaders\ShaderClasses\ShaderManager.cpp" />
     <ClCompile Include="Shapes\Cube.cpp" />
-    <ClCompile Include="CubeMapTexture.cpp" />
+    <ClCompile Include="Shapes\VerticesCreator.cpp" />
+    <ClCompile Include="Shapes\VerticesCreator.h" />
+    <ClCompile Include="TextureObjects\CubeMapTexture.cpp" />
     <ClCompile Include="Shapes\CustomShape.cpp" />
     <ClCompile Include="DirectXGameWindow.cpp" />
     <ClCompile Include="FPSCounter.cpp" />
-    <ClCompile Include="FrameBuffer.cpp" />
+    <ClCompile Include="Buffers\FrameBuffer.cpp" />
     <ClCompile Include="GameWindow.cpp" />
-    <ClCompile Include="IndexBuffer.cpp" />
+    <ClCompile Include="Buffers\IndexBuffer.cpp" />
     <ClCompile Include="Shapes\Line.cpp" />
     <ClCompile Include="MaterialType.cpp" />
     <ClCompile Include="PointTranslator.cpp" />
-    <ClCompile Include="Physics.cpp" />
+    <ClCompile Include="Physics\Physics.cpp" />
     <ClCompile Include="Shapes\Plane.cpp" />
     <ClCompile Include="Primitive.cpp" />
-    <ClCompile Include="Raycast.cpp" />
-    <ClCompile Include="RayDrawer.cpp" />
-    <ClCompile Include="Renderer.cpp" />
-    <ClCompile Include="RendererBuffer.cpp" />
-    <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="ShaderManager.cpp" />
-    <ClCompile Include="ShaderTypeGenerator.cpp" />
-    <ClCompile Include="Shape.cpp" />
+    <ClCompile Include="Camera\Raycast.cpp" />
+    <ClCompile Include="Camera\RayDrawer.cpp" />
+    <ClCompile Include="Rendering\Renderer.cpp" />
+    <ClCompile Include="Buffers\RendererBuffer.cpp" />
+    <ClCompile Include="Shaders\ShaderClasses\Shader.cpp" />
+    <ClCompile Include="Managers\ShaderCompiler.cpp" />
+    <ClCompile Include="Shaders\ShaderClasses\ShaderTypeGenerator.cpp" />
+    <ClCompile Include="Shapes\Shape.cpp" />
     <ClCompile Include="OpenGL_main.cpp" />
-    <ClCompile Include="ShapeManager.cpp" />
-    <ClCompile Include="ShapesBuilder.cpp" />
+    <ClCompile Include="Managers\ShapeManager.cpp" />
+    <ClCompile Include="Builders\ShapesBuilder.cpp" />
     <ClCompile Include="ShapesFactory.cpp" />
-    <ClCompile Include="SkyBoxCube.cpp" />
+    <ClCompile Include="Shapes\SkyBoxCube.cpp" />
     <ClCompile Include="Shapes\Sphere.cpp" />
-    <ClCompile Include="stb_image.cpp" />
-    <ClCompile Include="StencilOutline.cpp" />
-    <ClCompile Include="Terrain.cpp" />
-    <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="VertexArray.cpp" />
-    <ClCompile Include="VertexBuffer.cpp" />
+    <ClCompile Include="Rendering\StencilOutline.cpp" />
+    <ClCompile Include="Shapes\Terrain.cpp" />
+    <ClCompile Include="TextureObjects\Texture.cpp" />
+    <ClCompile Include="Managers\TextureManager.cpp" />
+    <ClCompile Include="Buffers\UniformBuffer.cpp" />
+    <ClCompile Include="Buffers\VertexArray.cpp" />
+    <ClCompile Include="Buffers\VertexBuffer.cpp" />
     <ClCompile Include="OpenGLGameWindow.cpp" />
+    <ClCompile Include="Managers\VertexManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="Collision.h" />
+    <ClInclude Include="Builders\FrameBufferBuilder.h" />
+    <ClInclude Include="Managers\FrameBufferManager.h" />
+    <ClInclude Include="Managers\LightManager.h" />
+    <ClInclude Include="Managers\BitManager.h" />
+    <ClInclude Include="Managers\BufferManager.h" />
+    <ClInclude Include="Builders\Builder.h" />
+    <ClInclude Include="Camera\Camera.h" />
+    <ClInclude Include="MVPManager.h" />
+    <ClInclude Include="Physics\Collision.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="Controls.h" />
+    <ClInclude Include="Lights\Light.h" />
+    <ClInclude Include="Builders\LightBuilder.h" />
+    <ClInclude Include="Buffers\ObjectBuffer.h" />
+    <ClInclude Include="Shaders\ShaderClasses\ShaderManager.h" />
     <ClInclude Include="Shapes\Cube.h" />
-    <ClInclude Include="CubeMapTexture.h" />
+    <ClInclude Include="TextureObjects\CubeMapTexture.h" />
     <ClInclude Include="CustomProperties.h" />
     <ClInclude Include="Shapes\CustomShape.h" />
     <ClInclude Include="DataStructures.h" />
     <ClInclude Include="DirectXGameWindow.h" />
     <ClInclude Include="FPSCounter.h" />
-    <ClInclude Include="FrameBuffer.h" />
+    <ClInclude Include="Buffers\FrameBuffer.h" />
     <ClInclude Include="GameWindow.h" />
-    <ClInclude Include="IndexBuffer.h" />
-    <ClInclude Include="LightShape.h" />
+    <ClInclude Include="Buffers\IndexBuffer.h" />
+    <ClInclude Include="Lights\LightShape.h" />
     <ClInclude Include="Shapes\Line.h" />
     <ClInclude Include="MaterialType.h" />
     <ClInclude Include="PointTranslator.h" />
-    <ClInclude Include="Physics.h" />
+    <ClInclude Include="Physics\Physics.h" />
     <ClInclude Include="Shapes\Plane.h" />
     <ClInclude Include="Primitive.h" />
-    <ClInclude Include="Raycast.h" />
-    <ClInclude Include="RayDrawer.h" />
-    <ClInclude Include="Renderer.h" />
-    <ClInclude Include="RenderBuffer.h" />
-    <ClInclude Include="Shader.h" />
-    <ClInclude Include="ShaderManager.h" />
-    <ClInclude Include="ShaderTypeGenerator.h" />
-    <ClInclude Include="Shape.h" />
-    <ClInclude Include="ShapeList.h" />
-    <ClInclude Include="ShapeManager.h" />
-    <ClInclude Include="ShapesBuilder.h" />
-    <ClInclude Include="SkyBoxCube.h" />
+    <ClInclude Include="Camera\Raycast.h" />
+    <ClInclude Include="Camera\RayDrawer.h" />
+    <ClInclude Include="Rendering\Renderer.h" />
+    <ClInclude Include="Buffers\RenderBuffer.h" />
+    <ClInclude Include="Shaders\ShaderClasses\Shader.h" />
+    <ClInclude Include="Managers\ShaderCompiler.h" />
+    <ClInclude Include="Shaders\ShaderClasses\ShaderTypeGenerator.h" />
+    <ClInclude Include="Shapes\Shape.h" />
+    <ClInclude Include="ShapeType.h" />
+    <ClInclude Include="Managers\ShapeManager.h" />
+    <ClInclude Include="Builders\ShapesBuilder.h" />
+    <ClInclude Include="Shapes\SkyBoxCube.h" />
     <ClInclude Include="Shapes\Sphere.h" />
-    <ClInclude Include="stb_image.h" />
-    <ClInclude Include="StencilOutline.h" />
-    <ClInclude Include="Terrain.h" />
-    <ClInclude Include="Texture.h" />
-    <ClInclude Include="VertexArray.h" />
-    <ClInclude Include="VertexBuffer.h" />
-    <ClInclude Include="VertexBufferLayout.h" />
+    <ClInclude Include="Rendering\StencilOutline.h" />
+    <ClInclude Include="Shapes\Terrain.h" />
+    <ClInclude Include="TextureObjects\Texture.h" />
+    <ClInclude Include="Managers\TextureManager.h" />
+    <ClInclude Include="Buffers\UniformBuffer.h" />
+    <ClInclude Include="Buffers\VertexArray.h" />
+    <ClInclude Include="Buffers\VertexBuffer.h" />
+    <ClInclude Include="Buffers\VertexBufferLayout.h" />
     <ClInclude Include="OpenGLGameWindow.h" />
+    <ClInclude Include="Managers\VertexManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\AlphaFragmentShader.frag" />
+    <None Include="Shaders\AlphaVertexShader.vert" />
+    <None Include="Shaders\DefferedShading.frag" />
+    <None Include="Shaders\DefferedShading.vert" />
     <None Include="Shaders\DiffuseFragmentShader.frag" />
     <None Include="Shaders\DiffuseVertexShader.vert" />
+    <None Include="Shaders\GaussianBlurShader.frag" />
+    <None Include="Shaders\GaussianBlurShader.vert" />
+    <None Include="Shaders\HDRGaussianBlurShader.frag" />
+    <None Include="Shaders\HDRGaussianBlurShader.vert" />
+    <None Include="Shaders\HDRShader.frag" />
+    <None Include="Shaders\HDRShader.vert" />
     <None Include="Shaders\LightFragmentShader.frag" />
+    <None Include="Shaders\LightShader.frag" />
+    <None Include="Shaders\LightShader.vert" />
+    <None Include="Shaders\LightShadow.frag" />
+    <None Include="Shaders\LightShadow.vert" />
     <None Include="Shaders\LightVertexShader.vert" />
     <None Include="Shaders\PickingFragmentShader.frag" />
     <None Include="Shaders\PickingVertexShader.vert" />
@@ -217,6 +259,7 @@
     <None Include="Shaders\PostProcesingShader.vert" />
     <None Include="Shaders\PrimitiveFragmentShader.frag" />
     <None Include="Shaders\PrimitiveVertexShader.vert" />
+    <None Include="Shaders\ShadowLibrary.glsl" />
     <None Include="Shaders\SimpleShaderCubeBox.frag" />
     <None Include="Shaders\SimpleShaderCubeBox.vert" />
     <None Include="Shaders\TerrainFragmentShader.frag" />

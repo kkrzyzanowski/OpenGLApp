@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include "glm\glm.hpp"
 #include "glm\gtc\matrix_transform.hpp"
 #include "glm\gtc\type_ptr.hpp"
@@ -16,9 +17,9 @@ typedef std::array<glm::vec3, 3> Triangle;
 };
  struct RGB
  {
-	 int r;
-	 int g; 
-	 int b;
+	 uint8_t r;
+	 uint8_t g;
+	 uint8_t b;
  };
 
  struct ShapeParameters
@@ -35,7 +36,16 @@ typedef std::array<glm::vec3, 3> Triangle;
 	 Faces faces;
  };
 
+ struct SimpleLight
+ {
+	 glm::vec3 position;
+	 glm::vec3 color;
+	 unsigned short slot;
+	 unsigned short lightNumber;
+ };
+
  template<typename T, size_t SIZE>
- size_t getSize(T(&)[SIZE]) {
+ size_t getSize(T(&)[SIZE]) 
+ {
 	 return SIZE;
- }
+ };

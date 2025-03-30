@@ -1,7 +1,10 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "menu.h"
+#include "AddWindow.h"
 #include <vector>
+bool openAddDialog = false;
+
 void MenuGUI::ShowTopMenu(bool* p_open)
 {
 	ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -59,26 +62,27 @@ void MenuGUI::ShowTopMenu(bool* p_open)
 		ImGui::EndMenuBar();
 	}
 
-	ImVec2 leftPanelSize = ImVec2(viewport->Size.x * 0.2f, (viewport->Size.y - menuBarSize.y) * 1.01f);
-	ImGuiWindowFlags tabBarflags =NULL;
 
+	ImVec2 leftPanelSize = ImVec2(viewport->Size.x * 0.2f, 0);
+	ImGuiWindowFlags tabBarflags =NULL;
+	
 	if(ImGui::BeginChild(dock_id_prop, leftPanelSize, true, tabBarflags))
 	{
 		propSize = ImGui::GetWindowSize();
 		propPosition = ImGui::GetWindowPos();
 		if (ImGui::BeginTabBar("blah"))
 		{
-			if (ImGui::BeginTabItem("Video"))
+			if (ImGui::BeginTabItem("Shapes"))
 			{
-				ImGui::Text("Blah blah");
-				ImGui::EndTabItem();
-			}
-			if (ImGui::BeginTabItem("Audio"))
-			{
-				ImGui::EndTabItem();
-			}
-			if (ImGui::BeginTabItem("Controls"))
-			{
+				if (ImGui::Button("Square"))
+					openAddDialog = true;
+				if(openAddDialog)
+				{
+					MenuGUI::CreateAddWindow(&openAddDialog);
+				}
+				ImGui::Button("Plane");
+				ImGui::Button("Sphere");
+				ImGui::Button("Custom");
 				ImGui::EndTabItem();
 			}
 			ImGui::EndTabBar();
@@ -86,8 +90,8 @@ void MenuGUI::ShowTopMenu(bool* p_open)
 	}
 	ImGui::EndChild();
 
-	ImVec2 downPanelSize = ImVec2((viewport->Size.x - leftPanelSize.x), (viewport->Size.y - menuBarSize.y) * 0.88f);
-	ImGuiWindowFlags downBarflags = NULL;
+	ImVec2 downPanelSize = ImVec2((viewport->Size.x - leftPanelSize.x), propSize.y);
+	ImGuiWindowFlags downBarflags = ImGuiTabBarFlags_None;
 
 	ImGui::SetNextWindowPos(ImVec2(leftPanelSize.x, propPosition.y));
 	if (ImGui::BeginChild(dock_id_bottom, downPanelSize, true, downBarflags))
@@ -97,16 +101,7 @@ void MenuGUI::ShowTopMenu(bool* p_open)
 		//downBarStyle.
 		if (ImGui::BeginTabBar("blah"))
 		{
-			if (ImGui::BeginTabItem("gfdsg"))
-			{
-				ImGui::Text("gdfgfd");
-				ImGui::EndTabItem();
-			}
-			if (ImGui::BeginTabItem("Audio"))
-			{
-				ImGui::EndTabItem();
-			}
-			if (ImGui::BeginTabItem("Controls"))
+			if (ImGui::BeginTabItem("Scene"))
 			{
 				ImGui::EndTabItem();
 			}
@@ -115,30 +110,21 @@ void MenuGUI::ShowTopMenu(bool* p_open)
 	}
 	ImGui::EndChild();
 
-	ImVec2 windowPanelSize = ImVec2((viewport->Size.x - leftPanelSize.x) , (viewport->Size.y - menuBarSize.y));
+	/*ImVec2 windowPanelSize = ImVec2((viewport->Size.x - leftPanelSize.x) , (viewport->Size.y - menuBarSize.y));
 	ImGuiWindowFlags windowBarFlags = NULL;
-	ImGui::SetNextWindowPos(ImVec2(viewport->Size.x * 0.2f, viewport->Size.y* 0.91f));
+	ImGui::SetNextWindowPos(ImVec2(viewport->Size., viewport->Size.y* 0.91f));
 	if (ImGui::BeginChild(dock_id_gameWindow, windowPanelSize, true, windowBarFlags))
 	{
 		if (ImGui::BeginTabBar("blah"))
 		{
-			if (ImGui::BeginTabItem("Video"))
-			{
-				ImGui::Text("Blagegd");
-				ImGui::EndTabItem();
-			}
-			if (ImGui::BeginTabItem("Audio"))
-			{
-				ImGui::EndTabItem();
-			}
-			if (ImGui::BeginTabItem("Controls"))
+			if (ImGui::BeginTabItem("Console"))
 			{
 				ImGui::EndTabItem();
 			}
 			ImGui::EndTabBar();
 		}
 	}
-	ImGui::EndChild();
+	ImGui::EndChild();*/
 
 	}
 	

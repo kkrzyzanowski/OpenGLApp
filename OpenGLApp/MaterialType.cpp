@@ -1,4 +1,5 @@
 #include "MaterialType.h"
+#include "ShapeType.h"
 
 LightShape::LightShape()
 {
@@ -6,12 +7,12 @@ LightShape::LightShape()
 
 LightShape::LightShape(LightType lightType)
 {
-	m_LightType = lightType;
+	_LightType = lightType;
 	switch (lightType)
 	{
 			case LightType::DIRECTIONAL:
 			{
-				light = new Light();
+				light = new LightProps();
 				break;
 			}
 			case LightType::POINT:
@@ -26,7 +27,7 @@ LightShape::LightShape(LightType lightType)
 			}
 			default:
 			{
-				light = new Light();
+				light = new LightProps();
 				break;
 			}
 	}

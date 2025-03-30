@@ -1,0 +1,6 @@
+﻿  pch.cpp
+  dllmain.cpp
+  Stb_image_reader.cpp
+  Generating Code...
+     Creating library C:\DyskD\ProjectsCpp\OpenGLApp\Debug\Stbimagereader.lib and object C:\DyskD\ProjectsCpp\OpenGLApp\Debug\Stbimagereader.exp
+  Stb_image_reader.vcxproj -> C:\DyskD\ProjectsCpp\OpenGLApp\Debug\Stbimagereader.dll

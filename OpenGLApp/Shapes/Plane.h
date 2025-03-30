@@ -1,12 +1,11 @@
-#include "../Shape.h"
-#include "../ShapesBuilder.h"
+#include "..\Shapes\Shape.h"
+
 class Plane: public Shape
 {
 public:
-	Plane();
-	Plane(const ShapesBuilder builder);
+	Plane(ShapesBuilder& builder);
+	Plane(ShapesBuilder&& builder);
 	void Update() override;
-	void GenerateShaders() override;
 	void GetSourceLight(glm::vec3 lightSource);
 	void Translate(const glm::vec3& valueToMove);
 	glm::vec3 GetNormal() override;

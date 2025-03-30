@@ -1,0 +1,2 @@
+#define STBIDEF __declspec(dllexport)
+#define STBIDEF __declspec(dllimport)

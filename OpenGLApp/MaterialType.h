@@ -1,8 +1,10 @@
+#pragma once
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm\glm.hpp"
 #include "glm\gtc\matrix_transform.hpp"
 #include "glm\gtc\type_ptr.hpp"
-#pragma once
+#include "ShapeType.h"
+
 class ShapeStateType
 {
 public:
@@ -13,30 +15,21 @@ protected:
 };
 
 
-enum LightType
-{
-	DEFAULT = 0,
-	DIRECTIONAL = 1,
-	POINT = 2,
-	SPOTLIGHT = 3,
-	NONELIGHT = 4,
-};
-
-struct Light
+struct LightProps
 {
 public:
 	glm::vec3 m_LightPos;
 	glm::vec3 m_LightDirection;
 	glm::vec3 m_LightColor;
 };
-struct PointLight : Light
+struct PointLight : LightProps
 {
 public:
 	glm::vec3 constant;
 	glm::vec3 linear;
 	glm::vec3 quadratic;
 };
-struct SpotLight: Light
+struct SpotLight: LightProps
 {
 public:
 	float cutOff;
@@ -49,14 +42,14 @@ public:
 	LightShape(LightType lightType);
 	~LightShape();
 private:
-	LightType m_LightType;
-	Light* light;
+	LightType _LightType;
+	LightProps* light;
 };
 
 class DiffuseShape : public ShapeStateType
 {
 private:
-	LightShape * m_SourceLight;
+	LightShape* _SourceLight;
 };
 class ParticleShape : public ShapeStateType
 {

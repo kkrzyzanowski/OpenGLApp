@@ -2,20 +2,26 @@
 
 unsigned int orderIndex[] = { 0, 1 };
 
-Line::Line()
+
+Line::Line(ShapesBuilder& builder): Shape(builder)
 {
 	this->points = { glm::vec3(), glm::vec3() };
-	this->sourceShapeType = SourceShapeType::PRIMITIVE;
 }
 
-void Line::CreateShape(const GLfloat* points, unsigned int* orderIndex, unsigned int countVertices, unsigned int countIndexes)
+Line::Line(ShapesBuilder&& builder) : Shape(std::move(builder))
 {
-	va = new VertexArray();
+	this->points = { glm::vec3(), glm::vec3() };
+}
+
+void Line::Create(const GLfloat* points, unsigned int* orderIndex, unsigned int countVertices, unsigned int countIndexes, unsigned int dataSize)
+{
+	/*va = new VertexArray();
 	vb = new VertexBuffer(points, sizeof(float) * countVertices * 3);
 	layout = new VertexBufferLayout();
 	layout->Push<float>(3);
 	va->AddBuffer(*vb, *layout);
-	ib = new IndexBuffer(orderIndex, countIndexes);
+	ib = new IndexBuffer(orderIndex, countIndexes);*/
+	bm->CreateBuffersOnlyVertex(points, orderIndex, countVertices, countIndexes);
 }
 
 glm::vec3 Line::GetNormal()
@@ -23,20 +29,12 @@ glm::vec3 Line::GetNormal()
 	return glm::vec3();
 }
 
-void Line::GenerateShaders()
-{
-	shaders.push_back(new Shader("Shaders\\PrimitiveVertexShader.vert"));
-	shaders.push_back(new Shader("Shaders\\PrimitiveFragmentShader.frag"));
-	sm.AddShadersToProgram(shaders);
-	sm.Bind();
-	CreateMVPMatrix();
-	ShaderTypeGenerator::ShaderPrimitiveGenerator(shaders, mvpResult, sm.GetProgram());
-	shapeState = ShapeState::EXISTING;
-}
-
 void Line::Update()
 {
-	sm.Bind();
+	sc.EnableUse();
+	ShaderTypeGenerator::UpdateModel(shaders, sc.GetCurrentProgram(), mvp.model);
+	ActivateShapeBufferParts();
+	sc.DisableUse();
 }
 
 void Line::Translate(const glm::vec3& valueToMove)
@@ -101,5 +99,4 @@ Line::~Line()
 void Line::CreateMVPMatrix()
 {
 	mvp.model = glm::mat4(1.0f);
-	mvpResult = mvp.proj * mvp.view * mvp.model;
 }

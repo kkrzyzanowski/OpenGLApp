@@ -1,6 +1,0 @@
-#pragma once
-
-enum ShapeType
-{
-	TRIANGLE, RECTANGLE, CUBE, SPEHERE, SKYBOX, LINE, TERRAIN, CUSTOM
-};

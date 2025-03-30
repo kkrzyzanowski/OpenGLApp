@@ -24,34 +24,31 @@
     <ClCompile Include="OpenGL_main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Shape.cpp">
+    <ClCompile Include="Shapes\Shape.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Shader.cpp">
+    <ClCompile Include="Shaders\ShaderClasses\Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VertexBuffer.cpp">
+    <ClCompile Include="Buffers\VertexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer.cpp">
+    <ClCompile Include="Rendering\Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IndexBuffer.cpp">
+    <ClCompile Include="Buffers\IndexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VertexArray.cpp">
+    <ClCompile Include="Buffers\VertexArray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ShaderManager.cpp">
+    <ClCompile Include="Managers\ShaderCompiler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.cpp">
+    <ClCompile Include="TextureObjects\Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="stb_image.cpp">
-      <Filter>ImageLoader</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
+    <ClCompile Include="Camera\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Controls.cpp">
@@ -72,34 +69,34 @@
     <ClCompile Include="MaterialType.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ShapesBuilder.cpp">
+    <ClCompile Include="Builders\ShapesBuilder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Shapes\CustomShape.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ShaderTypeGenerator.cpp">
+    <ClCompile Include="Shaders\ShaderClasses\ShaderTypeGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CubeMapTexture.cpp">
+    <ClCompile Include="TextureObjects\CubeMapTexture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SkyBoxCube.cpp">
+    <ClCompile Include="Shapes\SkyBoxCube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FrameBuffer.cpp">
+    <ClCompile Include="Buffers\FrameBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RendererBuffer.cpp">
+    <ClCompile Include="Buffers\RendererBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Raycast.cpp">
+    <ClCompile Include="Camera\Raycast.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ShapeManager.cpp">
+    <ClCompile Include="Managers\ShapeManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RayDrawer.cpp">
+    <ClCompile Include="Camera\RayDrawer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Shapes\Line.cpp">
@@ -108,19 +105,19 @@
     <ClCompile Include="Primitive.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Collision.cpp">
+    <ClCompile Include="Physics\Collision.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Physics.cpp">
+    <ClCompile Include="Physics\Physics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FPSCounter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Terrain.cpp">
+    <ClCompile Include="Shapes\Terrain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StencilOutline.cpp">
+    <ClCompile Include="Rendering\StencilOutline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PointTranslator.cpp">
@@ -135,39 +132,81 @@
     <ClCompile Include="DirectXGameWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Buffers\UniformBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Buffers\ObjectBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Managers\VertexManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Managers\BitManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Lights\Light.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Managers\TextureManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Managers\BufferManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Builders\LightBuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shapes\VerticesCreator.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shapes\VerticesCreator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Managers\LightManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MVPManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shaders\ShaderClasses\ShaderManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Builders\FrameBufferBuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Managers\FrameBufferManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Shape.h">
+    <ClInclude Include="Shapes\Shape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Shader.h">
+    <ClInclude Include="Shaders\ShaderClasses\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VertexBuffer.h">
+    <ClInclude Include="Buffers\VertexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer.h">
+    <ClInclude Include="Rendering\Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IndexBuffer.h">
+    <ClInclude Include="Buffers\IndexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VertexArray.h">
+    <ClInclude Include="Buffers\VertexArray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VertexBufferLayout.h">
+    <ClInclude Include="Buffers\VertexBufferLayout.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ShaderManager.h">
+    <ClInclude Include="Managers\ShaderCompiler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Texture.h">
+    <ClInclude Include="TextureObjects\Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="stb_image.h">
-      <Filter>ImageLoader</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
+    <ClInclude Include="Camera\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Controls.h">
@@ -185,43 +224,43 @@
     <ClInclude Include="MaterialType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LightShape.h">
+    <ClInclude Include="Lights\LightShape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ShapesBuilder.h">
+    <ClInclude Include="Builders\ShapesBuilder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Shapes\CustomShape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ShaderTypeGenerator.h">
+    <ClInclude Include="Shaders\ShaderClasses\ShaderTypeGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DataStructures.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CubeMapTexture.h">
+    <ClInclude Include="TextureObjects\CubeMapTexture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SkyBoxCube.h">
+    <ClInclude Include="Shapes\SkyBoxCube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FrameBuffer.h">
+    <ClInclude Include="Buffers\FrameBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RenderBuffer.h">
+    <ClInclude Include="Buffers\RenderBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Raycast.h">
+    <ClInclude Include="Camera\Raycast.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ShapeManager.h">
+    <ClInclude Include="Managers\ShapeManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RayDrawer.h">
+    <ClInclude Include="Camera\RayDrawer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Shapes\Line.h">
@@ -230,25 +269,25 @@
     <ClInclude Include="Primitive.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Collision.h">
+    <ClInclude Include="Physics\Collision.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Physics.h">
+    <ClInclude Include="Physics\Physics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FPSCounter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Terrain.h">
+    <ClInclude Include="Shapes\Terrain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CustomProperties.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StencilOutline.h">
+    <ClInclude Include="Rendering\StencilOutline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ShapeList.h">
+    <ClInclude Include="ShapeType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PointTranslator.h">
@@ -261,6 +300,48 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DirectXGameWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffers\UniformBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffers\ObjectBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Managers\VertexManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Managers\BitManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Lights\Light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Managers\TextureManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Managers\BufferManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Builders\Builder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Builders\LightBuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Managers\LightManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MVPManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Shaders\ShaderClasses\ShaderManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Builders\FrameBufferBuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Managers\FrameBufferManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -303,5 +384,20 @@
     </None>
     <None Include="Shaders\TerrainFragmentShader.frag" />
     <None Include="Shaders\TerrainVertexShader.vert" />
+    <None Include="Shaders\AlphaFragmentShader.frag" />
+    <None Include="Shaders\AlphaVertexShader.vert" />
+    <None Include="Shaders\LightShadow.vert" />
+    <None Include="Shaders\LightShadow.frag" />
+    <None Include="Shaders\ShadowLibrary.glsl" />
+    <None Include="Shaders\HDRShader.frag" />
+    <None Include="Shaders\HDRShader.vert" />
+    <None Include="Shaders\GaussianBlurShader.frag" />
+    <None Include="Shaders\GaussianBlurShader.vert" />
+    <None Include="Shaders\HDRGaussianBlurShader.frag" />
+    <None Include="Shaders\HDRGaussianBlurShader.vert" />
+    <None Include="Shaders\LightShader.frag" />
+    <None Include="Shaders\LightShader.vert" />
+    <None Include="Shaders\DefferedShading.vert" />
+    <None Include="Shaders\DefferedShading.frag" />
   </ItemGroup>
 </Project>

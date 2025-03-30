@@ -1,22 +1,46 @@
 #include "CustomShape.h"
+#include "..\Builders\ShapesBuilder.h"
 
-CustomShape::CustomShape(const ShapesBuilder builder)
+CustomShape::CustomShape(ShapesBuilder& builder): Shape(builder)
 {
 	//stuff with getting model;
 	Assimp::Importer importer;
 	meshObject = new MeshObject();
-	const aiScene* scene = importer.ReadFile(builder.m_path, aiProcess_Triangulate | aiProcess_FlipUVs);
+	const aiScene* scene = importer.ReadFile(this->builder->_path, aiProcess_Triangulate | aiProcess_FlipUVs);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
 		std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
 		return;
 	}
-	std::string dir = builder.m_path.substr(0, builder.m_path.find_last_of('/'));
+	std::string dir = this->builder->_path.substr(0, this->builder->_path.find_last_of('/'));
 	ProcessNode(scene->mRootNode, scene);
 	float* vertices = &meshObject->vertices[0];
 	unsigned int* indices = &meshObject->indices[0];
-	CreateShape(vertices, indices, meshObject->vertices.size() / 8, meshObject->indices.size());
+	unsigned int bufferDataSizes[3] = { 3, 2, 3 };
+	Create(vertices, indices, meshObject->vertices.size() / 8, meshObject->indices.size(), bufferDataSizes, 8);
+	ShapeName = "Custom";
+}
+
+CustomShape::CustomShape(ShapesBuilder&& builder) : Shape(std::move(builder)) 
+{
+	//stuff with getting model;	
+	Assimp::Importer importer;
+	meshObject = new MeshObject();
+	const aiScene* scene = importer.ReadFile(this->builder->_path, aiProcess_Triangulate | aiProcess_FlipUVs);
+
+	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+	{
+		std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
+		return;
+	}
+	std::string dir = this->builder->_path.substr(0, this->builder->_path.find_last_of('/'));
+	ProcessNode(scene->mRootNode, scene);
+	float* vertices = &meshObject->vertices[0];
+	unsigned int* indices = &meshObject->indices[0];
+	unsigned int bufferDataSizes[3] = { 3, 2, 3 };
+	Create(vertices, indices, meshObject->vertices.size() / 8, meshObject->indices.size(), bufferDataSizes, 8);
+	ShapeName = "Custom";
 }
 
 void CustomShape::GetBufferVertices(aiMesh * mesh, const aiScene * scene)
@@ -76,7 +100,7 @@ void CustomShape::SetTextures(aiMaterial * mat, aiTextureType type)
 		 aiString str;
 		 mat->GetTexture(type, i, &str);
 		 Texture* tex = new Texture(str.C_Str(), i);
-		 textures.push_back(tex);
+		 tm.Textures.push_back(tex);
 	 }
 	 
 }
@@ -98,9 +122,7 @@ void CustomShape::ProcessNode(aiNode* node, const aiScene* scene)
 void CustomShape::CreateMVPMatrix()
 {
 	mvp.model = glm::mat4(1.0f);
-	insideLightPos = glm::vec3(1.0f, 1.2f, 1.0f);
-	mvp.model = glm::translate(mvp.model, insideLightPos);
-	mvpResult = mvp.proj * mvp.view * mvp.model;
+	mvp.model = glm::translate(mvp.model, builder->Pos);
 }
 
 glm::vec3 CustomShape::GetNormal()
@@ -108,9 +130,6 @@ glm::vec3 CustomShape::GetNormal()
 	return glm::vec3();
 }
 
-CustomShape::CustomShape()
-{
-}
 
 
 CustomShape::~CustomShape()
@@ -119,24 +138,10 @@ CustomShape::~CustomShape()
 
 void CustomShape::Update()
 {
-	sm.Bind();
-	for(Texture* texture: textures)
+	sc.EnableUse();
+	for(Texture* texture: tm.Textures)
 		texture->Bind();
-	mvpResult = mvp.proj * mvp.view * mvp.model;
-	shaders[0]->SetUniformMat4f("u_MVP", mvpResult, sm.GetProgram());
-	sm.UnBind();
-	sm.Bind();
-	ib->Bind();
-	va->Bind();
+	ShaderTypeGenerator::UpdateModel(sm->shaders, sc.GetCurrentProgram(), mvp.model);
+	bm->ActivateShapeBufferParts();
 }
 
-void CustomShape::GenerateShaders()
-{
-	shaders.push_back(new Shader("Shaders\\LightDefaultVertexShader.vert"));
-	shaders.push_back(new Shader("Shaders\\LightDefaultFragmentShader.frag"));
-	sm.AddShadersToProgram(shaders);
-	sm.Bind();
-	CreateMVPMatrix();
-	shaders[0]->SetUniformMat4f("u_MVP", mvpResult, sm.GetProgram());
-	shaders[1]->SetUniform4f("u_color", 1.0f, 1.0f, 1.0f, 1.0f, sm.GetProgram());
-}

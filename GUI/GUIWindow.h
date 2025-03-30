@@ -19,8 +19,8 @@
 #include <glbinding/glbinding.h>  // Initialize with glbinding::initialize()
 #include <glbinding/gl/gl.h>
 using namespace gl;
-#else
-#include IMGUI_IMPL_OPENGL_LOADER_CUSTOM
+//#else
+//#include IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 #endif
 
 // Include glfw3.h after our OpenGL definitions

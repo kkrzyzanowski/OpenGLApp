@@ -16,7 +16,7 @@ public:
 	PointTranslator();
 	void SetMousePoint(double x, double y);
 	void CalculateScaledMousePoint();
-	glm::vec3 GetPerspectivePoint(float zModel);
+	glm::vec3 GetWorldPoint();
 	
 	
 };
