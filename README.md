@@ -1,6 +1,6 @@
 # OpenGLApp
 
-OpenGLApp is a demo project showcasing the capabilities of rendering graphics using OpenGL. The project is mainly written in C++ with elements of C, C#, CMake, and Objective-C++.
+OpenGLApp is a demo project showcasing the capabilities of rendering graphics using OpenGL. 
 
 ## Table of Contents
 - [Requirements](#requirements)
@@ -20,6 +20,10 @@ OpenGLApp is a demo project showcasing the capabilities of rendering graphics us
 - Input handling with GLFW
 - Utilizing mathematical functions with GLM
 - Examples of various graphic effects
+- Selection by mouse using raycasting
+- Implementing models, terrain
+- Managing framebuffers to use effects like HDR or shadows(not ready)
+- Possibility to add different type of texutres like normal map or specular map
 
 ## Examples
 
