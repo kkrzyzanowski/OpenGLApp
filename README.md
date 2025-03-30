@@ -25,7 +25,7 @@ OpenGLApp is a demo project showcasing the capabilities of rendering graphics us
 
 Code usage examples and screenshots.
 
-![Example Screenshot](./screenshots/example.png)
+![1](https://github.com/user-attachments/assets/8d90be1b-3c12-4217-bc19-f88d5975dc51)
 
 ## License
 
