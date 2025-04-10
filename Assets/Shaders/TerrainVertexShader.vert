@@ -27,7 +27,7 @@ uniform vec3 offset[val];
 void main()
 {
 	TexCoords = texCoord;
-	FragPos = vec3(model * vec4(position, 1.0));
+	FragPos = vec3(model * vec4(position + offset[gl_InstanceID], 1.0));
 	Normal = transpose(inverse(mat3(model))) * normal;
 	FragPosLightSpace = lightSpaceMatrix * vec4(FragPos, 1.0);
 	gl_Position = projection * view * model * vec4(position + offset[gl_InstanceID], 1.0);

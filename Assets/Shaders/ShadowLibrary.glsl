@@ -7,9 +7,10 @@ float ShadowCalculation(vec4 fragPosLightSpace, sampler2D shadowMap)
 	// closest depth value from light perspective
 	float closestDepth = texture(shadowMap, projCoords.xy).r;
 	// get depth of current fragment from light's perspective
+	float bias = 0.1;
 	float currentDepth = projCoords.z;
 	//check whether current frag pos is in ShadowCalculation
-	float shadow = currentDepth > closestDepth ? 1.0 : 0.0;
+	float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
 	return shadow;
  }
 
