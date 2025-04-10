@@ -41,5 +41,13 @@ OpenGLApp/Debug/*
 *.png
 *.js
 *.jpg
-assimp-4.1.0/
-assimp-3.1.1-win-binaries/
+*.tlog
+*.log
+*.pdb
+
+assimp-4.1.0/*
+assimp-3.1.1-win-binaries/*
+/GUI/Debug/*
+/BUILDER/*
+/Stb_image_reader/Debug/*
+
