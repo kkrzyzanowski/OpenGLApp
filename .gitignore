@@ -38,16 +38,16 @@ OpenGLApp/Debug/*
 *.html
 *.in
 *.yml
-*.png
 *.js
-*.jpg
+*.pdb
+*.idb
 *.tlog
 *.log
-*.pdb
 
-assimp-4.1.0/*
-assimp-3.1.1-win-binaries/*
-/GUI/Debug/*
-/BUILDER/*
+assimp-4.1.0/
+assimp-3.1.1-win-binaries/
+/BUILDER
 /Stb_image_reader/Debug/*
-
+/GUI/Debug/*
+/glm/doc/api/*
+/glm/doc/manual/*
