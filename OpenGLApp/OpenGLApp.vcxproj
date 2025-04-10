@@ -76,14 +76,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\DyskD\ProjectsCpp\OpenGLApp\assimp-4.1.0\include;C:\DyskD\ProjectsCpp\OpenGLApp\Stb_image_reader;$(SolutionDir)glfw-3.2.1.bin.WIN32\include;$(SolutionDir)glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)assimp-4.1.0\include;$(SolutionDir)Stb_image_reader;$(SolutionDir)glfw-3.2.1.bin.WIN32\include;$(SolutionDir)glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GLEW_STATIC;_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>glfw3.lib;opengl32.lib;glew32s.lib;assimp-vc140-mt.lib;Stbimagereader.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(IntDir);C:\DyskD\ProjectsCpp\OpenGLApp\assimp-4.1.0\lib;$(SolutionDir)glfw-3.2.1.bin.WIN32\lib-vc2015;$(SolutionDir)glew-2.1.0\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(IntDir);$(SolutionDir)assimp-4.1.0\lib;$(SolutionDir)glfw-3.2.1.bin.WIN32\lib-vc2015;$(SolutionDir)glew-2.1.0\lib\Release\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

@@ -56,6 +56,7 @@ void Sphere::CreateMVPMatrix()
 	if(builder->Angle != 0.0f)
 		mvp.model = glm::rotate(mvp.model, builder->Angle, builder->Axis);
 	TranslatePoints(mvp.model, shapeElements.vertices);
+	shapeElements.triangles = InitializeTriangles(verts->Indexes, verts->IndexesCount, shapeElements.vertices);
 }
 
 

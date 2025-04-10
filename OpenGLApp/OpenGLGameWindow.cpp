@@ -79,7 +79,7 @@ int OpenGLGameWindow::CreateWindow()
 		.Shader(DIFFUSE_VERT_PATH)
 		.Shader(DIFFUSE_FRAG_PATH)
 		.Shadow(true)
-		.Position(glm::vec3(0.6f, -.9f, -3.0f))
+		.Position(glm::vec3(0.6f, 0.12f, -3.0f))
 		.Create(ShapeType::CUBE));
 
 	ShapeManager::shapes.emplace_back(shapesBuilder->ObjectState(CamView::DYNAMIC)
@@ -173,7 +173,7 @@ int OpenGLGameWindow::CreateWindow()
 	std::unique_ptr<LightBuilder> lightBuilder = std::make_unique<LightBuilder>();
 
 	LightManager::lights.push_back(lightBuilder->SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f))
-		.Position(glm::vec3(-1.9f, -7.5f, 2.0f))
+		.Position(glm::vec3(-1.9f, 3.5f, 2.0f))
 		.Create(LightType::DEFAULT));
 
 	LightManager::lights.push_back(lightBuilder->SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f))
@@ -349,7 +349,6 @@ int OpenGLGameWindow::CreateWindow()
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
 	{
-
 		cam->Update();
 		/* Render here */
 		//HDRframeBuffer->Bind();
