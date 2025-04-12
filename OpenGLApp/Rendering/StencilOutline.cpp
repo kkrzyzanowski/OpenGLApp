@@ -27,6 +27,14 @@ void StencilOutline::InitializeModel(glm::mat4& model)
 	params.push_back(mvpOutline.model);
 }
 
+void StencilOutline::UpdateModel(glm::mat4& model)
+{
+	mvpOutline.model = model;
+	float scale = 1.01f;
+	mvpOutline.model = glm::scale(mvpOutline.model, glm::vec3(scale));
+	params[0] = mvpOutline.model;
+}
+
 void StencilOutline::SetColor(glm::vec3 color)
 {
 	params.push_back(glm::vec3(0.34f, 0.65f, 0.11f));

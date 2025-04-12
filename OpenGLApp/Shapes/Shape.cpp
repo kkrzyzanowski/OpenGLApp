@@ -209,8 +209,7 @@ void Shape::InitializePickedShape()
 }
 void Shape::UpdatePickedShape()
 {
-	stencilOutline->InitializeModel(mvp.model);
-	stencilOutline->InitializeView(mvp.view);
+	stencilOutline->UpdateModel(mvp.model);
 	stencilOutline->Update();
 	bm->ActivateShapeBufferParts();
 }
@@ -427,7 +426,6 @@ void Shape::TranslatePoints(glm::mat4& model, Vertices& verts)
 		iterator->x = point4f.x;
 		iterator->y = point4f.y;
 		iterator->z = point4f.z;
-
 	}
 }
 
