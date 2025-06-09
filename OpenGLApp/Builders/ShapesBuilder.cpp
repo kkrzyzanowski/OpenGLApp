@@ -22,12 +22,14 @@ ShapesBuilder::ShapesBuilder(ShapesBuilder&& other) noexcept
 	this->ShadingType = std::move(other.ShadingType);
 	this->_path = std::move(other._path);
 	this->IsShadowActive = std::move(other.IsShadowActive);
+	this->ScaleVector = other.ScaleVector;
 	this->HDR = other.HDR;
 	other.texturePaths.clear();
 	other.shaderPaths.clear();
 	other.ShadingType = Shading::FORWARD_SHADING;
 	other.IsShadowActive = false;
 	other.HDR = false;
+	other.ScaleVector = glm::vec3(1.0f);
 }
 
 ShapesBuilder::ShapesBuilder(const ShapesBuilder& other) noexcept

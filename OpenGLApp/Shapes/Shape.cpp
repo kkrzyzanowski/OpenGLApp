@@ -65,7 +65,7 @@ void Shape::GenerateTextures(std::vector<Texture*>& textures)
 
 void Shape::DeactivateShapeBufferParts()
 {
-	bm->DeactivateShapeBufferParts();
+	bm->UnbindBuffers();
 }
 
 void Shape::Update()
@@ -75,7 +75,7 @@ void Shape::Update()
 	for (Texture* texture : tm.Textures)
 		texture->Bind();
 	ShaderTypeGenerator::UpdateModel(sm->shaders, sc.GetCurrentProgram(), mvp.model);
-	bm->ActivateShapeBufferParts();
+	bm->BindBuffers();
 }
 
 void Shape::AfterUpdate()
@@ -87,7 +87,7 @@ void Shape::AfterUpdate()
 
 void Shape::ActivateShapeBufferParts()
 {
-	bm->ActivateShapeBufferParts();
+	bm->BindBuffers();
 }
 void Shape::ApplyShapeView(const glm::mat4& view)
 {
@@ -167,6 +167,7 @@ void Shape::SetPosition(const glm::vec3& pos)
 }
 void Shape::Scale(float value)
 {
+
 }
 void Shape::Rotate(float value)
 {
@@ -211,7 +212,7 @@ void Shape::UpdatePickedShape()
 {
 	stencilOutline->UpdateModel(mvp.model);
 	stencilOutline->Update();
-	bm->ActivateShapeBufferParts();
+	bm->BindBuffers();
 }
 
 Shape::~Shape()

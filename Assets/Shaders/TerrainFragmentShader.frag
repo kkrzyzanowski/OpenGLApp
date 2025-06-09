@@ -18,7 +18,7 @@ uniform vec3 sunLight;
 uniform vec3 skyLight;
 
 uniform sampler2D terrainTexture;
- uniform sampler2D shadowMap;
+uniform sampler2D shadowMap;
 
  float near =0.1;
  float far = 10;
@@ -26,7 +26,7 @@ uniform sampler2D terrainTexture;
 
 void main()
 {
-	vec3 ambient = light.ambient * vec3(texture(terrainTexture, TexCoords)) * sunLight * skyLight * material.ambient;
+	vec3 ambient =  vec3(texture(terrainTexture, TexCoords)) * sunLight * skyLight;
 
 	vec3 norm = normalize(Normal);
 	float dist = length(light.lightPos - FragPos);

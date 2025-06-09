@@ -20,19 +20,18 @@ public:
 	FrameBuffer();
 	FrameBuffer(FrameBufferBuilder& builder);
 	void Bind();
+	void ReadBind();
+	void DrawBind();
 	static void UnBind();
-	void GenerateRenderBuffer(RenderBuffer* rbo);
 	void GenerateTexture();
 	void GenerateShadowTexture();
-	void GenerateHDRTexture();
 	bool CheckFrameBuffer();
 	void TurnOffFrameBufferElements();
 	void TurnOnFrameBufferElements();
 	void InitializeShaders(unsigned short textureSlot = 0);
 	void InitializePostProcessingShaders();
-	void AddTexturesToBuffer(std::vector<Texture*>& textures);
+	void AddTexturesToBuffer(std::vector<Texture*>& textures, FrameBufferType type);
 	void AddTexturesToBuffer(std::vector<Texture*>&& textures);
-	void AddTexturesToBuffer(Texture** textures);
 	void InitializeHDRShaders();
 
 	void InitializeGaussianBlurShaders();
@@ -41,13 +40,12 @@ public:
 	void InitializeFrameBufferShader(const std::string& vertexPath, const std::string& fragmentPath, std::function<void(std::vector<Shader*>&, unsigned int)> shaderGeneratorFunc);
 	void InitializeFrameBufferShader(const char* vertexPath, const char* fragmentPath, std::function<void(std::vector<Shader*>&, unsigned int)> shaderGeneratorFunc);
 
-	Texture* GetFramebufferTexture();
+	Texture* GetFramebufferTexture(unsigned int slot = 0);
 	std::vector<Texture*> GetFramebufferTextures();
 	IndexBuffer* GetIndexBuffer();
 	unsigned int GetFrameBuffer() const;
 	void DrawBuffers(unsigned short colorAtachhment);
-	void DrawBuffers();
-	void GenerateHDRTextures(unsigned short size = 0);
+	void DrawBuffers(FrameBufferType type);
 	void SetFunctionShader(FrameBufferType type);
 	void AddParams(ShaderParams param);
 	void AddShaders(const std::vector<const char*>& paths);
@@ -55,7 +53,6 @@ public:
 	std::vector<Shader*> GetFrameBufferShaders();
 
 	~FrameBuffer();
-	void ActivateFramebufferTexture();
 private:
 	void InitializeBufferScreenCoords();
 	unsigned int texColorBuffer;

@@ -84,7 +84,7 @@ void ShaderTypeGenerator::HDRShaderGenerator(std::vector<Shader*>& shaders, unsi
 void ShaderTypeGenerator::HDRGaussianBlurShaderGenerator(std::vector<Shader*>& shaders, unsigned int program, std::vector<ShaderParams>& params)
 {
 	shaders[1]->SetUniform1i("scene", 0, program);
-	shaders[1]->SetUniform1i("blur", 1, program);
+	//shaders[1]->SetUniform1i("bloom", 1, program);
 	shaders[1]->SetUniform1f("exposure", 1.0f, program);
 }
 
@@ -131,6 +131,7 @@ void ShaderTypeGenerator::InstancedTerrainShaderGenerator(std::vector<Shader*>& 
 	shaders[0]->SetUniform3f("offset[" + std::to_string(instanceNumber) + "]", offset, program);
 	shaders[0]->SetUniformMat4f("lightSpaceMatrix", lightSpaceMatrix, program);
 	shaders[1]->SetUniform1i("terrainTexture", 0, program);
+	shaders[1]->SetUniform1i("shadowMap", 7, program);
 
 	shaders[1]->SetUniform1i("material.diffuse", 1, program);
 	shaders[1]->SetUniform1i("material.specular", 2, program);
@@ -165,7 +166,7 @@ void ShaderTypeGenerator::LightShadowShaderGenerator(std::vector<Shader*>& shade
 void ShaderTypeGenerator::UpdateBloomShader(std::vector<Shader*>& shaders, unsigned int program, std::vector<ShaderParams>& params)
 {
 	bool horizontal = std::get<bool>(params[0]);
-	shaders[1]->SetUniform1i("bloomHDRTexture", 0, program);
+	shaders[1]->SetUniform1i("bloomTexture", 0, program);
 	shaders[1]->SetUniform1i("horizontal", horizontal, program);
 }
 
@@ -228,8 +229,13 @@ void ShaderTypeGenerator::UpdateLightiningHDR(std::vector<Shader*>& shaders, uns
 		shaders[1]->SetUniform3f("simpleLights[" + std::to_string(light.lightNumber) + "].color", light.color, program);
 		shaders[1]->SetUniform3f("simpleLights.ambient", glm::vec3(0.2f, 0.2f, 0.2f), program);
 	}
+}
 
-
+void ShaderTypeGenerator::UpdateFinalBloomShader(std::vector<Shader*>& shaders, unsigned int program, std::vector<ShaderParams>& params)
+{
+	float exposure = std::get<float>(params[0]);
+	shaders[1]->SetUniform1i("bloom", 1, program);
+	shaders[1]->SetUniform1f("exposure", exposure, program);
 }
 
 

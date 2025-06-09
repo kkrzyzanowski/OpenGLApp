@@ -60,17 +60,19 @@ void Plane::CreateMVPMatrix()
 	mvp.model = glm::scale(mvp.model, builder->ScaleVector);
 	if(builder->Angle != 0.0f)
 		mvp.model = glm::rotate(mvp.model, glm::radians(builder->Angle), builder->Axis);
+	mvp.model = glm::scale(mvp.model, builder->ScaleVector);
 	TranslatePoints(mvp.model, shapeElements.vertices);
 	shapeElements.triangles = InitializeTriangles(verts->Indexes, verts->IndexesCount, shapeElements.vertices);
 }
 
 void Plane::Update()
 {
+	sc.ActivateDefaultProgram();
 	sc.EnableUse();
 	for (Texture* texture : tm.Textures)
 		texture->Bind();
 	ShaderTypeGenerator::UpdateModel(sm->shaders, sc.GetCurrentProgram(), mvp.model);
-	bm->ActivateShapeBufferParts();
+	bm->BindBuffers();
 }
 
 Plane::~Plane()

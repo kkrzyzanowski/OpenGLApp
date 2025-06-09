@@ -40,7 +40,7 @@ void LightManager::CreateShadowForLights(std::shared_ptr<Shape> shape)
 		params.push_back(glm::vec3(0.0f));
 		params.push_back(unsigned int(0));
 		ShaderTypeGenerator::LightShadowShaderGenerator(shadowShaders, shape->sc.GetCurrentProgram(), params);
-		shape->bm->ActivateShapeBufferParts();
+		shape->bm->BindBuffers();
 		break;
 	}
 }
@@ -67,7 +67,7 @@ void LightManager::CreateShadowForLightsTerrain(std::shared_ptr<Terrain> shape)
 			params[3] = i;
 			ShaderTypeGenerator::LightShadowShaderGenerator(shadowShaders, shape->sc.GetCurrentProgram(), params);
 		}
-		shape->bm->ActivateShapeBufferParts();
+		shape->bm->BindBuffers();
 		break;
 	}
 }

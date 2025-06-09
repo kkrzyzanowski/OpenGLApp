@@ -48,6 +48,33 @@ void ShapeManager::AddShape(ShapeType type)
 	//shapes.push_back(shapesBuilder->Create(type));
 }
 
+std::vector<std::shared_ptr<Shape>> ShapeManager::FilterShape(Shading shadingType)  
+{  
+   std::vector<std::shared_ptr<Shape>> filteredShapes;  
+   for (const auto& shape : shapes)  
+   {  
+       if (shape->GetShading() != shadingType)  
+       {  
+           filteredShapes.push_back(shape);  
+       }  
+   }  
+   return filteredShapes;  
+}  
+
+std::vector<std::shared_ptr<Shape>> ShapeManager::FilterShape(bool shadow)
+{  
+   static std::vector<std::shared_ptr<Shape>> filteredShapes;  
+   filteredShapes.clear();  
+   for (const auto& shape : shapes)  
+   {  
+       if (shape->IsShadowTurnOn() == shadow)  
+       {  
+           filteredShapes.push_back(shape);  
+       }  
+   }  
+   return filteredShapes;  
+}
+
 ShapeManager::~ShapeManager()
 {
 }

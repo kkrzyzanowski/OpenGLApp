@@ -53,3 +53,8 @@ void Renderer::ClearDepth() const
 {
 	glClear(GL_DEPTH_BUFFER_BIT);
 }
+
+void Renderer::ClearStencil() const
+{
+	glClear(GL_STENCIL_BUFFER_BIT);
+}

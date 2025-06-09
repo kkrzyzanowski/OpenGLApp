@@ -6,7 +6,7 @@
 #include <variant>
 #include <functional>
 
-using ShaderParams = std::variant<glm::mat4, glm::vec3, glm::vec4, MVP, bool, unsigned int, unsigned short, std::vector<SimpleLight>>;
+using ShaderParams = std::variant<glm::mat4, glm::vec3, glm::vec4, MVP, bool, float, unsigned int, unsigned short, std::vector<SimpleLight>>;
 using ShaderFunction = std::function<void(std::vector<Shader*>&, unsigned int, std::vector<ShaderParams>&)>;
 static class ShaderTypeGenerator
 {
@@ -36,6 +36,7 @@ public:
 	static void UpdateModelWithColor(std::vector<Shader*>& shaders, unsigned int program, std::vector<ShaderParams>& params);
 	static void UpdateModelColorandTexture(std::vector<Shader*>& shaders, unsigned int program, std::vector<ShaderParams>& params);
 	static void UpdateLightiningHDR(std::vector<Shader*>& shaders, unsigned int program, std::vector<ShaderParams>& params);
+	static void UpdateFinalBloomShader(std::vector<Shader*>& shaders, unsigned int program, std::vector<ShaderParams>& params);
 	static void PassDataToShader(std::vector<Shader*>& shader, unsigned int program);
 	~ShaderTypeGenerator();
 };

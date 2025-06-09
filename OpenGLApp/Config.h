@@ -47,6 +47,8 @@ static const char* GAUSSIANBLUR_VERT_PATH =		"..\\Assets\\Shaders\\GaussianBlurS
 static const char* GAUSSIANBLUR_FRAG_PATH =		"..\\Assets\\Shaders\\GaussianBlurShader.frag"								;
 static const char* LIGHTNING_HDR_VERT =			"..\\Assets\\Shaders\\LightningHDR.vert"									;
 static const char* LIGHTNING_HDR_FRAG =			"..\\Assets\\Shaders\\LightningHDR.frag"									;
+static const char* MAIN_TEXTURE_RENDER_VERT =	"..\\Assets\\Shaders\\MainTextureRender.vert"								;
+static const char* MAIN_TEXTURE_RENDER_FRAG =	"..\\Assets\\Shaders\\MainTextureRender.frag"								;
 
 static const char* TEMP_TEXTURE_DIFFUSE =		"..\\Assets\\Textures\\BrickMedievalBlocks0129_2_M.jpg"						;
 static const char* TEMP_TEXTURE_SPECULAR =		"..\\Assets\\Textures\\BrickMedievalBlocks0129_2_M_specular_map.jpg"			;
@@ -67,6 +69,7 @@ static const char* CUBEBOX_BACK_PATH =			"..\\Assets\\Textures\\SkyBox\\Daylight
 
 //Effects
 
-static bool SHADOW = true;
+static bool SHADOW = false;
 static bool POSTPROCESSING_EFFECTS = false;
 static bool HDR_LIGHT = false;
+static bool GAUSSIAN_BLUR = true;

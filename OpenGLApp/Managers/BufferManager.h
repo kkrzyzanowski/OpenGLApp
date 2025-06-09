@@ -10,8 +10,8 @@ public:
 	void CreateBuffers(const GLfloat* points, unsigned int* orderIndex, unsigned int countVertices, unsigned int countIndexes, unsigned int* bufferDataSizes, unsigned int dataSize = 8);
 	void CreateBuffersOnlyVertex(const GLfloat* points, unsigned int* orderIndex, unsigned int countVertices, unsigned int countIndexes);
 	void CreateBuffers(const GLfloat* points, std::vector<int>& orderIndex, unsigned int countVertices, unsigned int countIndexes, unsigned int* bufferDataSizes, unsigned int dataSize = 8);
-	void DeactivateShapeBufferParts();
-	void ActivateShapeBufferParts();
+	void UnbindBuffers();
+	void BindBuffers();
 	VertexArray* GetVertexArray();
 	VertexBuffer* GetVertexBuffer();
 	IndexBuffer* GetIndexBuffer();

@@ -45,7 +45,7 @@ void Sphere::Update()
 	for(Texture* texture: tm.Textures)
 		texture->Bind();
 	ShaderTypeGenerator::UpdateModel(sm->shaders, sc.GetDefaultProgram(), mvp.model);
-	bm->ActivateShapeBufferParts();
+	bm->BindBuffers();
 }
 
 

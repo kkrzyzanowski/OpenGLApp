@@ -67,9 +67,9 @@ FrameBufferBuilder& FrameBufferBuilder::Name(const char* name)
 	return *this;
 }
 
-FrameBufferBuilder& FrameBufferBuilder::AddTexture(TextureMode mode)
+FrameBufferBuilder& FrameBufferBuilder::AddTexture(TextureMode mode, unsigned short slot, unsigned short colorAttachment)
 {
-	textures.push_back(new Texture(0, 0, 5126, mode));
+	textures.push_back(new Texture(slot, colorAttachment, 5126, mode));
 	return *this;
 }
 	

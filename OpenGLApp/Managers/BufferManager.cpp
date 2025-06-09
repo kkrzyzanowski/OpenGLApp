@@ -29,14 +29,14 @@ void BufferManager::CreateBuffers(const GLfloat* points, std::vector<int>& order
 	ib = new IndexBuffer(static_cast<void*>(orderIndex.data()), countIndexes); //indexes count
 }
 
-void BufferManager::DeactivateShapeBufferParts()
+void BufferManager::UnbindBuffers()
 {
 	va->UnBind();
 	vb->UnBind();
 	ib->UnBind();
 }
 
-void BufferManager::ActivateShapeBufferParts()
+void BufferManager::BindBuffers()
 {
 	va->Bind();
 	vb->Bind();

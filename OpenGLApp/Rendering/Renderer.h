@@ -27,6 +27,7 @@ public:
 	void Clear() const;
 	void ClearColor() const;
 	void ClearDepth() const;
+	void ClearStencil() const;
 };
 
 

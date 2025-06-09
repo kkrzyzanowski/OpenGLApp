@@ -3,6 +3,7 @@
 
 #include "OpenGLGameWindow.h"
 #include "Managers/FrameBufferManager.h"
+#include "PlaneView.h"
 
 
 // to-do do textures for framebuffer (maybe class or something like that) to prepare connection beetween framebuffers
@@ -82,6 +83,18 @@ int OpenGLGameWindow::CreateWindow()
 		.Position(glm::vec3(0.6f, 0.12f, -3.0f))
 		.Create(ShapeType::CUBE));
 
+	//ShapeManager::shapes.emplace_back(shapesBuilder->ObjectState(CamView::DYNAMIC)
+	//	.SourceType(SourceShapeType::SHAPE)
+	//	.Texture(TEMP_TEXTURE_DIFFUSE)
+	//	.Texture(TEMP_TEXTURE_SPECULAR)
+	//	.Shader(DIFFUSE_VERT_PATH)
+	//	.Shader(DIFFUSE_FRAG_PATH)
+	//	.Shadow(true)
+	//	.Rotation(glm::vec3(0.0f, 0.0f, 0.0f), 0.0f)
+	//	.Position(glm::vec3(0.0f, -1.0f, -3.0f))
+	//	.Scale(glm::vec3(5.0f, 1.0f, 5.0f))
+	//	.Create(ShapeType::PLANE));
+
 	ShapeManager::shapes.emplace_back(shapesBuilder->ObjectState(CamView::DYNAMIC)
 		.SourceType(SourceShapeType::SHAPE)
 		.Texture(TEMP_TEXTURE_DIFFUSE)
@@ -148,7 +161,7 @@ int OpenGLGameWindow::CreateWindow()
 	//	.Color(glm::vec4(0.43f, 0.56f, 0.23f, 1.0f))
 	//	.Create(ShapeType::LINE));
 
-	TerrainProperties tp = { -4.0f, 1.0f, 16, 16, glm::vec3(0.0f, -4.0f, 0.0f) };
+	TerrainProperties tp = { -4.0f, 1.0f, 16, 16, glm::vec3(0.0f, -3.0f, 0.0f) };
 	ShapeManager::shapes.push_back(shapesBuilder->ObjectState(CamView::DYNAMIC)
 		.SourceType(SourceShapeType::SHAPE)
 		.Texture(TEMP_TEXTURE_GRASS)
@@ -158,26 +171,14 @@ int OpenGLGameWindow::CreateWindow()
 		.CustomProperties(tp)
 		.Create(ShapeType::TERRAIN));
 
-
-	auto filteredShapes = [&](Shading shadingType)
-		{
-			std::vector<std::shared_ptr<Shape>> shapes;
-			for (std::shared_ptr<Shape> shape : ShapeManager::shapes)
-			{
-				if (shape->GetShading() != shadingType)
-					shapes.push_back(shape);
-			}
-			return shapes;
-		};
-
 	std::unique_ptr<LightBuilder> lightBuilder = std::make_unique<LightBuilder>();
 
 	LightManager::lights.push_back(lightBuilder->SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f))
-		.Position(glm::vec3(-1.9f, 3.5f, 2.0f))
+		.Position(glm::vec3(2.5f, 2.5f, -2.5f))
 		.Create(LightType::DEFAULT));
 
 	LightManager::lights.push_back(lightBuilder->SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f))
-		.Position(glm::vec3(5.0f, 1.0f, -3.0f))
+		.Position(glm::vec3(2.0f, 1.0f, -3.0f))
 		.Create(LightType::DEFAULT));
 
 	//Creation light
@@ -207,59 +208,27 @@ int OpenGLGameWindow::CreateWindow()
 	frameBufferBuilder->ResetData();
 
 
-	FrameBufferManager::CreateFRBuffer(FrameBufferType::HDR, frameBufferBuilder->AddShaderByPath(HDR_GAUSSIANBLUR_VERT_PATH)
+	FrameBufferManager::CreateFRBuffer(FrameBufferType::BLUR, frameBufferBuilder->AddShaderByPath(HDR_GAUSSIANBLUR_VERT_PATH)
 		.AddShaderByPath(HDR_GAUSSIANBLUR_FRAG_PATH)
-		.AddTexture(TextureMode::HDR_TEXTURE)
-		.AddTexture(TextureMode::HDR_TEXTURE)
+		.AddTexture(TextureMode::HDR_TEXTURE, 0, 0)
+		.AddTexture(TextureMode::HDR_TEXTURE, 0, 1)
 		.Create(FrameBufferType::BLUR));
 	frameBufferBuilder->ResetData();
 
 
 	FrameBufferManager::CreateFRBuffer(FrameBufferType::GAUUSIAN_HORIZONTAL, frameBufferBuilder->AddShaderByPath(GAUSSIANBLUR_VERT_PATH)
 		.AddShaderByPath(GAUSSIANBLUR_FRAG_PATH)
-		.AddTexture(TextureMode::HDR_TEXTURE)
+		.AddTexture(TextureMode::HDR_TEXTURE, 0)
 		.Create(FrameBufferType::GAUUSIAN_HORIZONTAL));
 	frameBufferBuilder->ResetData();
 
-	FrameBufferManager::CreateFRBuffer(FrameBufferType::GAUSSIAN_VERTICAL, frameBufferBuilder->AddShaders(FrameBufferManager::FRbuffer_container[FrameBufferType::GAUUSIAN_HORIZONTAL].frameBuffer->GetFrameBufferShaders())
-		.AddTexture(TextureMode::HDR_TEXTURE)
-		.Create(FrameBufferType::GAUSSIAN_VERTICAL));
+	FrameBufferManager::CreateFRBuffer(FrameBufferType::MAIN, frameBufferBuilder->AddTexture(TextureMode::FRAMEBUFFER)
+		.AddShaderByPath(MAIN_TEXTURE_RENDER_VERT)
+		.AddShaderByPath(MAIN_TEXTURE_RENDER_FRAG)
+		.Create(FrameBufferType::MAIN));
 
 	FrameBufferManager::InitializeFrameBuffers();
 
-	//HDR framebuffer
-	FrameBuffer* HDRframeBuffer = new FrameBuffer();
-	RenderBuffer* HDRrenderBuffer = new RenderBuffer();
-	HDRframeBuffer->Bind();
-	HDRframeBuffer->GenerateHDRTextures(2);
-	HDRframeBuffer->InitializeHDRShaders();
-
-	HDRrenderBuffer->Bind();
-	HDRrenderBuffer->GenerateDepthRenderBuffer();
-	HDRrenderBuffer->UnBind();
-	HDRrenderBuffer->GenerateDepthFrameRenderBuffer();
-	HDRframeBuffer->CheckFrameBuffer();
-
-	HDRframeBuffer->UnBind();
-
-	//Shadow depth map initalizer
-	//FrameBuffer* depthMapFrameBuffer = new FrameBuffer();
-	//depthMapFrameBuffer->Bind();
-	//depthMapFrameBuffer->GenerateShadowTexture();
-	//glDrawBuffer(GL_NONE);
-	//glReadBuffer(GL_NONE);
-	//depthMapFrameBuffer->UnBind();
-
-
-	//Pingpong Gauss framebuffer
-	FrameBuffer* pingpongFramebuffer = new FrameBuffer[2]();
-	for (int i = 0; i < 2; ++i)
-	{
-		pingpongFramebuffer[i].Bind();
-		pingpongFramebuffer[i].GenerateHDRTexture();
-		pingpongFramebuffer[i].InitializeGaussianBlurShaders();
-		pingpongFramebuffer[i].UnBind();
-	}
 
 	/// Deffered shading framebuffers
 
@@ -273,7 +242,7 @@ int OpenGLGameWindow::CreateWindow()
 	normalTexture->CreateTextureForFrameBuffer();
 	colorSpecTexture->CreateTextureForFrameBuffer();
 	gBuffer->AddTexturesToBuffer({ positionTexture.get(), normalTexture.get(), colorSpecTexture.get() });
-	gBuffer->DrawBuffers();
+	//gBuffer->DrawBuffers();
 	//gBuffer->InitializeFrameBufferShader(DEFFERED_VERT_PATH, DEFFERED_FRAG_PATH, ShaderTypeGenerator::PassLightMatrixData);
 	gRenderBuffer->Bind();
 	gRenderBuffer->GenerateDepthRenderBuffer();
@@ -282,7 +251,7 @@ int OpenGLGameWindow::CreateWindow()
 	gBuffer->UnBind();
 
 
-	 
+
 	///add shadow map to shader
 	/*Texture* shadowMapRaw = depthMapFrameBuffer->GetFramebufferTexture();
 	std::shared_ptr<Texture> shadowMap = std::shared_ptr<Texture>(shadowMapRaw);
@@ -296,25 +265,6 @@ int OpenGLGameWindow::CreateWindow()
 	cam->PassProjectionToShaders();
 	cam->PassViewToShaders();
 
-
-
-	//Postprocesing initializer
-	FrameBuffer* frameBuffer = new FrameBuffer();
-	RenderBuffer* renderBuffer = new RenderBuffer();
-
-	frameBuffer->Bind();
-	frameBuffer->GenerateTexture();
-
-	frameBuffer->InitializePostProcessingShaders();
-	renderBuffer->Bind();
-	renderBuffer->GenerateRenderBuffer();
-	renderBuffer->UnBind();
-	renderBuffer->GenerateFrameRenderBuffer();
-	if (!frameBuffer->CheckFrameBuffer())
-		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
-
-
-	FrameBuffer::UnBind();
 
 	for (std::shared_ptr<Shape> s : ShapeManager::shapes)
 	{
@@ -336,15 +286,31 @@ int OpenGLGameWindow::CreateWindow()
 	glEnable(GL_STENCIL_TEST);
 	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-
-	float distance = 1000.0f;
+	std::shared_ptr<PlaneView> planeView;
+	if (GAUSSIAN_BLUR)
+	{
+		//Texture* colorBufferTexture = FrameBufferManager::FRbuffer_container[BLUR].frameBuffer->GetFramebufferTexture(0);
+		//Texture* gaussianHorizontalTexture = FrameBufferManager::FRbuffer_container[GAUUSIAN_HORIZONTAL].frameBuffer->GetFramebufferTexture(0);
+		//Texture* gaussianVerticalTexture = FrameBufferManager::FRbuffer_container[GAUSSIAN_VERTICAL].frameBuffer->GetFramebufferTexture(0);
+		//std::vector<Texture*> textures = { colorBufferTexture, gaussianHorizontalTexture, gaussianVerticalTexture };
+		//Shader* gaussianShaderVert = new Shader(HDR_GAUSSIANBLUR_VERT_PATH);
+		//Shader* gaussianShaderFrag = new Shader(HDR_GAUSSIANBLUR_FRAG_PATH);
+		//std::vector<Shader*> gaussianShaders = { gaussianShaderVert, gaussianShaderFrag };
+		//planeView = std::make_shared<PlaneView>(textures,
+		//	gaussianShaders);
+		//planeView->SetFunction(ShaderTypeGenerator::UpdateFinalBloomShader);
+		//planeView->AddParams({ 0.5f });
+	}
 
 	GLfloat color[] = {
 		255, 0, 0
 	};
 
 	std::vector<std::shared_ptr<Shape>> selectedShapes;
-	auto forwardShapes = filteredShapes(Shading::DEFFERED_SHADING);
+	auto forwardShapes = ShapeManager::FilterShape(Shading::DEFFERED_SHADING);
+	auto shadowShapes = ShapeManager::FilterShape(true);
+
+	bool horizontal = true;
 	//auto defferedShapes = filteredShapes(Shading::DEFFERED_SHADING);
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
@@ -352,70 +318,24 @@ int OpenGLGameWindow::CreateWindow()
 		cam->Update();
 		/* Render here */
 		//HDRframeBuffer->Bind();
-		
-		if(POSTPROCESSING_EFFECTS)
+
+		if (POSTPROCESSING_EFFECTS)
 			FrameBufferManager::FRbuffer_container[POSTPROCESSING].frameBuffer->Bind();
 
-		//Lights
-		for (auto& light : LightManager::lights)
-		{
-			light->Update();
-			int verticesCount = light->bm->GetIndexBuffer()->GetCount();
-			renderer->Draw(verticesCount, GL_TRIANGLES);
-		}
-		
 		if (HDR_LIGHT)
 			FrameBufferManager::FRbuffer_container[HDR].frameBuffer->Bind();
 
-
-
-		glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-		FrameBufferManager::FRbuffer_container[DEPTHMAP].frameBuffer->Bind();	
-		
-		renderer->ClearDepth();
-		glEnable(GL_DEPTH_TEST);
-
-		//depthMapFrameBuffer->Bind();
-		////renderer->Clear();
-
-		//glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-
-		//depthMapFrameBuffer->GetFramebufferTexture()->Bind();
-		//
-		////render 
-
-		//for (auto& shape : ShapeManager::shapes)
-		//{
-		//	if (shape->GetSourceShapeType() == SourceShapeType::SHAPE)
-		//	{
-		//		shape->UpdateLight();
-		//		shape->ActivateShapeBufferParts();
-		//		int verticesCount = shape->bm->GetIndexBuffer()->GetCount();
-		//		auto terr = dynamic_cast<Terrain*>(shape.get());
-		//		if (terr == nullptr)
-		//		{
-		//			renderer->Draw(verticesCount, GL_TRIANGLES);
-		//		}
-		//		else
-		//			renderer->DrawArrayInstances(verticesCount, GL_TRIANGLE_STRIP, 256);
-
-		//		shape->DeactivateShapeBufferParts();
-		//	}
-
-		//}
-
-
-		//FrameBuffer::UnBind();
-		//renderer->Clear();
-		//glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-
-		//FrameBuffer::UnBind();
-
-
-		//TO-DO SET THIS LIGHTNING SHAPES
-		for (auto& shape : ShapeManager::shapes)
+		if (SHADOW)
 		{
-			if(shape->IsShadowTurnOn())
+			glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+			FrameBufferManager::FRbuffer_container[DEPTHMAP].frameBuffer->Bind();
+
+			renderer->ClearDepth();
+			glEnable(GL_DEPTH_TEST);
+
+
+			//TO-DO SET THIS LIGHTNING SHAPES
+			for (auto& shape : shadowShapes)
 			{
 				if (auto terr = dynamic_cast<Terrain*>(shape.get()))
 					LightManager::CreateShadowForLightsTerrain(std::static_pointer_cast<Terrain>(shape));
@@ -425,60 +345,33 @@ int OpenGLGameWindow::CreateWindow()
 				renderer->Draw(verticesCount, GL_TRIANGLES);
 				shape->DeactivateShapeBufferParts();
 			}
+
+			FrameBufferManager::FRbuffer_container[DEPTHMAP].frameBuffer->UnBind();
+
+			glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+			renderer->Clear();
 		}
-
-		FrameBufferManager::FRbuffer_container[DEPTHMAP].frameBuffer->UnBind();
-
-		glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-		renderer->Clear();
-		
-		//int count = 0;
 
 		glStencilMask(0x00);
 
-		glClearColor(0.0f, 0.2f, 0.0f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-		//Shapes
-		//for (auto& shape : ShapeManager::shapes)
-		//{
-		//	if (shape->Selected)
-		//	{
-		//		selectedShapes.push_back(shape);
-		//		continue;
-		//	}
-		//}
-
-		////deffered
-		//for (auto& shape : defferedShapes)
-		//{
-		//	shape->ApplyShapeView(cam->GetView());
-		//	shape->SetEyeCamPos(cam->GetCamPos());
-		//	shape->SetOutsideLight(light->Position);
-		//	shape->Update();
-		//	if (shape->GetSourceShapeType() != SourceShapeType::PRIMITIVE)
-		//	{
-		//		auto terr = dynamic_cast<Terrain*>(shape.get());
-		//		int verticesCount = shape->bm->GetIndexBuffer()->GetCount();
-		//		if (terr == nullptr)
-		//		{
-		//			renderer->Draw(verticesCount, GL_TRIANGLES);
-		//		}
-		//		else
-		//			renderer->DrawArrayInstances(verticesCount, GL_TRIANGLE_STRIP, 256);
-
-		//	}
-		//	shape->AfterUpdate();
-		//	shape->DeactivateShapeBufferParts();
-		//}
+		if (GAUSSIAN_BLUR)
+		{
+			FrameBufferManager::FRbuffer_container[BLUR].frameBuffer->Bind();
+			renderer->ClearColor();
+		}
+		//Lights
+		for (auto& light : LightManager::lights)
+		{
+			light->Update();
+			int verticesCount = light->bm->GetIndexBuffer()->GetCount();
+			renderer->Draw(verticesCount, GL_TRIANGLES);
+		}
 
 		//forward
 		for (auto& shape : forwardShapes)
 		{
-
-			/// view is not needed in shapes ;)
-			//shape->ApplyShapeView(cam->GetView());
-			//shape->SetEyeCamPos(cam->GetCamPos());
-
 			if (shape->Selected)
 			{
 				selectedShapes.push_back(shape);
@@ -520,7 +413,7 @@ int OpenGLGameWindow::CreateWindow()
 			renderer->Draw(sShape->bm->GetIndexBuffer()->GetCount(), GL_TRIANGLES);
 			sShape->DeactivateShapeBufferParts();
 
-			//draw object
+			////draw object
 			TurnOnNormalMask();
 			glDisable(GL_DEPTH_TEST);
 			sShape->UpdatePickedShape();
@@ -531,40 +424,55 @@ int OpenGLGameWindow::CreateWindow()
 		}
 		glDisable(GL_DEPTH_TEST);
 
-		//FrameBuffer::UnBind();
+		
 
-		//bool horizontal = true, firstIteration = true;
-		//int amount = 10;
+        // Fix for the initialization issue with FrameBufferType and bool
+		if (GAUSSIAN_BLUR)
+		{
+			FrameBufferManager::FRbuffer_container[BLUR].frameBuffer->UnBind();
+			FrameBufferManager::FRbuffer_container[BLUR].frameBuffer->TurnOffFrameBufferElements();
+			glDisable(GL_DEPTH_TEST);
+			bool firstIteration = true;
+			for (int i = 0; i < 1; ++i)
+			{
+				FrameBufferManager::FRbuffer_container[GAUUSIAN_HORIZONTAL].frameBuffer->Bind();
+				// bindujemy teksturê z BLUR jako wejœcie na slot 0
 
-		//for (unsigned int i = 0; i < amount; i++)
-		//{
-		//	pingpongFramebuffer[horizontal].Bind();
-		//	pingpongFramebuffer[horizontal].TurnOnFrameBufferElements();
-		//	pingpongFramebuffer[horizontal].UpdateGaussianBlurShaders(horizontal);
-		//	if (firstIteration)
-		//		HDRframeBuffer->GetFramebufferTextures()[1]->Bind();
-		//	else
-		//		pingpongFramebuffer[!horizontal].GetFramebufferTexture()->Bind();
+				if (firstIteration)
+				{
+					FrameBufferManager::FRbuffer_container[BLUR].frameBuffer->GetFramebufferTexture(1)->BindNoActive();
+					firstIteration = false;
+				}
+				else
+				{
+					FrameBufferManager::FRbuffer_container[GAUUSIAN_HORIZONTAL].frameBuffer->GetFramebufferTexture(0)->BindNoActive();
+				}
 
-		//	renderer->DrawArrays(6, GL_TRIANGLES);
+				FrameBufferManager::FRbuffer_container[GAUUSIAN_HORIZONTAL].frameBuffer->TurnOnFrameBufferElements();
 
-		//	horizontal = !horizontal;
-		//	if (firstIteration)
-		//		firstIteration = false;
-		//}
+				// ustawiamy uniform horizontal = true
+				//FrameBufferManager::FRbuffer_container[GAUUSIAN_HORIZONTAL].frameBuffer->TurnOnFrameBufferElements();
 
-		//FrameBuffer::UnBind();
+				renderer->DrawArrays(6, GL_TRIANGLES);
+			}
+			FrameBufferManager::FRbuffer_container[GAUUSIAN_HORIZONTAL].frameBuffer->UnBind();
+			FrameBufferManager::FRbuffer_container[GAUUSIAN_HORIZONTAL].frameBuffer->TurnOffFrameBufferElements();
 
-		//renderer->Clear();
-		//HDRframeBuffer->GetFramebufferTexture()->Bind();
-		//HDRframeBuffer->TurnOnFrameBufferElements();
-		////renderer->Clear();
-		//pingpongFramebuffer[!horizontal].GetFramebufferTexture()->BindTexture(1);
-		//HDRframeBuffer->TurnOnFrameBufferElements();
-		//renderer->DrawArrays(6, GL_TRIANGLES);
+			renderer->Clear();
+			FrameBufferManager::FRbuffer_container[GAUUSIAN_HORIZONTAL].frameBuffer->GetFramebufferTexture(0)->Bind(0);
+			FrameBufferManager::FRbuffer_container[BLUR].frameBuffer->TurnOnFrameBufferElements();
+			renderer->DrawArrays(6, GL_TRIANGLES);
 
-
-		//works fine
+		}
+		if (HDR_LIGHT)
+		{
+			FrameBufferManager::FRbuffer_container[HDR].frameBuffer->UnBind();
+			FrameBufferManager::FRbuffer_container[HDR].frameBuffer->TurnOffFrameBufferElements();
+			glDisable(GL_DEPTH_TEST);
+			renderer->ClearColor();
+			FrameBufferManager::FRbuffer_container[HDR].frameBuffer->TurnOnFrameBufferElements();
+			renderer->DrawArrays(6, GL_TRIANGLES);
+		}
 		if (POSTPROCESSING_EFFECTS)
 		{
 			FrameBufferManager::FRbuffer_container[POSTPROCESSING].frameBuffer->UnBind();
@@ -575,7 +483,7 @@ int OpenGLGameWindow::CreateWindow()
 			FrameBufferManager::FRbuffer_container[POSTPROCESSING].frameBuffer->GetFramebufferTexture()->Bind();
 			renderer->DrawArrays(6, GL_TRIANGLES);
 		}
-		
+
 		selectedShapes.clear();
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -586,10 +494,6 @@ int OpenGLGameWindow::CreateWindow()
 
 	glfwTerminate();
 
-	//delete renderBuffer;
-	delete frameBuffer;
-	delete HDRframeBuffer;
-	//delete depthMapFrameBuffer;
 	delete window;
 
 	return 0;

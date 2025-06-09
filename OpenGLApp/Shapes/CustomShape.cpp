@@ -142,6 +142,6 @@ void CustomShape::Update()
 	for(Texture* texture: tm.Textures)
 		texture->Bind();
 	ShaderTypeGenerator::UpdateModel(sm->shaders, sc.GetCurrentProgram(), mvp.model);
-	bm->ActivateShapeBufferParts();
+	bm->BindBuffers();
 }
 

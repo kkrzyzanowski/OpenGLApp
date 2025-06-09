@@ -19,7 +19,7 @@ public:
 	FrameBufferBuilder& AddShaderByPath(const std::string& path);
 	FrameBufferBuilder& AddShaders(std::vector<Shader*>& shaders);
 	FrameBufferBuilder& AddShaders(std::vector<Shader*>&& shaders);
-	FrameBufferBuilder& AddTexture(TextureMode mode);
+	FrameBufferBuilder& AddTexture(TextureMode mode, unsigned short slot = 0, unsigned short colorAttachment = 0);
 	FrameBufferBuilder& Name(const char* name);
 	std::shared_ptr<FrameBuffer> Create(const FrameBufferType frameBufferType) override;
 	void ResetData();

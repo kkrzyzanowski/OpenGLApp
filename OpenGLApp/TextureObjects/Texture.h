@@ -14,8 +14,9 @@ public:
 	Texture(const std::string& path, unsigned int slot, int mode = GL_CLAMP_TO_EDGE);
 	Texture(unsigned int slot = 0, unsigned short colorAttachment = 0, int colorMode = GL_FLOAT, TextureMode textureMode = TextureMode::TEXTURE);
 	~Texture();
-	void BindTexture(unsigned short slot = 0) const;
+	void Bind(unsigned short slot) const;
 	virtual void Bind() const;
+	void BindNoActive() const;
 	virtual void UnBind() const;
 
 	void CreateTexture();
@@ -23,7 +24,7 @@ public:
 
 	void CreateShadowMapTexture();
 
-	void CreateHDRTexture(unsigned short colorAttachment);
+	void CreateHDRTexture();
 
 	void CreateTextureForFrameBuffer();
 

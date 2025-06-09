@@ -68,7 +68,7 @@ void TextureManager::CreateHDRTextures(short int size)
 	for (int i = 0; i < size; ++i)
 	{
 		Texture* tex = new Texture();
-		tex->CreateHDRTexture(i);
+		tex->CreateHDRTexture();
 		Textures.push_back(tex);
 	}
 }

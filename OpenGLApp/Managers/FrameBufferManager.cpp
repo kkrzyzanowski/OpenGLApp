@@ -6,6 +6,7 @@
 std::map<FrameBufferType, FRBufferContainer> FrameBufferManager:: FRbuffer_container;
 FrameBufferManager::FrameBufferManager()
 {
+	FRbuffer_container[MAIN] = {std::make_shared<FrameBuffer>(), nullptr};
 }
 
 void FrameBufferManager::CreateFRBuffer(FrameBufferType type, std::shared_ptr<FrameBuffer> fb)
@@ -13,13 +14,17 @@ void FrameBufferManager::CreateFRBuffer(FrameBufferType type, std::shared_ptr<Fr
 	FRbuffer_container.insert({ type, { fb, std::make_shared<RenderBuffer>() } });
 }
 
+//void FrameBufferManager::CopyFRBuffer(FrameBufferType type, FrameBuffer& other)
+//{
+//	FRbuffer_container.insert({ type, { std::make_shared<FrameBuffer>(other), std::make_shared<RenderBuffer>()}});
+//}
+
 void FrameBufferManager::InitializeFrameBuffers()
 {
+	constexpr int ANY_OF_INTEREST = POSTPROCESSING | BLUR | HDR | DEPTHMAP;
 	for (auto& [key, val] : FRbuffer_container)
 	{
-		switch (key)
-		{
-		case POSTPROCESSING:
+		if (key & ANY_OF_INTEREST)
 		{
 			val.frameBuffer->Bind();
 			val.rendererBuffer->Bind();
@@ -27,34 +32,19 @@ void FrameBufferManager::InitializeFrameBuffers()
 			val.rendererBuffer->UnBind();
 			val.rendererBuffer->GenerateDepthFrameRenderBuffer();
 			//val.frameBuffer->UnBind();
-			break;
-		}
-		case HDR:
-		{
-			val.frameBuffer->Bind();
-			val.rendererBuffer->Bind();
-			val.rendererBuffer->GenerateDepthRenderBuffer();
-			val.rendererBuffer->UnBind();
-			val.rendererBuffer->GenerateDepthFrameRenderBuffer();
-			break;
-		}
-		case DEPTHMAP:
-		{
-			break;
-		}
 		}
 	}
 }
 
-void FrameBufferManager::PassShadowDataToShader(std::shared_ptr<Shape> shape)
-{
-	for (auto& [key, val] : FRbuffer_container)
-	{
-		if (key == DEPTHMAP && shape->IsShadowTurnOn())
-		{
-			shape->tm.AddTexture(val.frameBuffer->GetFramebufferTexture());
-		}
-	}
+void FrameBufferManager::PassShadowDataToShader(std::shared_ptr<Shape> shape)  
+{  
+    for (auto& [key, val] : FRbuffer_container)  
+    {  
+        if ((key & DEPTHMAP) && shape->IsShadowTurnOn())  
+        {  
+            shape->tm.AddTexture(val.frameBuffer->GetFramebufferTexture());  
+        }  
+    }  
 }
 
 void FrameBufferManager::SetTextureUnactive()

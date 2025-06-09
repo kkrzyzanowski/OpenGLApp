@@ -37,15 +37,35 @@ FrameBuffer::FrameBuffer(FrameBufferBuilder& builder)
 	sm = new ShaderManager();
 	InitializeBufferScreenCoords();
 	tm = new TextureManager();
-	AddTexturesToBuffer(builder.textures);
+	AddTexturesToBuffer(builder.textures, builder.type);
 	AddShaders(builder.ShaderPaths);
 	SetFunctionShader(builder.type);
 	InitializeShaders();
 }
 
+//FrameBuffer::FrameBuffer(FrameBuffer& other, FrameBufferBuilder& builder)
+//{
+//	GLCall(glGenFramebuffers(1, &fbo));
+//	bm = std::unique_ptr<BufferManager>(new BufferManager());
+//	sc = other.sc;
+//	sm = other.sm;
+//	tm = new TextureManager();
+//	AddTexturesToBuffer(builder.textures, builder.type);
+//}
+
 void FrameBuffer::Bind()
 {
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, fbo));
+}
+
+void FrameBuffer::ReadBind()
+{
+	GLCall(glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo));
+}
+
+void FrameBuffer::DrawBind()
+{
+	GLCall(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbo));
 }
 
 
@@ -67,15 +87,6 @@ void FrameBuffer::GenerateShadowTexture()
 	tm->Textures[0]->CreateShadowMapTexture();
 }
 
-void FrameBuffer::GenerateHDRTexture()
-{
-	Texture* tex = new Texture();
-	tex->CreateHDRTexture(0);
-	tm->Textures.push_back(tex);
-	DrawBuffers(0);
-}
-
-
 bool FrameBuffer::CheckFrameBuffer()
 {
 	bool status = (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
@@ -94,13 +105,13 @@ void FrameBuffer::InitializeBufferScreenCoords()
 void FrameBuffer::TurnOffFrameBufferElements()
 {
 	sc.DisableUse();
-	bm->DeactivateShapeBufferParts();
+	bm->UnbindBuffers();
 }
 
 void FrameBuffer::TurnOnFrameBufferElements()
 {
 	sc.EnableUse();
-	bm->ActivateShapeBufferParts();
+	bm->BindBuffers();
 }
 
 void FrameBuffer::AddParams(ShaderParams param)
@@ -151,11 +162,12 @@ void FrameBuffer::InitializePostProcessingShaders()
 	//sm.UnBind();
 }
 
-void FrameBuffer::AddTexturesToBuffer(std::vector<Texture*>& textures)
+void FrameBuffer::AddTexturesToBuffer(std::vector<Texture*>& textures, FrameBufferType type)
 {
 	Bind();
 	tm->AddTextures(textures);
 	tm->InitializeTextures();
+	DrawBuffers(type);
 	UnBind();
 }
 
@@ -221,9 +233,9 @@ void FrameBuffer::InitializeFrameBufferShader(const char* vertexPath, const char
 	sc.DisableUse();*/
 }
 
-Texture* FrameBuffer::GetFramebufferTexture()
+Texture* FrameBuffer::GetFramebufferTexture(unsigned int slot)
 {
-	return tm->Textures[0];
+	return tm->Textures[slot];
 }
 
 std::vector<Texture*> FrameBuffer::GetFramebufferTextures()
@@ -249,19 +261,16 @@ void FrameBuffer::DrawBuffers(unsigned short colorAtachhment)
 	glDrawBuffers(1, DrawBuffers.data());
 }
 
-void FrameBuffer::DrawBuffers()
+void FrameBuffer::DrawBuffers(FrameBufferType type)
 {
-	unsigned int textureSize = tm->Textures.size();
-	std::vector<GLenum> DrawBuffers(textureSize);
-	for (int i = 0; i < textureSize; i++)
-		DrawBuffers[i] = GL_COLOR_ATTACHMENT0 + i;
-	glDrawBuffers(textureSize, DrawBuffers.data());
-}
-
-void FrameBuffer::GenerateHDRTextures(unsigned short size)
-{
-	tm->CreateHDRTextures(size);
-	DrawBuffers(size);
+	if (type & (POSTPROCESSING | HDR | BLUR))
+	{
+		unsigned int textureSize = tm->Textures.size();
+		std::vector<GLenum> DrawBuffers(textureSize);
+		for (int i = 0; i < textureSize; i++)
+			DrawBuffers[i] = GL_COLOR_ATTACHMENT0 + i;
+		glDrawBuffers(textureSize, DrawBuffers.data());
+	}
 }
 
 void FrameBuffer::SetFunctionShader(FrameBufferType type)
@@ -271,35 +280,36 @@ void FrameBuffer::SetFunctionShader(FrameBufferType type)
 	case POSTPROCESSING:
 	{
 		func = ShaderTypeGenerator::PostProcesingShaderGenerator;
-		//GenerateTexture();
+		break;
+	}
+	case MAIN:
+	{
+		func = ShaderTypeGenerator::PostProcesingShaderGenerator;
 		break;
 	}
 	case BLUR:
 	{
-		func = ShaderTypeGenerator::HDRGaussianBlurShaderGenerator;
-		//GenerateHDRTexture();
+		func = ShaderTypeGenerator::HDRGaussianBlurShaderGenerator;	
 		break;
 	}
 	case HDR:
 	{
 		func = ShaderTypeGenerator::HDRShaderGenerator;
-		//GenerateHDRTextures(2);
 		break;
 	}
 	case DEPTHMAP:
 	{
-		//GenerateShadowTexture();
 		break;
 	}
 	case GAUUSIAN_HORIZONTAL:
 	{
-		params.push_back(false);
+		params.push_back(true);
 		func = ShaderTypeGenerator::UpdateBloomShader;
 		break;
 	}
 	case GAUSSIAN_VERTICAL:
 	{
-		params.push_back(true);
+		params.push_back(false);
 		func = ShaderTypeGenerator::UpdateBloomShader;
 		break;
 	}
@@ -310,7 +320,7 @@ void FrameBuffer::SetFunctionShader(FrameBufferType type)
 		tm->Textures.push_back(new Texture(2, 2, GL_UNSIGNED_BYTE, TextureMode::FRAMEBUFFER));
 		for (Texture* tex : tm->Textures)
 			tex->CreateTextureForFrameBuffer();
-		DrawBuffers();
+		//DrawBuffers();
 		func = ShaderTypeGenerator::PassLightMatrixData;
 	}
 
@@ -320,41 +330,4 @@ FrameBuffer::~FrameBuffer()
 {
 	delete tm;
 	GLCall(glDeleteFramebuffers(1, &fbo));
-}
-
-void FrameBuffer::ActivateFramebufferTexture()
-{
-	switch (type)
-	{
-	case POSTPROCESSING:
-	{
-
-	}
-	case BLUR:
-	{
-	}
-	case HDR:
-	{
-		break;
-	}
-	case DEPTHMAP:
-	{
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, tm->Textures[0]->GetTextureID(), 0);
-		glDrawBuffer(GL_NONE);
-		glReadBuffer(GL_NONE);
-		break;
-	}
-	case GAUUSIAN_HORIZONTAL:
-	{
-		break;
-	}
-	case GAUSSIAN_VERTICAL:
-	{
-		break;
-	}
-	case GBUFFER:
-	{
-
-	}
-	}
 }

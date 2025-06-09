@@ -45,6 +45,7 @@ void Cube::CreateMVPMatrix()
 	mvp.model = glm::translate(mvp.model, builder->Pos);
 	if(builder->Angle != 0.0f)
 		mvp.model = glm::rotate(mvp.model, builder->Angle, builder->Axis);
+	mvp.model = glm::scale(mvp.model, builder->ScaleVector);
 	TranslatePoints(mvp.model, shapeElements.vertices);
 	shapeElements.triangles = InitializeTriangles(verts->Indexes, verts->IndexesCount, shapeElements.vertices);
 }
@@ -58,7 +59,7 @@ void Cube::Update()
 		texture->Bind();
 	ShaderTypeGenerator::UpdateModel(sm->shaders, sc.GetCurrentProgram(), mvp.model);
 	ShaderTypeGenerator::PassLightMatrixData(sm->shaders, sc.GetCurrentProgram(), functionParams);
-	bm->ActivateShapeBufferParts();
+	bm->BindBuffers();
 }
 
 glm::vec3 Cube::GetNormal()

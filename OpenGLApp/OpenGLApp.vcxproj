@@ -136,6 +136,7 @@
     <ClCompile Include="Lights\Light.cpp" />
     <ClCompile Include="Builders\LightBuilder.cpp" />
     <ClCompile Include="Buffers\ObjectBuffer.cpp" />
+    <ClCompile Include="PlaneView.cpp" />
     <ClCompile Include="Shaders\ShaderClasses\ShaderManager.cpp" />
     <ClCompile Include="Shapes\Cube.cpp" />
     <ClCompile Include="Shapes\VerticesCreator.cpp" />
@@ -192,6 +193,7 @@
     <ClInclude Include="Lights\Light.h" />
     <ClInclude Include="Builders\LightBuilder.h" />
     <ClInclude Include="Buffers\ObjectBuffer.h" />
+    <ClInclude Include="PlaneView.h" />
     <ClInclude Include="Shaders\ShaderClasses\ShaderManager.h" />
     <ClInclude Include="Shapes\Cube.h" />
     <ClInclude Include="TextureObjects\CubeMapTexture.h" />
