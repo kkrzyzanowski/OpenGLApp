@@ -28,9 +28,9 @@ void FrameBufferManager::InitializeFrameBuffers()
 		{
 			val.frameBuffer->Bind();
 			val.rendererBuffer->Bind();
-			val.rendererBuffer->GenerateDepthRenderBuffer();
+			val.rendererBuffer->GenerateDepthStencilRenderBuffer();
 			val.rendererBuffer->UnBind();
-			val.rendererBuffer->GenerateDepthFrameRenderBuffer();
+			val.rendererBuffer->AttachDepthFrameRenderBuffer();
 			//val.frameBuffer->UnBind();
 		}
 	}

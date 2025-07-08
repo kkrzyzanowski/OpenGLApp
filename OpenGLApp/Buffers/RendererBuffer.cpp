@@ -25,7 +25,7 @@ void RenderBuffer::GenerateRenderBuffer()
 }
 
 
-void RenderBuffer::GenerateFrameRenderBuffer()
+void RenderBuffer::AttachStencilDepthFrameRenderBuffer()
 {
 	GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo));
 }
@@ -35,8 +35,13 @@ void RenderBuffer::GenerateDepthRenderBuffer()
 	GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SCREEN_WIDTH, SCREEN_HEIGHT));
 }
 
+void RenderBuffer::GenerateDepthStencilRenderBuffer()
+{
+	GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCREEN_WIDTH, SCREEN_HEIGHT));
+}
 
-void RenderBuffer::GenerateDepthFrameRenderBuffer()
+
+void RenderBuffer::AttachDepthFrameRenderBuffer()
 {
 	GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo));
 }

@@ -100,11 +100,20 @@ void SkyBoxCube::GenerateShaders()
 
 void SkyBoxCube::ApplyShaders()
 {
+	glDepthMask(GL_FALSE);
 	glDepthFunc(GL_LEQUAL);
 	cubeMapTexture = new CubeMapTexture(paths);
 	cubeMapTexture->Bind();
 	ShaderTypeGenerator::ShaderSkyBoxGenerator(sm->shaders, sc.GetDefaultProgram());
 	cubeMapTexture->UnBind();
+	glDepthFunc(GL_LESS);
+}
+
+void SkyBoxCube::AfterUpdate()
+{
+	cubeMapTexture->UnBind();
+	sc.DisableUse();
+	glDepthMask(GL_TRUE);
 	glDepthFunc(GL_LESS);
 }
 
@@ -114,12 +123,11 @@ void SkyBoxCube::CreateMVPMatrix()
 
 void SkyBoxCube::Update()
 {
+	sc.ActivateDefaultProgram();
 	glDepthFunc(GL_LEQUAL);
 	sc.EnableUse();
 	cubeMapTexture->Bind();
-	ActivateShapeBufferParts();
-	//sc.DisableUse();
-	glDepthFunc(GL_LESS);
+	bm->BindBuffers();
 }
 void SkyBoxCube::InitializeShapeView(glm::mat4 & view)
 {

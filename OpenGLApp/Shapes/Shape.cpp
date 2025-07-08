@@ -74,21 +74,18 @@ void Shape::Update()
 	sc.EnableUse();
 	for (Texture* texture : tm.Textures)
 		texture->Bind();
-	ShaderTypeGenerator::UpdateModel(sm->shaders, sc.GetCurrentProgram(), mvp.model);
 	bm->BindBuffers();
+	ShaderTypeGenerator::UpdateModel(sm->shaders, sc.GetCurrentProgram(), mvp.model);
 }
 
 void Shape::AfterUpdate()
 {
 	for (Texture* texture : tm.Textures)
 		texture->UnBind();
+	bm->UnbindBuffers();
 	sc.DisableUse();
 }
 
-void Shape::ActivateShapeBufferParts()
-{
-	bm->BindBuffers();
-}
 void Shape::ApplyShapeView(const glm::mat4& view)
 {
 	this->mvp.view = view;
@@ -106,12 +103,15 @@ void Shape::GenerateShaders()
 }
 void Shape::ApplyShaders()
 {
+	sc.ActivateDefaultProgram();
+	sc.EnableUse();
 	for (Texture* texture : tm.Textures)
 		texture->Bind();
 	sm->AddShaderFunction(builder->Func, functionParams);
 	sm->ExecuteShaderFunction(sm->shaders, sc.GetCurrentProgram());
 	for (Texture* texture : tm.Textures)
 		texture->UnBind();
+	sc.DisableUse();
 }
 void Shape::GenerateVertices()
 {

@@ -8,7 +8,6 @@ public:
 	Terrain(ShapesBuilder& builder);
 	Terrain(ShapesBuilder&& builder);
 	void CreateTerrain();
-	void Update() override;
 	glm::vec3 GetNormal() override;
 	void GenerateShaders() override;
 	void ApplyShaders() override;

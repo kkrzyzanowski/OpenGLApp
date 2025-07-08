@@ -58,7 +58,7 @@ void Cube::Update()
 	for (Texture* texture : tm.Textures)
 		texture->Bind();
 	ShaderTypeGenerator::UpdateModel(sm->shaders, sc.GetCurrentProgram(), mvp.model);
-	ShaderTypeGenerator::PassLightMatrixData(sm->shaders, sc.GetCurrentProgram(), functionParams);
+	//ShaderTypeGenerator::PassLightMatrixData(sm->shaders, sc.GetCurrentProgram(), functionParams);
 	bm->BindBuffers();
 }
 

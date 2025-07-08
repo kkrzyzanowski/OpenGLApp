@@ -75,16 +75,6 @@ void Terrain::CreateTerrain()
 	delete bm;
 }
 
-void Terrain::Update()
-{
-	sc.ActivateDefaultProgram();
-	sc.EnableUse();
-	for (Texture* texture : tm.Textures)
-		texture->Bind();
-	ShaderTypeGenerator::UpdateModel(sm->shaders, sc.GetDefaultProgram(), mvp.model);
-	bm->BindBuffers();
-}
-
 glm::vec3 Terrain::GetNormal()
 {
 	return glm::vec3();
@@ -128,6 +118,7 @@ void Terrain::AddParamsToShader()
 void Terrain::CreateMVPMatrix()
 {
 	mvp.model = glm::mat4(1.0f);
+	mvp.model = glm::translate(mvp.model, builder->Pos);
 }
 
 void Terrain::LoadTerrain()

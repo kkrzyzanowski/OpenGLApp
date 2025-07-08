@@ -301,7 +301,7 @@ void FrameBuffer::SetFunctionShader(FrameBufferType type)
 	{
 		break;
 	}
-	case GAUUSIAN_HORIZONTAL:
+	case GAUSSIAN_HORIZONTAL:
 	{
 		params.push_back(true);
 		func = ShaderTypeGenerator::UpdateBloomShader;

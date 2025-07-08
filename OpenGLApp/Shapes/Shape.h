@@ -48,8 +48,6 @@ public:
 	virtual void Update();
 	virtual void AfterUpdate();
 
-
-	void ActivateShapeBufferParts();
 	virtual void ApplyShapeView(const glm::mat4& view);
 	virtual void GenerateShaders();
 	virtual void ApplyShaders();

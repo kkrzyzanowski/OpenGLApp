@@ -11,6 +11,7 @@ public:
 	void Create(const GLfloat* points, unsigned int* orederIndex, unsigned int countVertices, unsigned int countIndexes, unsigned int* bufferDataSizes, unsigned int dataSize) override;
 	void GenerateShaders() override;
 	void ApplyShaders() override;
+	void AfterUpdate() override;
 	void Update() override;
 	void InitializeShapeView(glm::mat4& view);
 	glm::vec3 GetNormal() override;

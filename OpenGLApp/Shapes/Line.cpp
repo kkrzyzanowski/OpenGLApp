@@ -33,7 +33,7 @@ void Line::Update()
 {
 	sc.EnableUse();
 	ShaderTypeGenerator::UpdateModel(shaders, sc.GetCurrentProgram(), mvp.model);
-	ActivateShapeBufferParts();
+	bm->BindBuffers();
 	sc.DisableUse();
 }
 

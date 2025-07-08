@@ -1,11 +1,6 @@
 c:\dyskd\projectscpp\openglapp\gui\debug\vc143.pdb
 c:\dyskd\projectscpp\openglapp\gui\debug\vc143.idb
 c:\dyskd\projectscpp\openglapp\gui\debug\topmenugui.obj
-c:\dyskd\projectscpp\openglapp\gui\debug\iconloader.obj
-c:\dyskd\projectscpp\openglapp\gui\debug\guiwindow.obj
-c:\dyskd\projectscpp\openglapp\gui\debug\guimain.obj
-c:\dyskd\projectscpp\openglapp\gui\debug\gamewindow.obj
-c:\dyskd\projectscpp\openglapp\gui\debug\addwindow.obj
 c:\dyskd\projectscpp\openglapp\gui\debug\imgui_widgets.obj
 c:\dyskd\projectscpp\openglapp\gui\debug\imgui_tables.obj
 c:\dyskd\projectscpp\openglapp\gui\debug\imgui_impl_opengl3.obj
@@ -13,6 +8,11 @@ c:\dyskd\projectscpp\openglapp\gui\debug\imgui_impl_glfw.obj
 c:\dyskd\projectscpp\openglapp\gui\debug\imgui_draw.obj
 c:\dyskd\projectscpp\openglapp\gui\debug\imgui_demo.obj
 c:\dyskd\projectscpp\openglapp\gui\debug\imgui.obj
+c:\dyskd\projectscpp\openglapp\gui\debug\iconloader.obj
+c:\dyskd\projectscpp\openglapp\gui\debug\guiwindow.obj
+c:\dyskd\projectscpp\openglapp\gui\debug\guimain.obj
+c:\dyskd\projectscpp\openglapp\gui\debug\gamewindow.obj
+c:\dyskd\projectscpp\openglapp\gui\debug\addwindow.obj
 c:\dyskd\projectscpp\openglapp\debug\gui.exe
 c:\dyskd\projectscpp\openglapp\debug\gui.pdb
 c:\dyskd\projectscpp\openglapp\gui\debug\gui.ilk

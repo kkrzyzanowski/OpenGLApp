@@ -21,7 +21,7 @@ ShapesBuilder::ShapesBuilder(ShapesBuilder&& other) noexcept
 	this->Type = std::move(other.Type);
 	this->ShadingType = std::move(other.ShadingType);
 	this->_path = std::move(other._path);
-	this->IsShadowActive = std::move(other.IsShadowActive);
+	this->IsShadowActive = other.IsShadowActive;
 	this->ScaleVector = other.ScaleVector;
 	this->HDR = other.HDR;
 	other.texturePaths.clear();
