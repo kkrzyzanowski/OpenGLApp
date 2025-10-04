@@ -2,7 +2,7 @@
 #include <vector>
 #include <map>
 #include <memory>
-#include "..\ShapeType.h"
+#include "..\Enums.h"
 
 class FrameBuffer;
 class RenderBuffer;

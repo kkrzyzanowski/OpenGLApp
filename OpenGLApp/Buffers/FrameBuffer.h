@@ -11,7 +11,7 @@
 #include "../Managers/BufferManager.h"
 #include "../Shaders/ShaderClasses/ShaderTypeGenerator.h"
 #include "../Shaders/ShaderClasses/ShaderManager.h"
-#include "../ShapeType.h"
+#include "../DataStructures.h"
 #include "../Builders/FrameBufferBuilder.h"
 
 class FrameBuffer
@@ -48,6 +48,7 @@ public:
 	void DrawBuffers(FrameBufferType type);
 	void SetFunctionShader(FrameBufferType type);
 	void AddParams(ShaderParams param);
+	void UpdateParams(ShaderParams param, std::string& name);
 	void AddShaders(const std::vector<const char*>& paths);
 	void AddShaders(std::vector<Shader*>& shaders);
 	std::vector<Shader*> GetFrameBufferShaders();

@@ -22,6 +22,7 @@ ShapesBuilder::ShapesBuilder(ShapesBuilder&& other) noexcept
 	this->ShadingType = std::move(other.ShadingType);
 	this->_path = std::move(other._path);
 	this->IsShadowActive = other.IsShadowActive;
+	this->IsBloomActive = other.IsBloomActive;
 	this->ScaleVector = other.ScaleVector;
 	this->HDR = other.HDR;
 	other.texturePaths.clear();
@@ -29,6 +30,7 @@ ShapesBuilder::ShapesBuilder(ShapesBuilder&& other) noexcept
 	other.ShadingType = Shading::FORWARD_SHADING;
 	other.IsShadowActive = false;
 	other.HDR = false;
+	other.IsBloomActive = false;
 	other.ScaleVector = glm::vec3(1.0f);
 }
 
@@ -51,6 +53,7 @@ ShapesBuilder::ShapesBuilder(const ShapesBuilder& other) noexcept
 		this->ShadingType = other.ShadingType;
 		this->IsShadowActive = other.IsShadowActive;
 		this->HDR = other.HDR;
+		this->IsBloomActive = other.IsBloomActive;
 	}
 }
 
@@ -208,6 +211,12 @@ ShapesBuilder& ShapesBuilder::Shadow(bool shadow)
 	return *this;
 }
 
+ShapesBuilder& ShapesBuilder::Bloom(bool bloom)
+{
+	IsBloomActive = bloom;
+	return *this;
+}
+
 ShapesBuilder& ShapesBuilder::SetHDR(bool hdr)
 {
 	HDR = hdr;
@@ -248,6 +257,12 @@ void ShapesBuilder::CheckShadingType()
 		Func = ShaderTypeGenerator::UpdateLightiningHDR;
 		break;
 	}
+	case Shading::BLOOM:
+	{
+		Func = ShaderTypeGenerator::BloomShaderGenerator;
+		break;
+	}
+
 	}
 }
 

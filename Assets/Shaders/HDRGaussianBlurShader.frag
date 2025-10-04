@@ -5,8 +5,8 @@ in vec2 TexCoords;
 
 uniform sampler2D scene;
 uniform sampler2D bloom;
+uniform float exposure = 0.9;
 
-uniform float exposure = 0.0;
 void main()
 {
 	const float gamma = 2.2;

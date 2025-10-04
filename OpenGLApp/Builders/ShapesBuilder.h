@@ -3,6 +3,7 @@
 #include "..\CustomProperties.h"
 #include "..\Shaders\ShaderClasses\Shader.h"
 #include "..\Shaders\ShaderClasses\ShaderTypeGenerator.h"
+#include "..\DataStructures.h"
 class Shape;
 
 class ShapesBuilder: public Builder<Shape, ShapeType>
@@ -30,6 +31,7 @@ public:
 	ShapesBuilder& Shader(const std::string& path);
 	ShapesBuilder& SetShading(Shading shading);
 	ShapesBuilder& Shadow(bool shadow);
+	ShapesBuilder& Bloom(bool bloom);
 	ShapesBuilder& SetHDR(bool hdr);
 	std::shared_ptr<Shape> _shapes;
 	Shape* _light;
@@ -43,6 +45,7 @@ public:
 	Shading ShadingType = Shading::FORWARD_SHADING;
 	ShaderFunction Func;
 	bool IsShadowActive;
+	bool IsBloomActive;
 	bool HDR;
 private:
 

@@ -486,6 +486,13 @@ void Shape::AddParamsToShader()
 		functionParams.push_back(mvp.model);
 		break;
 	}
+	case Shading::BLOOM:
+	{
+		functionParams.push_back(mvp.model);
+		functionParams.push_back(mainLight);
+		functionParams.push_back(glm::vec3(0.04f, 0.74f, 0.94f)); // temporary light color
+		break;
+	}
 	default:
 		functionParams.push_back(mvp.model);
 		break;

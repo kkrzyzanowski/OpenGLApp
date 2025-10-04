@@ -2,7 +2,7 @@
  
 #include "ShadowLibrary.glsl"
 
- layout(location = 0) out vec4 color;
+ layout(location = 0) out vec4 Color;
 
  in vec2 TexCoord;
  in vec3 FragPos;
@@ -43,6 +43,7 @@
 	// shadow
 	float shadow = ShadowCalculation(FragPosLightSpace, shadowMap);
 	vec3 lightining = (sunLight + (1.0 - shadow) * (diffuse + specular)) * diffuseColor; 
- 	color = vec4(lightining, 1.0);
+   
+ 	Color = vec4(lightining, 1.0);
 	//color = vec4(vec3(texture(shadowMap, TexCoord).r), 1.0);
  };

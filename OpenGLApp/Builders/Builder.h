@@ -2,7 +2,7 @@
 #include <memory>
 #include "..\glm\glm.hpp"
 #include "..\glm\gtc\type_ptr.hpp"
-#include "..\ShapeType.h"
+#include "..\Enums.h"
 
 template <typename T, typename U>
 class Builder

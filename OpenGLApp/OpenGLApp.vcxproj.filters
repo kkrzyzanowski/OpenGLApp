@@ -180,6 +180,9 @@
     <ClCompile Include="PlaneView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RendererScreen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shapes\Shape.h">
@@ -290,7 +293,7 @@
     <ClInclude Include="Rendering\StencilOutline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ShapeType.h">
+    <ClInclude Include="Enums.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PointTranslator.h">
@@ -348,6 +351,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PlaneView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererScreen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

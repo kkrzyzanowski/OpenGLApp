@@ -1,5 +1,5 @@
 #include "MaterialType.h"
-#include "ShapeType.h"
+#include "Enums.h"
 
 LightShape::LightShape()
 {

@@ -234,10 +234,24 @@ void ShaderTypeGenerator::UpdateLightiningHDR(std::vector<Shader*>& shaders, uns
 void ShaderTypeGenerator::UpdateFinalBloomShader(std::vector<Shader*>& shaders, unsigned int program, std::vector<ShaderParams>& params)
 {
 	float exposure = std::get<float>(params[0]);
+	shaders[1]->SetUniform1i("scene", 0, program);
 	shaders[1]->SetUniform1i("bloom", 1, program);
 	shaders[1]->SetUniform1f("exposure", exposure, program);
 }
 
+
+void ShaderTypeGenerator::BloomShaderGenerator(std::vector<Shader*>& shaders, unsigned int program, std::vector<ShaderParams>& params)
+{
+	glm::mat4 model = std::get<glm::mat4>(params[0]);
+	glm::vec3 lightPos = std::get<glm::vec3>(params[1]);
+	glm::vec3 lightColor = std::get<glm::vec3>(params[2]);
+
+	UpdateModel(shaders, program, model);
+	shaders[1]->SetUniform1i("diffuseTexture", 0, program);
+	shaders[1]->SetUniform3f("lightPosition", lightPos, program);
+	shaders[1]->SetUniform3f("lightColor", lightColor, program);
+
+}
 
 ShaderTypeGenerator::~ShaderTypeGenerator()
 {

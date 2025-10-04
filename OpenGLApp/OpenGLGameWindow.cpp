@@ -4,6 +4,7 @@
 #include "OpenGLGameWindow.h"
 #include "Managers/FrameBufferManager.h"
 #include "PlaneView.h"
+#include "RendererScreen.h"
 
 
 // to-do do textures for framebuffer (maybe class or something like that) to prepare connection beetween framebuffers
@@ -87,6 +88,26 @@ int OpenGLGameWindow::CreateWindow()
 		.Shader(DIFFUSE_FRAG_PATH)
 		.Shadow(true)
 		.Position(glm::vec3(0.6f, 0.12f, -3.0f))
+		.Create(ShapeType::CUBE));
+
+	ShapeManager::shapes.emplace_back(shapesBuilder->ObjectState(CamView::DYNAMIC)
+		.SourceType(SourceShapeType::SHAPE)
+		.Texture(TEMP_TEXTURE_DIFFUSE)
+		.Shader(BLOOM_VERT)
+		.Shader(BLOOM_FRAG)
+		.Bloom(true)
+		.Shadow(true)
+		.Position(glm::vec3(0.1f, 0.0f, -7.0f))
+		.Create(ShapeType::CUBE));
+
+	ShapeManager::shapes.emplace_back(shapesBuilder->ObjectState(CamView::DYNAMIC)
+		.SourceType(SourceShapeType::SHAPE)
+		.Texture(TEMP_TEXTURE_DIFFUSE)
+		.Shader(BLOOM_VERT)
+		.Shader(BLOOM_FRAG)
+		.Bloom(true)
+		.Shadow(true)
+		.Position(glm::vec3(-0.3f, -0.2f, -4.0f))
 		.Create(ShapeType::CUBE));
 
 	ShapeManager::shapes.emplace_back(shapesBuilder->ObjectState(CamView::DYNAMIC)
@@ -290,6 +311,13 @@ int OpenGLGameWindow::CreateWindow()
 	auto shadowShapes = ShapeManager::FilterShape(true);
 
 	bool horizontal = true;
+
+	ShaderProperties sp;
+	sp.type = ShaderFunctionType::SHADER_FUNC_BLOOM;
+	sp.params.push_back(0.9f);
+	Paths paths;
+	paths.shadersPaths = { HDR_GAUSSIANBLUR_VERT_PATH, HDR_GAUSSIANBLUR_FRAG_PATH };
+	RendererScreen* screen = new RendererScreen(paths, sp);
 	//auto defferedShapes = filteredShapes(Shading::DEFFERED_SHADING);
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
@@ -426,35 +454,43 @@ int OpenGLGameWindow::CreateWindow()
 			bool firstIteration = true, horizontal = true;
 			for (int i = 0; i < 8; ++i)
 			{
-				FrameBufferManager::FRbuffer_container[GAUSSIAN_HORIZONTAL].frameBuffer->Bind();
-				// bindujemy teksturê z BLUR jako wejœcie na slot 0
+				FrameBufferManager::FRbuffer_container[static_cast<FrameBufferType>(horizontal)].frameBuffer->Bind();
 
 				if (firstIteration)
 				{
-					FrameBufferManager::FRbuffer_container[BLUR].frameBuffer->GetFramebufferTexture(0)->Bind();
+					FrameBufferManager::FRbuffer_container[BLUR].frameBuffer->GetFramebufferTexture(1)->Bind();
 					firstIteration = false;
 				}
 				else
 				{
-					FrameBufferManager::FRbuffer_container[GAUSSIAN_HORIZONTAL].frameBuffer->GetFramebufferTexture(0)->Bind(0);
+					FrameBufferManager::FRbuffer_container[static_cast<FrameBufferType>(horizontal)].frameBuffer->GetFramebufferTexture(0)->Bind(0);
 				}
 
-				FrameBufferManager::FRbuffer_container[GAUSSIAN_HORIZONTAL].frameBuffer->TurnOnFrameBufferElements();
+				FrameBufferManager::FRbuffer_container[static_cast<FrameBufferType>(horizontal)].frameBuffer->TurnOnFrameBufferElements();
 
 				// ustawiamy uniform horizontal = true
 				//FrameBufferManager::FRbuffer_container[GAUUSIAN_HORIZONTAL].frameBuffer->TurnOnFrameBufferElements();
 
 				renderer->DrawArrays(6, GL_TRIANGLES);
-				FrameBufferManager::FRbuffer_container[GAUSSIAN_HORIZONTAL].frameBuffer->TurnOffFrameBufferElements();
+				FrameBufferManager::FRbuffer_container[static_cast<FrameBufferType>(horizontal)].frameBuffer->TurnOffFrameBufferElements();
+				//
+				//horizontal = !horizontal;
 			}
 			FrameBufferManager::FRbuffer_container[GAUSSIAN_HORIZONTAL].frameBuffer->UnBind();
 
 			renderer->Clear();
 			FrameBufferManager::FRbuffer_container[BLUR].frameBuffer->GetFramebufferTexture(0)->Bind(0);
-			FrameBufferManager::FRbuffer_container[GAUSSIAN_HORIZONTAL].frameBuffer->GetFramebufferTexture(0)->Bind(1);
+			//FrameBufferManager::FRbuffer_container[GAUSSIAN_HORIZONTAL].frameBuffer->GetFramebufferTexture(0)->Bind(0);
 			FrameBufferManager::FRbuffer_container[BLUR].frameBuffer->TurnOnFrameBufferElements();
-			renderer->DrawArrays(6, GL_TRIANGLES);
 
+
+			//ScreenBlock for test next will be on whole loop 
+			// TO-DO make texture handler for adding textures to screen renderer
+			FrameBufferManager::FRbuffer_container[BLUR].frameBuffer->GetFramebufferTexture()->Bind(0);
+			FrameBufferManager::FRbuffer_container[static_cast<FrameBufferType>(horizontal)].frameBuffer->GetFramebufferTexture(0)->Bind(1);
+			screen->Update();
+			renderer->DrawArrays(6, GL_TRIANGLES);
+			screen->AfterUpdate();
 		}
 		if (HDR_LIGHT)
 		{
@@ -487,7 +523,7 @@ int OpenGLGameWindow::CreateWindow()
 	}
 
 	glfwTerminate();
-
+	delete screen;
 	delete window;
 
 	return 0;

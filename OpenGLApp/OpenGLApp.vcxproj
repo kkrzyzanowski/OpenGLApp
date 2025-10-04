@@ -137,6 +137,7 @@
     <ClCompile Include="Builders\LightBuilder.cpp" />
     <ClCompile Include="Buffers\ObjectBuffer.cpp" />
     <ClCompile Include="PlaneView.cpp" />
+    <ClCompile Include="RendererScreen.cpp" />
     <ClCompile Include="Shaders\ShaderClasses\ShaderManager.cpp" />
     <ClCompile Include="Shapes\Cube.cpp" />
     <ClCompile Include="Shapes\VerticesCreator.cpp" />
@@ -194,6 +195,7 @@
     <ClInclude Include="Builders\LightBuilder.h" />
     <ClInclude Include="Buffers\ObjectBuffer.h" />
     <ClInclude Include="PlaneView.h" />
+    <ClInclude Include="RendererScreen.h" />
     <ClInclude Include="Shaders\ShaderClasses\ShaderManager.h" />
     <ClInclude Include="Shapes\Cube.h" />
     <ClInclude Include="TextureObjects\CubeMapTexture.h" />
@@ -220,7 +222,7 @@
     <ClInclude Include="Managers\ShaderCompiler.h" />
     <ClInclude Include="Shaders\ShaderClasses\ShaderTypeGenerator.h" />
     <ClInclude Include="Shapes\Shape.h" />
-    <ClInclude Include="ShapeType.h" />
+    <ClInclude Include="Enums.h" />
     <ClInclude Include="Managers\ShapeManager.h" />
     <ClInclude Include="Builders\ShapesBuilder.h" />
     <ClInclude Include="Shapes\SkyBoxCube.h" />

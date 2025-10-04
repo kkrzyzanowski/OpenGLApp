@@ -8,7 +8,7 @@
 #include "..\DataStructures.h"
 #include "..\Rendering\StencilOutline.h"
 #include "..\Physics\Physics.h"
-#include "..\ShapeType.h"
+#include "..\Enums.h"
 #include "..\Buffers\UniformBuffer.h"
 #include "..\Managers\VertexManager.h"
 #include "..\Managers\TextureManager.h"

@@ -252,3 +252,27 @@ VerticesShape* CreatePlane(float size)
 	};
 	return plane;
 }
+
+VerticesShape* CreateQuad()
+{
+	float* bufferData = new float[]{
+		-1.0f, 1.0f, 0.0f, 1.0f,
+			-1.0f, -1.0f, 0.0f, 0.0f,
+			1.0f, -1.0f, 1.0f, 0.0f,
+
+			-1.0f, 1.0f, 0.0f, 1.0f,
+			1.0f, -1.0f, 1.0f, 0.0f,
+			1.0f, 1.0f, 1.0f, 1.0f };
+
+	unsigned int* indexes = new unsigned int[]{ 0, 1, 2,
+						3, 4, 5 };
+
+	VerticesShape* quad = new VerticesShape
+	{
+		6,
+		6,
+		bufferData,
+		indexes
+	};
+	return quad;
+}

@@ -119,6 +119,10 @@ void FrameBuffer::AddParams(ShaderParams param)
 	params.push_back(param);
 }
 
+void FrameBuffer::UpdateParams(ShaderParams param, std::string& name)
+{
+}
+
 void FrameBuffer::AddShaders(const std::vector<const char*>& paths)
 {
 	for (const char* path : paths)

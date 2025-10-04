@@ -17,4 +17,5 @@ struct VerticesShape
 
 VerticesShape* CreateSphere(int rings, int sectors, unsigned short bufferSize, float radius = 1.0f); 
 VerticesShape* CreateCube(float size = 1.0f, unsigned int bufferSize = 8); 
-VerticesShape* CreatePlane(float size = 1.0f);
+VerticesShape* CreatePlane(float size = 1.0f); 
+VerticesShape* CreateQuad();

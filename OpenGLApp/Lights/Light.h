@@ -9,6 +9,7 @@
 #include "../Managers/BufferManager.h"
 #include "../MVPManager.h"
 #include "../Camera/Camera.h"
+#include "../DataStructures.h"
 
 class LightBuilder;
 

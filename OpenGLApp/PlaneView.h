@@ -3,6 +3,7 @@
 #include "Managers/TextureManager.h"
 #include "Managers/ShaderCompiler.h"
 #include "Managers/BufferManager.h"
+#include "DataStructures.h"
 class PlaneView  
 {  
 public:  

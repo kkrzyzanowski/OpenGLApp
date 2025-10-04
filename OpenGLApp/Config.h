@@ -49,6 +49,8 @@ static const char* LIGHTNING_HDR_VERT =			"..\\Assets\\Shaders\\LightningHDR.ver
 static const char* LIGHTNING_HDR_FRAG =			"..\\Assets\\Shaders\\LightningHDR.frag"									;
 static const char* MAIN_TEXTURE_RENDER_VERT =	"..\\Assets\\Shaders\\MainTextureRender.vert"								;
 static const char* MAIN_TEXTURE_RENDER_FRAG =	"..\\Assets\\Shaders\\MainTextureRender.frag"								;
+static const char* BLOOM_VERT =					"..\\Assets\\Shaders\\Bloom.vert";
+static const char* BLOOM_FRAG =					"..\\Assets\\Shaders\\Bloom.frag"											;
 
 static const char* TEMP_TEXTURE_DIFFUSE =		"..\\Assets\\Textures\\BrickMedievalBlocks0129_2_M.jpg"						;
 static const char* TEMP_TEXTURE_SPECULAR =		"..\\Assets\\Textures\\BrickMedievalBlocks0129_2_M_specular_map.jpg"			;

@@ -1,15 +1,26 @@
 #pragma once
 #include <vector>
+#include <variant>
+#include <functional>
+#include <array>
+#include "Enums.h"
 #include "glm\glm.hpp"
 #include "glm\gtc\matrix_transform.hpp"
 #include "glm\gtc\type_ptr.hpp"
+
+struct MVP;
+struct SimpleLight;
+class Shader;
+using ShaderParams = std::variant<glm::mat4, glm::vec3, glm::vec4, MVP, bool, float, unsigned int, unsigned short, std::vector<SimpleLight>>;
+using ShaderFunction = std::function<void(std::vector<Shader*>&, unsigned int, std::vector<ShaderParams>&)>;
 
 typedef std::vector<glm::vec3> Vertices;
 typedef std::vector<std::array<glm::vec3, 2>> Edges;
 typedef std::vector<std::array<glm::vec3, 3>> Triangles;
 typedef std::vector<std::vector<std::array<glm::vec3, 3>>> Faces;
 typedef std::array<glm::vec3, 3> Triangle;
- struct MVP
+
+struct MVP
 {
 	glm::mat4 model;
 	glm::mat4 view;
@@ -48,4 +59,16 @@ typedef std::array<glm::vec3, 3> Triangle;
  size_t getSize(T(&)[SIZE]) 
  {
 	 return SIZE;
+ };
+
+ struct ShaderProperties
+ {
+	 ShaderFunctionType type;
+	 std::vector<ShaderParams> params;
+ };
+
+ struct Paths
+ {
+	 std::vector<const char*> shadersPaths;
+	 std::vector<const char*> texturesPaths;
  };
