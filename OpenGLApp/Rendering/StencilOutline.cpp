@@ -30,7 +30,7 @@ void StencilOutline::InitializeModel(glm::mat4& model)
 void StencilOutline::UpdateModel(glm::mat4& model)
 {
 	mvpOutline.model = model;
-	float scale = 1.01f;
+	float scale = 1.06f;
 	mvpOutline.model = glm::scale(mvpOutline.model, glm::vec3(scale));
 	params[0] = mvpOutline.model;
 }

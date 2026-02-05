@@ -93,77 +93,76 @@ VerticesShape* CreateCube(float size, unsigned int bufferSize)
 {
 	float halfSize = size * 0.5f;
 	float* bufferData = new float[]{
-		// front
-		-halfSize, -halfSize, halfSize, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f / sqrt(3.0f),//0
-		halfSize, -halfSize, halfSize, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f / sqrt(3.0f),//3
-		halfSize, halfSize, halfSize, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f / sqrt(3.0f),//2
+		// FRONT (z = +half)
+		-halfSize, -halfSize,  halfSize,  0.0f, 0.0f,   0.0f,  0.0f,  1.0f,
+		 halfSize, -halfSize,  halfSize,  1.0f, 0.0f,   0.0f,  0.0f,  1.0f,
+		 halfSize,  halfSize,  halfSize,  1.0f, 1.0f,   0.0f,  0.0f,  1.0f,
 
-		halfSize, halfSize, halfSize, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f / sqrt(3.0f),//10
-		-halfSize, halfSize, halfSize, 0.0f, 1.0f,  0.0f, 0.0f, 1.0f / sqrt(3.0f),//9
-		-halfSize, -halfSize, halfSize, 0.0f, 0.0f,  0.0f, 0.0f, 1.0f / sqrt(3.0f),//8
+		 halfSize,  halfSize,  halfSize,  1.0f, 1.0f,   0.0f,  0.0f,  1.0f,
+		-halfSize,  halfSize,  halfSize,  0.0f, 1.0f,   0.0f,  0.0f,  1.0f,
+		-halfSize, -halfSize,  halfSize,  0.0f, 0.0f,   0.0f,  0.0f,  1.0f,
 
-		// left
-		-halfSize, -halfSize, 0.0f, 0.0f, 0.0f, -1.0f / sqrt(3.0f), 0.0f, 0.0f,// 4
-		-halfSize, -halfSize, halfSize, 1.0f, 0.0f, -1.0f / sqrt(3.0f), 0.0f, 0.0f,//16
-		-halfSize,  halfSize, halfSize, 1.0f, 1.0f, -1.0f / sqrt(3.0f), 0.0f, 0.0f,//1
+		// BACK (z = -half)
+		 halfSize, -halfSize, -halfSize,  0.0f, 0.0f,   0.0f,  0.0f, -1.0f,
+		-halfSize, -halfSize, -halfSize,  1.0f, 0.0f,   0.0f,  0.0f, -1.0f,
+		-halfSize,  halfSize, -halfSize,  1.0f, 1.0f,   0.0f,  0.0f, -1.0f,
 
-		-halfSize, halfSize, halfSize, 1.0f, 1.0f, -1.0f / sqrt(3.0f), 0.0f, 0.0f,//17
-		-halfSize, halfSize, 0.0f, 0.0f, 1.0f, -1.0f / sqrt(3.0f), 0.0f, 0.0f,// 12
-		-halfSize, -halfSize, 0.0f, 0.0f, 0.0f, -1.0f / sqrt(3.0f), 0.0f, 0.0f,// 5
+		-halfSize,  halfSize, -halfSize,  1.0f, 1.0f,   0.0f,  0.0f, -1.0f,
+		 halfSize,  halfSize, -halfSize,  0.0f, 1.0f,   0.0f,  0.0f, -1.0f,
+		 halfSize, -halfSize, -halfSize,  0.0f, 0.0f,   0.0f,  0.0f, -1.0f,
 
-		//top
-		-halfSize, halfSize, halfSize, 0.0f, 1.0f, 0.0f, 1.0f / sqrt(3.0f), 0.0f, // 6
-		halfSize, halfSize,  halfSize, 1.0f, 1.0f, 0.0f, 1.0f / sqrt(3.0f), 0.0f,// 7
-		halfSize, halfSize, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f / sqrt(3.0f), 0.0f,//11
+		 // LEFT (x = -half)
+		 -halfSize, -halfSize, -halfSize,  0.0f, 0.0f,  -1.0f,  0.0f,  0.0f,
+		 -halfSize, -halfSize,  halfSize,  1.0f, 0.0f,  -1.0f,  0.0f,  0.0f,
+		 -halfSize,  halfSize,  halfSize,  1.0f, 1.0f,  -1.0f,  0.0f,  0.0f,
 
-		halfSize, halfSize, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f / sqrt(3.0f), 0.0f,// 13
-		-halfSize, halfSize, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f / sqrt(3.0f), 0.0f,// 14
-		-halfSize, halfSize, halfSize, 0.0f, 1.0f, 0.0f, 1.0f / sqrt(3.0f), 0.0f,//15
+		 -halfSize,  halfSize,  halfSize,  1.0f, 1.0f,  -1.0f,  0.0f,  0.0f,
+		 -halfSize,  halfSize, -halfSize,  0.0f, 1.0f,  -1.0f,  0.0f,  0.0f,
+		 -halfSize, -halfSize, -halfSize,  0.0f, 0.0f,  -1.0f,  0.0f,  0.0f,
 
-		//right
-		halfSize, halfSize, halfSize, 1.0f, 1.0f, 1.0f / sqrt(3.0f), 0.0f, 0.0f,//18
-		halfSize, -halfSize, halfSize, 0.0f, 1.0f, 1.0f / sqrt(3.0f), 0.0f, 0.0f,//19
-		halfSize, -halfSize, 0.0f, 0.0f, 0.0f, 1.0f / sqrt(3.0f), 0.0f, 0.0f,// 20
+		 // RIGHT (x = +half)
+		  halfSize, -halfSize,  halfSize,  0.0f, 0.0f,   1.0f,  0.0f,  0.0f,
+		  halfSize, -halfSize, -halfSize,  1.0f, 0.0f,   1.0f,  0.0f,  0.0f,
+		  halfSize,  halfSize, -halfSize,  1.0f, 1.0f,   1.0f,  0.0f,  0.0f,
 
-		halfSize, -halfSize, 0.0f, 0.0f, 0.0f, 1.0f / sqrt(3.0f), 0.0f, 0.0f,// 21
-		halfSize, halfSize, 0.0f, 1.0f, 0.0f, 1.0f / sqrt(3.0f), 0.0f, 0.0f,// 22
-		halfSize, halfSize, halfSize, 1.0f, 1.0f, 1.0f / sqrt(3.0f), -0.0f, 0.0f,// 23
+		  halfSize,  halfSize, -halfSize,  1.0f, 1.0f,   1.0f,  0.0f,  0.0f,
+		  halfSize,  halfSize,  halfSize,  0.0f, 1.0f,   1.0f,  0.0f,  0.0f,
+		  halfSize, -halfSize,  halfSize,  0.0f, 0.0f,   1.0f,  0.0f,  0.0f,
 
-		//back
-		halfSize, halfSize, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f / sqrt(3.0f),// 6
-		halfSize, -halfSize, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f / sqrt(3.0f),// 7
-		-halfSize, -halfSize, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f / sqrt(3.0f),//11
+		  // TOP (y = +half)
+		  -halfSize,  halfSize,  halfSize,  0.0f, 0.0f,   0.0f,  1.0f,  0.0f,
+		   halfSize,  halfSize,  halfSize,  1.0f, 0.0f,   0.0f,  1.0f,  0.0f,
+		   halfSize,  halfSize, -halfSize,  1.0f, 1.0f,   0.0f,  1.0f,  0.0f,
 
-		-halfSize, -halfSize, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f / sqrt(3.0f),// 13
-		-halfSize, halfSize, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f / sqrt(3.0f),// 14
-		halfSize, halfSize, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f / sqrt(3.0f),//15
+		   halfSize,  halfSize, -halfSize,  1.0f, 1.0f,   0.0f,  1.0f,  0.0f,
+		  -halfSize,  halfSize, -halfSize,  0.0f, 1.0f,   0.0f,  1.0f,  0.0f,
+		  -halfSize,  halfSize,  halfSize,  0.0f, 0.0f,   0.0f,  1.0f,  0.0f,
 
+		  // BOTTOM (y = -half)
+		  -halfSize, -halfSize, -halfSize,  0.0f, 0.0f,   0.0f, -1.0f,  0.0f,
+		   halfSize, -halfSize, -halfSize,  1.0f, 0.0f,   0.0f, -1.0f,  0.0f,
+		   halfSize, -halfSize,  halfSize,  1.0f, 1.0f,   0.0f, -1.0f,  0.0f,
 
-		//bottom
-		halfSize, -halfSize, halfSize, 1.0f, 1.0f, 0.0f, 0.0f, -1.0f / sqrt(3.0f),//18
-		-halfSize, -halfSize, halfSize, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f / sqrt(3.0f),//19
-		-halfSize, -halfSize, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f / sqrt(3.0f),// 20
-
-		-halfSize, -halfSize, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f / sqrt(3.0f),// 21
-		halfSize, -halfSize, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f / sqrt(3.0f),// 22
-		halfSize, -halfSize, halfSize, 1.0f, 1.0f, 0.0f, 0.0f, -1.0f / sqrt(3.0f)// 23
+		   halfSize, -halfSize,  halfSize,  1.0f, 1.0f,   0.0f, -1.0f,  0.0f,
+		  -halfSize, -halfSize,  halfSize,  0.0f, 1.0f,   0.0f, -1.0f,  0.0f,
+		  -halfSize, -halfSize, -halfSize,  0.0f, 0.0f,   0.0f, -1.0f,  0.0f
 	};
 
 	unsigned int* indexes = new unsigned int[]
-	{
-		0, 1, 2,
-		3, 4, 5, // front
-		6, 7, 8,
-		9, 10, 11, // left
-		12, 13, 14,
-		15, 16, 17,
-		18, 19, 20,
-		21, 22, 23,
-		24, 25, 26,
-		27, 28, 29,
-		30, 31, 32,
-		33, 34, 35,
-	}; // bottom
+		{
+			0, 1, 2,
+				3, 4, 5, // front
+				6, 7, 8,
+				9, 10, 11, // left
+				12, 13, 14,
+				15, 16, 17,
+				18, 19, 20,
+				21, 22, 23,
+				24, 25, 26,
+				27, 28, 29,
+				30, 31, 32,
+				33, 34, 35,
+		}; // bottom
 	VerticesShape* cube = new VerticesShape
 	{
 		36,

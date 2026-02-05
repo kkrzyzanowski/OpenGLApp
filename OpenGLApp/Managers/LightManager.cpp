@@ -95,6 +95,7 @@ void LightManager::PassLightDataToShape(std::shared_ptr<Shape> shape)
 {
 	for (auto& light : lights)
 	{
+		shape->functionParams.push_back(shape->IsShadowTurnOn());
 		if (shape->IsShadowTurnOn())
 			shape->functionParams.push_back(light->LightSpaceMatrix);
 		break;
@@ -105,4 +106,19 @@ void LightManager::InitializeShadowShaders()
 {
 	shadowShaders.push_back(new Shader(SHADOW_VERT_PATH));
 	shadowShaders.push_back(new Shader(SHADOW_FRAG_PATH));
+}
+
+void LightManager::AddLightsToFrameBuffer(std::shared_ptr<FrameBuffer> frameBuffer)
+{
+	std::vector<SimpleLight> simpleLights;
+	for (size_t i = 0; i < lights.size(); ++i)
+	{
+		SimpleLight light;
+		light.color = lights[i]->GetColor();
+		light.position = lights[i]->Position;
+		light.slot = unsigned short(0);
+		light.lightNumber = i;
+		simpleLights.push_back(light);
+	}
+	frameBuffer->AddParams(simpleLights);
 }

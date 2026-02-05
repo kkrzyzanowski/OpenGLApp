@@ -40,18 +40,8 @@ FrameBuffer::FrameBuffer(FrameBufferBuilder& builder)
 	AddTexturesToBuffer(builder.textures, builder.type);
 	AddShaders(builder.ShaderPaths);
 	SetFunctionShader(builder.type);
-	InitializeShaders();
+	//InitializeShaders();
 }
-
-//FrameBuffer::FrameBuffer(FrameBuffer& other, FrameBufferBuilder& builder)
-//{
-//	GLCall(glGenFramebuffers(1, &fbo));
-//	bm = std::unique_ptr<BufferManager>(new BufferManager());
-//	sc = other.sc;
-//	sm = other.sm;
-//	tm = new TextureManager();
-//	AddTexturesToBuffer(builder.textures, builder.type);
-//}
 
 void FrameBuffer::Bind()
 {
@@ -141,29 +131,38 @@ std::vector<Shader*> FrameBuffer::GetFrameBufferShaders()
 }
 
 
-void FrameBuffer::InitializeShaders(unsigned short textureSlot)
+void FrameBuffer::InitializeShaders()
 {
 	if (sm->shaders.size() > 0)
 	{
 		sc.AddShadersToProgram(sm->shaders);
 		sc.EnableUse();
-		tm->Textures[textureSlot]->Bind();
+		for (size_t i = 0; i < tm->Textures.size(); ++i)
+			tm->Textures[i]->Bind();
 		func(sm->shaders, sc.GetCurrentProgram(), params);
-		tm->Textures[textureSlot]->UnBind();
+		for(size_t i = 0; i < tm->Textures.size(); ++i)
+			tm->Textures[i]->UnBind();
 		sc.DisableUse();
 	}
 }
 
-void FrameBuffer::InitializePostProcessingShaders()
+void FrameBuffer::ExecuteShader()
 {
-	/*shaders.push_back(new Shader("Shaders\\PostProcesingShader.vert"));
-	shaders.push_back(new Shader("Shaders\\PostProcesingShader.frag"));
-	sc.AddShadersToProgram(shaders);
 	sc.EnableUse();
-	tm->Textures[0]->Bind();
-	ShaderTypeGenerator::PostProcesingShaderGenerator(shaders, sc.GetDefaultProgram());*/
-	//fbTexture->UnBind();
-	//sm.UnBind();
+	func(sm->shaders, sc.GetCurrentProgram(), params);
+}
+
+void FrameBuffer::UpdateFrameBuffer()
+{
+	ExecuteShader();
+}
+
+void FrameBuffer::AfterUpdateFrameBuffer()
+{
+	sc.DisableUse();
+	bm->UnbindBuffers();
+	for(auto& tex: tm->Textures)
+		tex->UnBind();
 }
 
 void FrameBuffer::AddTexturesToBuffer(std::vector<Texture*>& textures, FrameBufferType type)
@@ -178,63 +177,6 @@ void FrameBuffer::AddTexturesToBuffer(std::vector<Texture*>& textures, FrameBuff
 void FrameBuffer::AddTexturesToBuffer(std::vector<Texture*>&& textures)
 {
 	tm->AddTextures(textures);
-}
-
-void FrameBuffer::InitializeHDRShaders()
-{
-	/*shaders.push_back(new Shader("Shaders\\HDRGaussianBlurShader.vert"));
-	shaders.push_back(new Shader("Shaders\\HDRGaussianBlurShader.frag"));
-	sc.AddShadersToProgram(shaders);
-	sc.EnableUse();
-	tm->Textures[0]->Bind();
-	ShaderTypeGenerator::HDRGaussianBlurShaderGenerator(shaders, sc.GetDefaultProgram());
-	tm->Textures[0]->UnBind();*/
-	//sm.UnBind();
-}
-
-void FrameBuffer::InitializeGaussianBlurShaders()
-{
-	/*shaders.push_back(new Shader("Shaders\\GaussianBlurShader.vert"));
-	shaders.push_back(new Shader("Shaders\\GaussianBlurShader.frag"));
-	sc.AddShadersToProgram(shaders);
-	sc.EnableUse();
-	tm->Textures[0]->Bind();
-	ShaderTypeGenerator::UpdateBloomShader(shaders, true, sc.GetDefaultProgram());
-	tm->Textures[0]->UnBind();
-	sc.DisableUse();*/
-}
-
-void FrameBuffer::UpdateGaussianBlurShaders(bool horizontal)
-{
-	//sc.EnableUse();
-	//tm->Textures[0]->Bind();
-	//ShaderTypeGenerator::UpdateBloomShader(shaders, 0, sc.GetDefaultProgram());
-	//tm->Textures[0]->UnBind();
-	//sc.DisableUse();
-}
-
-void FrameBuffer::InitializeFrameBufferShader(const std::string& vertexPath, const std::string& fragmentPath, std::function<void(std::vector<Shader*>&, unsigned int)> shaderGeneratorFunc)
-{
-	/*shaders.push_back(new Shader(vertexPath));
-	shaders.push_back(new Shader(fragmentPath));
-	sc.AddShadersToProgram(shaders);
-	sc.EnableUse();
-	tm->Textures[0]->Bind();
-	shaderGeneratorFunc(shaders, sc.GetDefaultProgram());
-	tm->Textures[0]->UnBind();
-	sc.DisableUse();*/
-}
-
-void FrameBuffer::InitializeFrameBufferShader(const char* vertexPath, const char* fragmentPath, std::function<void(std::vector<Shader*>&, unsigned int)> shaderGeneratorFunc)
-{
-	/*shaders.push_back(new Shader(vertexPath));
-	shaders.push_back(new Shader(fragmentPath));
-	sc.AddShadersToProgram(shaders);
-	sc.EnableUse();
-	tm->Textures[0]->Bind();
-	shaderGeneratorFunc(shaders, sc.GetDefaultProgram());
-	tm->Textures[0]->UnBind();
-	sc.DisableUse();*/
 }
 
 Texture* FrameBuffer::GetFramebufferTexture(unsigned int slot)
@@ -268,6 +210,14 @@ void FrameBuffer::DrawBuffers(unsigned short colorAtachhment)
 void FrameBuffer::DrawBuffers(FrameBufferType type)
 {
 	if (type & (POSTPROCESSING | HDR | BLUR))
+	{
+		unsigned int textureSize = tm->Textures.size();
+		std::vector<GLenum> DrawBuffers(textureSize);
+		for (int i = 0; i < textureSize; i++)
+			DrawBuffers[i] = GL_COLOR_ATTACHMENT0 + i;
+		glDrawBuffers(textureSize, DrawBuffers.data());
+	}
+	else if(type & GBUFFER)
 	{
 		unsigned int textureSize = tm->Textures.size();
 		std::vector<GLenum> DrawBuffers(textureSize);
@@ -319,13 +269,8 @@ void FrameBuffer::SetFunctionShader(FrameBufferType type)
 	}
 	case GBUFFER:
 	{
-		tm->Textures.push_back(new Texture(0, 0, GL_FLOAT, TextureMode::FRAMEBUFFER));
-		tm->Textures.push_back(new Texture(1, 1, GL_FLOAT, TextureMode::FRAMEBUFFER));
-		tm->Textures.push_back(new Texture(2, 2, GL_UNSIGNED_BYTE, TextureMode::FRAMEBUFFER));
-		for (Texture* tex : tm->Textures)
-			tex->CreateTextureForFrameBuffer();
-		//DrawBuffers();
-		func = ShaderTypeGenerator::PassLightMatrixData;
+		func = ShaderTypeGenerator::DefferedShading;
+		break;
 	}
 
 	}

@@ -28,17 +28,15 @@ public:
 	bool CheckFrameBuffer();
 	void TurnOffFrameBufferElements();
 	void TurnOnFrameBufferElements();
-	void InitializeShaders(unsigned short textureSlot = 0);
-	void InitializePostProcessingShaders();
+	void InitializeShaders();
+	void ExecuteShader();
+	void UpdateFrameBuffer();
+
+	void AfterUpdateFrameBuffer();
+
 	void AddTexturesToBuffer(std::vector<Texture*>& textures, FrameBufferType type);
 	void AddTexturesToBuffer(std::vector<Texture*>&& textures);
-	void InitializeHDRShaders();
 
-	void InitializeGaussianBlurShaders();
-
-	void UpdateGaussianBlurShaders(bool horizontal);
-	void InitializeFrameBufferShader(const std::string& vertexPath, const std::string& fragmentPath, std::function<void(std::vector<Shader*>&, unsigned int)> shaderGeneratorFunc);
-	void InitializeFrameBufferShader(const char* vertexPath, const char* fragmentPath, std::function<void(std::vector<Shader*>&, unsigned int)> shaderGeneratorFunc);
 
 	Texture* GetFramebufferTexture(unsigned int slot = 0);
 	std::vector<Texture*> GetFramebufferTextures();

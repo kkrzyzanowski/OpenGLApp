@@ -6,20 +6,6 @@
 #include "../Managers/LightManager.h"
 
 static bool RandomInitializer = false;
-//Shape::Shape()
-//{
-//	shapeState = ShapeState::CREATING;
-//	sourceShapeType = SourceShapeType::NO_TYPE;
-//	do
-//	{
-//		this->Id = GenerateId(this->rgbCheck);
-//	} while (std::find(shape_ids.begin(), shape_ids.end(), this->Id) != shape_ids.end());
-//	sc.ActivateDefaultProgram();
-//	Selected = false;
-//	bm = new BufferManager();
-//	sm = new ShaderManager();
-//	
-//}
 
 Shape::Shape(ShapesBuilder& builder) : builder(std::make_unique<ShapesBuilder>(std::move(builder)))
 {
@@ -460,10 +446,12 @@ void Shape::AddParamsToShader()
 	case Shading::DEFFERED_SHADING:
 	{
 		functionParams.push_back(mvp.model);
+		functionParams.push_back(mainLight);
 		break;
 	}
 	case Shading::FORWARD_SHADING:
 	case Shading::DISPLACEMENT:
+	case Shading::CUBEMAP:
 	{
 		functionParams.push_back(mvp.model);
 		functionParams.push_back(mainLight);

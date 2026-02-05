@@ -9,10 +9,17 @@ void ShaderTypeGenerator::ShaderDiffuseGenerator(std::vector<Shader*>& shaders, 
 {
 	glm::mat4 model = std::get<glm::mat4>(params[0]);
 	glm::vec3 outsideLight = std::get<glm::vec3>(params[1]);
-	glm::mat4 lightSpaceMatrix = std::get<glm::mat4>(params[2]);;
-
+	bool isShadow = std::get<bool>(params[2]);
+	if (isShadow)
+	{
+		glm::mat4 lightSpaceMatrix = std::get<glm::mat4>(params[3]);;
+		shaders[0]->SetUniformMat4f("lightSpaceMatrix", lightSpaceMatrix, program);
+	}
+	else
+	{
+		shaders[0]->SetUniformMat4f("lightSpaceMatrix", glm::mat4(1.0f), program);
+	}
 	shaders[0]->SetUniformMat4f("model", model, program);
-	shaders[0]->SetUniformMat4f("lightSpaceMatrix", lightSpaceMatrix, program);
 
 	shaders[1]->SetUniform1i("material.diffuse", 0, program);
 	shaders[1]->SetUniform1i("material.specular", 1, program);
@@ -126,7 +133,8 @@ void ShaderTypeGenerator::InstancedTerrainShaderGenerator(std::vector<Shader*>& 
 	glm::vec3 outsideLight = std::get<glm::vec3>(params[1]);
 	glm::vec3 offset = std::get<glm::vec3>(params[2]);
 	unsigned int instanceNumber = std::get<unsigned int>(params[3]);
-	glm::mat4 lightSpaceMatrix = std::get<glm::mat4>(params[4]);
+	bool isShadow = std::get<bool>(params[4]);
+	glm::mat4 lightSpaceMatrix = std::get<glm::mat4>(params[5]);
 	shaders[0]->SetUniformMat4f("model", model, program);
 	shaders[0]->SetUniform3f("offset[" + std::to_string(instanceNumber) + "]", offset, program);
 	shaders[0]->SetUniformMat4f("lightSpaceMatrix", lightSpaceMatrix, program);
@@ -219,7 +227,7 @@ void ShaderTypeGenerator::UpdateLightiningHDR(std::vector<Shader*>& shaders, uns
 	glm::mat4 model = std::get<glm::mat4>(params[0]);
 	UpdateModel(shaders, program, model);
 	shaders[0]->SetUniform3f("camPos", CameraManager::camManager->GetActiveCamera()->GetCamPos(), program);
-	std::vector<SimpleLight> lights = std::get <std::vector<SimpleLight>>(params[1]);
+	std::vector<SimpleLight> lights = std::get <std::vector<SimpleLight>>(params[2]);
 
 	for (auto& light : lights)
 	{
@@ -251,6 +259,26 @@ void ShaderTypeGenerator::BloomShaderGenerator(std::vector<Shader*>& shaders, un
 	shaders[1]->SetUniform3f("lightPosition", lightPos, program);
 	shaders[1]->SetUniform3f("lightColor", lightColor, program);
 
+}
+
+void ShaderTypeGenerator::DefferedShading(std::vector<Shader*>& shaders, unsigned int program, std::vector<ShaderParams>& params)
+{
+	std::vector<SimpleLight> lights = std::get <std::vector<SimpleLight>>(params[0]);
+	shaders[1]->SetUniform1i("pos", 0, program);
+	shaders[1]->SetUniform1i("normal", 1, program);
+	shaders[1]->SetUniform1i("albedoSpec", 2, program);
+	shaders[1]->SetUniform3f("viewPos", CameraManager::camManager->GetActiveCamera()->GetCamPos(), program);
+	for (auto& light : lights)
+	{
+		for (auto& light : lights)
+		{
+			shaders[1]->SetUniform3f("lights[" + std::to_string(light.lightNumber) + "].position", light.position, program);
+			shaders[1]->SetUniform3f("lights[" + std::to_string(light.lightNumber) + "].color", light.color, program);
+			shaders[1]->SetUniform1f("lights[" + std::to_string(light.lightNumber) + "].linear", 0.09f, program);    // typical small linear
+			shaders[1]->SetUniform1f("lights[" + std::to_string(light.lightNumber) + "].quadratic", 0.032f, program); // typical quadratic
+			shaders[1]->SetUniform1f("lights[" + std::to_string(light.lightNumber) + "].radius", 10.0f, program);
+		}
+	}
 }
 
 ShaderTypeGenerator::~ShaderTypeGenerator()

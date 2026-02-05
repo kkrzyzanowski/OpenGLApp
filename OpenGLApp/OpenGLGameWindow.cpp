@@ -78,6 +78,7 @@ int OpenGLGameWindow::CreateWindow()
 		.SourceType(SourceShapeType::SHAPE)
 		.Shader(CUBEBOX_VERT_PATH)
 		.Shader(CUBEBOX_FRAG_PATH)
+		.SetShading(Shading::CUBEMAP)
 		.Create(ShapeType::SKYBOX));
 
 	ShapeManager::shapes.emplace_back(shapesBuilder->ObjectState(CamView::DYNAMIC)
@@ -86,28 +87,8 @@ int OpenGLGameWindow::CreateWindow()
 		.Texture(TEMP_TEXTURE_SPECULAR)
 		.Shader(DIFFUSE_VERT_PATH)
 		.Shader(DIFFUSE_FRAG_PATH)
-		.Shadow(true)
+		.Shadow(false)
 		.Position(glm::vec3(0.6f, 0.12f, -3.0f))
-		.Create(ShapeType::CUBE));
-
-	ShapeManager::shapes.emplace_back(shapesBuilder->ObjectState(CamView::DYNAMIC)
-		.SourceType(SourceShapeType::SHAPE)
-		.Texture(TEMP_TEXTURE_DIFFUSE)
-		.Shader(BLOOM_VERT)
-		.Shader(BLOOM_FRAG)
-		.Bloom(true)
-		.Shadow(true)
-		.Position(glm::vec3(0.1f, 0.0f, -7.0f))
-		.Create(ShapeType::CUBE));
-
-	ShapeManager::shapes.emplace_back(shapesBuilder->ObjectState(CamView::DYNAMIC)
-		.SourceType(SourceShapeType::SHAPE)
-		.Texture(TEMP_TEXTURE_DIFFUSE)
-		.Shader(BLOOM_VERT)
-		.Shader(BLOOM_FRAG)
-		.Bloom(true)
-		.Shadow(true)
-		.Position(glm::vec3(-0.3f, -0.2f, -4.0f))
 		.Create(ShapeType::CUBE));
 
 	ShapeManager::shapes.emplace_back(shapesBuilder->ObjectState(CamView::DYNAMIC)
@@ -116,7 +97,7 @@ int OpenGLGameWindow::CreateWindow()
 		.Texture(TEMP_TEXTURE_SPECULAR)
 		.Shader(DIFFUSE_VERT_PATH)
 		.Shader(DIFFUSE_FRAG_PATH)
-		.Shadow(true)
+		.Shadow(false)
 		.Rotation(glm::vec3(0.0f, 0.0f, 0.0f), 0.0f)
 		.Position(glm::vec3(0.0f, -1.0f, -3.0f))
 		.Scale(glm::vec3(5.0f, 1.0f, 5.0f))
@@ -247,36 +228,22 @@ int OpenGLGameWindow::CreateWindow()
 		.AddShaderByPath(MAIN_TEXTURE_RENDER_VERT)
 		.AddShaderByPath(MAIN_TEXTURE_RENDER_FRAG)
 		.Create(FrameBufferType::MAIN));
+	frameBufferBuilder->ResetData();
 
+	FrameBufferManager::CreateFRBuffer(FrameBufferType::GBUFFER, frameBufferBuilder->AddShaderByPath(DEFFERED_VERT_PATH)
+		.AddShaderByPath(DEFFERED_FRAG_PATH)
+		.AddTexture(TextureMode::G_BUFFER_TRANSFORM, 0, 0)
+		.AddTexture(TextureMode::G_BUFFER_NORMAL, 0, 1)
+		.AddTexture(TextureMode::G_BUFFER_COLOR_SPECULAR, 0, 2)
+		.Create(FrameBufferType::GBUFFER));
+	frameBufferBuilder->ResetData();
 	FrameBufferManager::InitializeFrameBuffers();
 
-
-	/// Deffered shading framebuffers
-
-	std::unique_ptr gBuffer = std::make_unique<FrameBuffer>();
-	std::unique_ptr gRenderBuffer = std::make_unique<RenderBuffer>();
-	gBuffer->Bind();
-	std::shared_ptr positionTexture = std::make_shared<Texture>(Texture(0, 0, GL_FLOAT, TextureMode::FRAMEBUFFER));
-	std::shared_ptr normalTexture = std::make_shared<Texture>(Texture(1, 1, GL_FLOAT, TextureMode::FRAMEBUFFER));
-	std::shared_ptr colorSpecTexture = std::make_shared<Texture>(Texture(2, 2, GL_UNSIGNED_BYTE, TextureMode::FRAMEBUFFER));
-	positionTexture->CreateTextureForFrameBuffer();
-	normalTexture->CreateTextureForFrameBuffer();
-	colorSpecTexture->CreateTextureForFrameBuffer();
-	gBuffer->AddTexturesToBuffer({ positionTexture.get(), normalTexture.get(), colorSpecTexture.get() });
-	//gBuffer->DrawBuffers();
-	//gBuffer->InitializeFrameBufferShader(DEFFERED_VERT_PATH, DEFFERED_FRAG_PATH, ShaderTypeGenerator::PassLightMatrixData);
-	gRenderBuffer->Bind();
-	gRenderBuffer->GenerateDepthRenderBuffer();
-	gRenderBuffer->UnBind();
-	gRenderBuffer->AttachDepthFrameRenderBuffer();
-	gBuffer->UnBind();
-
-
-
-	///add shadow map to shader
-	/*Texture* shadowMapRaw = depthMapFrameBuffer->GetFramebufferTexture();
-	std::shared_ptr<Texture> shadowMap = std::shared_ptr<Texture>(shadowMapRaw);
-	std::vector<std::shared_ptr<Texture>> shadowMapTextureContainer = { shadowMap };*/
+	LightManager::AddLightsToFrameBuffer(FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer);
+	for (auto fb : FrameBufferManager::FRbuffer_container)
+	{
+		fb.second.frameBuffer->InitializeShaders();
+	}
 
 	LightManager::InitializeShadowShaders();
 	ShapeManager::InitializeShapesData(cam.get());
@@ -305,9 +272,13 @@ int OpenGLGameWindow::CreateWindow()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 	glEnable(GL_STENCIL_TEST);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
 	std::vector<std::shared_ptr<Shape>> selectedShapes;
-	auto forwardShapes = ShapeManager::FilterShape(Shading::DEFFERED_SHADING);
+	auto skyboxShape = ShapeManager::FilterShape(Shading::CUBEMAP)[0];
+	auto forwardShapes = ShapeManager::FilterShape({ Shading::FORWARD_SHADING, Shading::DISPLACEMENT, Shading::TEXTURE_COLOR, Shading::DISPLACEMENT,
+		Shading::ONLY_COLOR });
+	auto deferredShapes = ShapeManager::FilterShape(Shading::DEFFERED_SHADING);
 	auto shadowShapes = ShapeManager::FilterShape(true);
 
 	bool horizontal = true;
@@ -322,12 +293,12 @@ int OpenGLGameWindow::CreateWindow()
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
 	{
+		FrameBuffer::UnBind();
 		cam->Update();
-		renderer->ClearColor();
-		renderer->ClearDepth();
+		renderer->Clear();
+		glStencilMask(0x00);
+
 		glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-		glClearColor(0.2f, 0.5f, 0.3f, 1.0f);
-		///glStencilMask(0x00);
 
 		if (POSTPROCESSING_EFFECTS)
 		{
@@ -371,9 +342,19 @@ int OpenGLGameWindow::CreateWindow()
 			FrameBufferManager::FRbuffer_container[BLUR].frameBuffer->Bind();
 			renderer->Clear();
 		}
-		
 
-		//forward
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_BLEND);
+
+
+		glDepthFunc(GL_LEQUAL);
+		glDepthMask(GL_FALSE);
+
+		skyboxShape->SetMainLight(light->Position);
+		skyboxShape->Update();
+		renderer->Draw(skyboxShape->bm->GetIndexBuffer()->GetCount(), GL_TRIANGLES);
+		skyboxShape->AfterUpdate();
 
 		for (auto& shape : ShapeManager::shapes)
 		{
@@ -382,34 +363,45 @@ int OpenGLGameWindow::CreateWindow()
 				selectedShapes.push_back(shape);
 				continue;
 			}
-
-			shape->SetMainLight(light->Position);
-			shape->Update();
-			if (shape->GetSourceShapeType() != SourceShapeType::PRIMITIVE)
-			{
-				auto terr = dynamic_cast<Terrain*>(shape.get());
-				int verticesCount = shape->bm->GetIndexBuffer()->GetCount();
-				if (terr == nullptr)
-				{
-					renderer->Draw(verticesCount, GL_TRIANGLES);
-				}
-				else
-					renderer->DrawArrayInstances(verticesCount, GL_TRIANGLE_STRIP, 256);
-
-			}
-			//Check collision - for now on main loop
-			collision->CheckCollision();
-
-			/*if (dynamic_cast<Primitive*>(shape) != nullptr)
-			{
-				Primitive* p = dynamic_cast<Primitive*>(shape);
-				delete p;
-			}*/
-			shape->AfterUpdate();
 		}
 
+		glDepthMask(GL_TRUE);
+		glDepthFunc(GL_LESS);
+
+
+		//deffered
+		FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->Bind();
+		renderer->Clear();
+		for (auto& shape : deferredShapes)
+		{
+			shape->SetMainLight(light->Position);
+			shape->Update();
+			int verticesCount = shape->bm->GetIndexBuffer()->GetCount();
+			renderer->Draw(verticesCount, GL_TRIANGLES);
+			shape->AfterUpdate();
+		}
+		FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->UnBind();
+
+		FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->TurnOnFrameBufferElements();
+		for (int i = 0; i < FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->GetFramebufferTextures().size(); i++)
+		{
+			FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->GetFramebufferTextures()[i]->Bind(i);
+		}
+
+		FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->UpdateFrameBuffer();
+
+		renderer->DrawArrays(6, GL_TRIANGLES);
+		FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->AfterUpdateFrameBuffer();
+
+		FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->ReadBind();
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		glBlitFramebuffer(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+		FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->UnBind();
+
 		//Lights
-		//TurnOnNormalMask();
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_ONE, GL_ONE);
+
 		for (auto& light : LightManager::lights)
 		{
 			light->Update();
@@ -417,35 +409,80 @@ int OpenGLGameWindow::CreateWindow()
 			renderer->Draw(verticesCount, GL_TRIANGLES);
 		}
 
+		glDisable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
 
-		//Selected shapes
-		renderer->ClearStencil();
+
+		//forward
+		//{
+		//	for (auto& shape : forwardShapes)
+		//	{
+		//		shape->SetMainLight(light->Position);
+		//		shape->Update();
+		//		if (shape->GetSourceShapeType() != SourceShapeType::PRIMITIVE)
+		//		{
+		//			auto terr = dynamic_cast<Terrain*>(shape.get());
+		//			int verticesCount = shape->bm->GetIndexBuffer()->GetCount();
+		//			if (terr == nullptr)
+		//			{
+		//				renderer->Draw(verticesCount, GL_TRIANGLES);
+		//			}
+		//			else
+		//				renderer->DrawArrayInstances(verticesCount, GL_TRIANGLE_STRIP, 256);
+
+		//		}
+		//		//Check collision - for now on main loop
+		//		collision->CheckCollision();
+
+		//		/*if (dynamic_cast<Primitive*>(shape) != nullptr)
+		//		{
+		//			Primitive* p = dynamic_cast<Primitive*>(shape);
+		//			delete p;
+		//		}*/
+		//		shape->AfterUpdate();
+		//	}
+		//}
+		for (auto& shape : forwardShapes)
+		{
+			if (!shape->Selected)
+			{
+				shape->SetMainLight(light->Position);
+				shape->Update();
+				int verticesCount = shape->bm->GetIndexBuffer()->GetCount();
+				renderer->Draw(verticesCount, GL_TRIANGLES);
+				shape->AfterUpdate();
+			}
+		}
+
+		///Selected shapes
+		//renderer->ClearStencil();
 		for (auto& sShape : selectedShapes)
 		{
 			// draw selection
-			glEnable(GL_STENCIL_TEST);
+			glEnable(GL_DEPTH_TEST);
 			glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 			glStencilFunc(GL_ALWAYS, 1, 0xFF);
 			glStencilMask(0xFF);
-			glClear(GL_STENCIL_BUFFER_BIT);
-			glDisable(GL_DEPTH_TEST);
-			sShape->UpdatePickedShape();
-			renderer->Draw(sShape->bm->GetIndexBuffer()->GetCount(), GL_TRIANGLES);
-			sShape->DeactivateShapeBufferParts();
-			sShape->AfterUpdate();
-
-
-			/// draw selected shape
-			glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-			glStencilMask(0x00);
-			glEnable(GL_DEPTH_TEST);
 			sShape->Update();
 			renderer->Draw(sShape->bm->GetIndexBuffer()->GetCount(), GL_TRIANGLES);
 			sShape->DeactivateShapeBufferParts();
 			sShape->AfterUpdate();
-		}
 
-        // Fix for the initialization issue with FrameBufferType and bool
+			/// draw selected shape
+			glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+			glStencilMask(0x00);
+			glDisable(GL_DEPTH_TEST);
+			glStencilMask(0x00);
+			sShape->UpdatePickedShape();
+			renderer->Draw(sShape->bm->GetIndexBuffer()->GetCount(), GL_TRIANGLES);
+			sShape->DeactivateShapeBufferParts();
+			sShape->AfterUpdate();
+			glStencilMask(0xFF);
+			glEnable(GL_DEPTH_TEST);
+		}
+	
+
+		// Fix for the initialization issue with FrameBufferType and bool
 		if (GAUSSIAN_BLUR)
 		{
 			FrameBufferManager::FRbuffer_container[BLUR].frameBuffer->UnBind();
@@ -504,7 +541,7 @@ int OpenGLGameWindow::CreateWindow()
 		if (POSTPROCESSING_EFFECTS)
 		{
 			FrameBufferManager::FRbuffer_container[POSTPROCESSING].frameBuffer->UnBind();
-			
+
 			glDisable(GL_DEPTH_TEST);
 			renderer->Clear();
 			FrameBufferManager::FRbuffer_container[POSTPROCESSING].frameBuffer->TurnOnFrameBufferElements();
@@ -524,7 +561,7 @@ int OpenGLGameWindow::CreateWindow()
 
 	glfwTerminate();
 	delete screen;
-	delete window;
+	glfwDestroyWindow(window);
 
 	return 0;
 }

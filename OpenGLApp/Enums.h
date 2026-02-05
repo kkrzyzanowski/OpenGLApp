@@ -24,14 +24,14 @@ enum SourceShapeType
 
 enum Shading
 {
-	FORWARD_SHADING = 0,
-	DEFFERED_SHADING = 1,
-	ONLY_COLOR = 2,
-	TEXTURE_COLOR = 3,
-	DISPLACEMENT = 4,
-	CUBEMAP = 5,
-	HDR_SHADING = 6,
-	BLOOM = 7
+	FORWARD_SHADING  = 1u << 0,
+	DEFFERED_SHADING = 1u << 1,
+	ONLY_COLOR		 = 1u << 2,
+	TEXTURE_COLOR	 = 1u << 3,
+	DISPLACEMENT	 = 1u << 4,
+	CUBEMAP			 = 1u << 5,
+	HDR_SHADING		 = 1u << 6,
+	BLOOM			 = 1u << 7,
 }; // by bytes to-do
 
 enum class CamView
@@ -50,7 +50,18 @@ enum Direction
 };
 enum FrameBufferType
 {
-	POSTPROCESSING = 32, BLUR = 2, HDR = 4, DEPTHMAP = 8, GBUFFER = 16, GAUSSIAN_HORIZONTAL = 1, GAUSSIAN_VERTICAL = 0, COLOR = 64, MAIN = 128
+	GAUSSIAN_HORIZONTAL = 1 << 0, // 1
+	BLUR = 1 << 1, // 2
+	HDR = 1 << 2, // 4
+	DEPTHMAP = 1 << 3, // 8
+	GBUFFER = 1 << 4, // 16
+	POSTPROCESSING = 1 << 5, // 32
+	COLOR = 1 << 6, // 64
+	MAIN = 1 << 7, // 128
+
+	// keep vertical as zero if your code relies on casting bool -> 0/1,
+	// but prefer defining an explicit flag instead (see note below)
+	GAUSSIAN_VERTICAL = 0
 };
 
 enum class ShaderFunctionType

@@ -4,6 +4,7 @@
 #include <memory>
 #include "ShaderCompiler.h"
 #include "..\Shaders\ShaderClasses\ShaderTypeGenerator.h"
+#include "../Buffers/FrameBuffer.h"
 
 class Light;
 class Shape;
@@ -22,5 +23,6 @@ public:
 	static void ApplyHDRLightParams(std::shared_ptr<Shape> shape, std::vector<ShaderParams>& params);
 	static void PassLightDataToShape(std::shared_ptr<Shape> shape);
 	static void InitializeShadowShaders();
+	static void AddLightsToFrameBuffer(std::shared_ptr<FrameBuffer> frameBuffer);
 };
 

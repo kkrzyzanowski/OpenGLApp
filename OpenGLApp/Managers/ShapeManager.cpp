@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "ShapeManager.h"
 #include "..\Builders\ShapesBuilder.h"
 #include "..\Lights\Light.h"
@@ -5,6 +6,7 @@
 #include "..\Camera\Camera.h"
 
 std::vector<std::shared_ptr<Shape>> ShapeManager::shapes;
+
 //ShapesBuilder shapesBuilder;
 std::shared_ptr<ShapesBuilder> shapesBuilder = std::make_shared<ShapesBuilder>();
 ShapeManager::ShapeManager()
@@ -48,18 +50,39 @@ void ShapeManager::AddShape(ShapeType type)
 	//shapes.push_back(shapesBuilder->Create(type));
 }
 
+ 
+
 std::vector<std::shared_ptr<Shape>> ShapeManager::FilterShape(Shading shadingType)  
 {  
-   std::vector<std::shared_ptr<Shape>> filteredShapes;  
-   for (const auto& shape : shapes)  
-   {  
-       if (shape->GetShading() != shadingType)  
-       {  
-           filteredShapes.push_back(shape);  
-       }  
-   }  
-   return filteredShapes;  
+	std::vector<std::shared_ptr<Shape>> filteredShapes;
+	std::copy_if(
+		shapes.begin(), shapes.end(),
+		std::back_inserter(filteredShapes),
+		[&shadingType](const std::shared_ptr<Shape>& shape) {
+			return shape->GetShading() == shadingType;
+		});
+	return filteredShapes;
 }  
+
+std::vector<std::shared_ptr<Shape>> ShapeManager::FilterShape(std::initializer_list<Shading> shadingTypes)
+{
+	std::vector<std::shared_ptr<Shape>> filteredShapes;
+	std::copy_if(
+		shapes.begin(), shapes.end(),
+		std::back_inserter(filteredShapes),
+		[shadingTypes](const std::shared_ptr<Shape>& shape) {
+			Shading shapeShading = shape->GetShading();
+			int shapeVal = static_cast<int>(shapeShading);
+			for (auto flag : shadingTypes)
+			{
+				int flagVal = static_cast<int>(flag);
+				if ((shapeVal & flagVal) != 0) // matches any provided flag
+					return true;
+			}
+			return false;
+		});
+	return filteredShapes;
+}
 
 std::vector<std::shared_ptr<Shape>> ShapeManager::FilterShape(bool shadow)
 {  

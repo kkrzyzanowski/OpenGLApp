@@ -60,6 +60,8 @@ void RendererScreen::SetFunctionForShaders(ShaderProperties props)
 	case ShaderFunctionType::SHADER_FUNC_BLOOM:
 		func = ShaderTypeGenerator::UpdateFinalBloomShader;
 		break;
+	case ShaderFunctionType::SHADER_FUNC_GBUFFER:
+
 	default:
 		break;
 	}

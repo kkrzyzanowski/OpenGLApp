@@ -31,7 +31,16 @@ void FrameBufferManager::InitializeFrameBuffers()
 			val.rendererBuffer->GenerateDepthStencilRenderBuffer();
 			val.rendererBuffer->UnBind();
 			val.rendererBuffer->AttachDepthFrameRenderBuffer();
-			//val.frameBuffer->UnBind();
+			val.frameBuffer->UnBind();
+		}
+		if(key & GBUFFER)
+		{
+			val.frameBuffer->Bind();
+			val.rendererBuffer->Bind();
+			val.rendererBuffer->GenerateDepthRenderBuffer();
+			val.rendererBuffer->UnBind();
+			val.rendererBuffer->AttachDepthFrameRenderBuffer();
+			val.frameBuffer->UnBind();
 		}
 	}
 }
@@ -40,7 +49,7 @@ void FrameBufferManager::PassShadowDataToShader(std::shared_ptr<Shape> shape)
 {  
     for (auto& [key, val] : FRbuffer_container)  
     {  
-        if ((key & DEPTHMAP) && shape->IsShadowTurnOn())  
+        if (SHADOW && (key & DEPTHMAP) && shape->IsShadowTurnOn())  
         {  
             shape->tm.AddTexture(val.frameBuffer->GetFramebufferTexture());  
         }  
