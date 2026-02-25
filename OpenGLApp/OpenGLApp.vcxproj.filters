@@ -183,6 +183,9 @@
     <ClCompile Include="RendererScreen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SSAO\KernelSamplerGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shapes\Shape.h">
@@ -354,6 +357,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RendererScreen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SSAO\KernelSamplerGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -20,7 +20,6 @@
 #include "glm\gtc\type_ptr.hpp"
 #include "Shapes\SkyBoxCube.h"
 #include "Controls.h"
-#include "Managers\ShapeManager.h"
 #include "Camera\RayDrawer.h"
 #include "Primitive.h"
 #include "Physics\Collision.h"

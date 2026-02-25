@@ -281,6 +281,19 @@ void ShaderTypeGenerator::DefferedShading(std::vector<Shader*>& shaders, unsigne
 	}
 }
 
+void ShaderTypeGenerator::SSAOShaderGenerator(std::vector<Shader*>& shaders, unsigned int program, std::vector<ShaderParams>& params)
+{
+	shaders[1]->SetUniform1i("gPosition", 0, program);
+	shaders[1]->SetUniform1i("gNormal", 1, program);
+	shaders[1]->SetUniform1i("texNoise", 2, program);
+	std::vector<glm::vec3> ssaoKernel = std::get<std::vector<glm::vec3>>(params[0]);
+	shaders[1]->SetUniformMat4f("projection", std::get<glm::mat4>(params[1]), program);
+	for (unsigned int i = 0; i < ssaoKernel.size(); ++i)
+	{
+		shaders[1]->SetUniform3f("samples[" + std::to_string(i) + "]", ssaoKernel[i], program);
+	}
+}
+
 ShaderTypeGenerator::~ShaderTypeGenerator()
 {
 }

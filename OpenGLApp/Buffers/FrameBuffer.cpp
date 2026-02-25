@@ -272,7 +272,9 @@ void FrameBuffer::SetFunctionShader(FrameBufferType type)
 		func = ShaderTypeGenerator::DefferedShading;
 		break;
 	}
-
+	case SSAO:
+		func = ShaderTypeGenerator::SSAOShaderGenerator;
+		break;
 	}
 }
 FrameBuffer::~FrameBuffer()

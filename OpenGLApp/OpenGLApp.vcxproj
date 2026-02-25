@@ -142,6 +142,7 @@
     <ClCompile Include="Shapes\Cube.cpp" />
     <ClCompile Include="Shapes\VerticesCreator.cpp" />
     <ClCompile Include="Shapes\VerticesCreator.h" />
+    <ClCompile Include="SSAO\KernelSamplerGenerator.cpp" />
     <ClCompile Include="TextureObjects\CubeMapTexture.cpp" />
     <ClCompile Include="Shapes\CustomShape.cpp" />
     <ClCompile Include="DirectXGameWindow.cpp" />
@@ -198,6 +199,7 @@
     <ClInclude Include="RendererScreen.h" />
     <ClInclude Include="Shaders\ShaderClasses\ShaderManager.h" />
     <ClInclude Include="Shapes\Cube.h" />
+    <ClInclude Include="SSAO\KernelSamplerGenerator.h" />
     <ClInclude Include="TextureObjects\CubeMapTexture.h" />
     <ClInclude Include="CustomProperties.h" />
     <ClInclude Include="Shapes\CustomShape.h" />

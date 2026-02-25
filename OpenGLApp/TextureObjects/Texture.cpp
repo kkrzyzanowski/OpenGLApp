@@ -111,6 +111,13 @@ void Texture::CreateTexture()
 		CreateHDRTexture();
 		break;
 	}
+	case TextureMode::ONE_COLOR:
+	{
+		m_width = SCREEN_WIDTH;
+		m_height = SCREEN_HEIGHT;
+		Texture::CreateOneColorTexture();
+		break;
+	}
 	}
 }
 
@@ -182,6 +189,16 @@ void Texture::CreateColorAlphaFramebufferTexture()
 	glGenTextures(1, &m_TextureID);
 	glBindTexture(GL_TEXTURE_2D, m_TextureID);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + m_colorAttachment, GL_TEXTURE_2D, m_TextureID, 0);
+}
+
+void Texture::CreateOneColorTexture()
+{
+	glGenTextures(1, &m_TextureID);
+	glBindTexture(GL_TEXTURE_2D, m_TextureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RED, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + m_colorAttachment, GL_TEXTURE_2D, m_TextureID, 0);

@@ -5,7 +5,7 @@
 
 enum TextureMode
 {
-	TEXTURE, FRAMEBUFFER, SHADOWMAP, HDR_TEXTURE, G_BUFFER_TRANSFORM, G_BUFFER_COLOR_SPECULAR, G_BUFFER_NORMAL
+	TEXTURE, FRAMEBUFFER, SHADOWMAP, HDR_TEXTURE, G_BUFFER_TRANSFORM, G_BUFFER_COLOR_SPECULAR, G_BUFFER_NORMAL, ONE_COLOR
 };
 
 class Texture
@@ -21,14 +21,11 @@ public:
 
 	void CreateTexture();
 	void CreateFrameBufferTexture();
-
 	void CreateShadowMapTexture();
-
 	void CreateHDRTexture();
-
 	void CreateTextureForFrameBuffer();
-
 	void CreateColorAlphaFramebufferTexture();
+	void CreateOneColorTexture();
 
 	inline int GetWidth() const { return m_width; }
 	inline int GetHeight() const { return m_height; }

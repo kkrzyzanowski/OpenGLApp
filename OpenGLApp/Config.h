@@ -51,6 +51,11 @@ static const char* MAIN_TEXTURE_RENDER_VERT =	"..\\Assets\\Shaders\\MainTextureR
 static const char* MAIN_TEXTURE_RENDER_FRAG =	"..\\Assets\\Shaders\\MainTextureRender.frag"								;
 static const char* BLOOM_VERT =					"..\\Assets\\Shaders\\Bloom.vert";
 static const char* BLOOM_FRAG =					"..\\Assets\\Shaders\\Bloom.frag"											;
+static const char* SSAO_VERT_PATH =				"..\\Assets\\Shaders\\SSAOShader.vert";
+static const char* SSAO_FRAG_PATH =				"..\\Assets\\Shaders\\SSAOShader.frag";
+static const char* SSAO_LIGHTNING_VERT_PATH =	"..\\Assets\\Shaders\\LightningSSAOShader.vert";
+static const char* SSAO_LIGHTNING_FRAG_PATH =	"..\\Assets\\Shaders\\LightningSSAOShader.frag";
+
 
 static const char* TEMP_TEXTURE_DIFFUSE =		"..\\Assets\\Textures\\BrickMedievalBlocks0129_2_M.jpg"						;
 static const char* TEMP_TEXTURE_SPECULAR =		"..\\Assets\\Textures\\BrickMedievalBlocks0129_2_M_specular_map.jpg"			;
@@ -75,3 +80,4 @@ static bool SHADOW = false;
 static bool POSTPROCESSING_EFFECTS = false;
 static bool HDR_LIGHT = false;
 static bool GAUSSIAN_BLUR = false;
+static bool SSAO_LIGHT = false;

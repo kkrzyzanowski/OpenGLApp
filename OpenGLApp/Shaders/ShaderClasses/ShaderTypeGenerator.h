@@ -35,5 +35,6 @@ public:
 	static void UpdateFinalBloomShader(std::vector<Shader*>& shaders, unsigned int program, std::vector<ShaderParams>& params);
 	static void BloomShaderGenerator(std::vector<Shader*>& shaders, unsigned int program, std::vector<ShaderParams>& params);
 	static void DefferedShading(std::vector<Shader*>& shaders, unsigned int program, std::vector<ShaderParams>& params);
+	static void SSAOShaderGenerator(std::vector<Shader*>& shaders, unsigned int program, std::vector<ShaderParams>& params);
 	~ShaderTypeGenerator();
 };

@@ -5,6 +5,7 @@
 #include "Managers/FrameBufferManager.h"
 #include "PlaneView.h"
 #include "RendererScreen.h"
+#include "SSAO/KernelSamplerGenerator.h"
 
 
 // to-do do textures for framebuffer (maybe class or something like that) to prepare connection beetween framebuffers
@@ -111,6 +112,16 @@ int OpenGLGameWindow::CreateWindow()
 		.Shader(GBUFFER_FRAG_PATH)
 		.SetShading(Shading::DEFFERED_SHADING)
 		.Position(glm::vec3(-2.0f, 2.0f, -4.0f))
+		.Create(ShapeType::CUBE));
+
+	ShapeManager::shapes.emplace_back(shapesBuilder->ObjectState(CamView::DYNAMIC)
+		.SourceType(SourceShapeType::SHAPE)
+		.Texture(TEMP_TEXTURE_DIFFUSE)
+		.Texture(TEMP_TEXTURE_SPECULAR)
+		.Shader(GBUFFER_VERT_PATH)
+		.Shader(GBUFFER_FRAG_PATH)
+		.SetShading(Shading::DEFFERED_SHADING)
+		.Position(glm::vec3(1.0f, 3.0f, 0.0f))
 		.Create(ShapeType::CUBE));
 
 	ShapeManager::shapes.emplace_back(shapesBuilder->ObjectState(CamView::DYNAMIC)
@@ -237,6 +248,11 @@ int OpenGLGameWindow::CreateWindow()
 		.AddTexture(TextureMode::G_BUFFER_COLOR_SPECULAR, 0, 2)
 		.Create(FrameBufferType::GBUFFER));
 	frameBufferBuilder->ResetData();
+
+	FrameBufferManager::CreateFRBuffer(FrameBufferType::SSAO, frameBufferBuilder->AddShaderByPath(SSAO_LIGHTNING_VERT_PATH)
+		.AddShaderByPath(SSAO_LIGHTNING_FRAG_PATH)
+		.AddTexture(TextureMode::ONE_COLOR)
+		.Create(FrameBufferType::SSAO));
 	FrameBufferManager::InitializeFrameBuffers();
 
 	LightManager::AddLightsToFrameBuffer(FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer);
@@ -291,6 +307,13 @@ int OpenGLGameWindow::CreateWindow()
 	RendererScreen* screen = new RendererScreen(paths, sp);
 	//auto defferedShapes = filteredShapes(Shading::DEFFERED_SHADING);
 	/* Loop until the user closes the window */
+
+	/// generate samples for SSAO
+	KernelSamplerGenerator kernelSampler;
+	std::vector<glm::vec3> ssaoKernel = kernelSampler.GenerateKernelSamples();
+
+
+	/// TO-DO refactor this code, maybe create some functions for each step of rendering, and make it more clear and readable
 	while (!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
 	{
 		FrameBuffer::UnBind();
@@ -413,35 +436,6 @@ int OpenGLGameWindow::CreateWindow()
 		glEnable(GL_DEPTH_TEST);
 
 
-		//forward
-		//{
-		//	for (auto& shape : forwardShapes)
-		//	{
-		//		shape->SetMainLight(light->Position);
-		//		shape->Update();
-		//		if (shape->GetSourceShapeType() != SourceShapeType::PRIMITIVE)
-		//		{
-		//			auto terr = dynamic_cast<Terrain*>(shape.get());
-		//			int verticesCount = shape->bm->GetIndexBuffer()->GetCount();
-		//			if (terr == nullptr)
-		//			{
-		//				renderer->Draw(verticesCount, GL_TRIANGLES);
-		//			}
-		//			else
-		//				renderer->DrawArrayInstances(verticesCount, GL_TRIANGLE_STRIP, 256);
-
-		//		}
-		//		//Check collision - for now on main loop
-		//		collision->CheckCollision();
-
-		//		/*if (dynamic_cast<Primitive*>(shape) != nullptr)
-		//		{
-		//			Primitive* p = dynamic_cast<Primitive*>(shape);
-		//			delete p;
-		//		}*/
-		//		shape->AfterUpdate();
-		//	}
-		//}
 		for (auto& shape : forwardShapes)
 		{
 			if (!shape->Selected)
@@ -549,6 +543,10 @@ int OpenGLGameWindow::CreateWindow()
 			renderer->DrawArrays(6, GL_TRIANGLES);
 
 			FrameBufferManager::FRbuffer_container[POSTPROCESSING].frameBuffer->TurnOffFrameBufferElements();
+		}
+		if (SSAO_LIGHT)
+		{
+
 		}
 
 		selectedShapes.clear();

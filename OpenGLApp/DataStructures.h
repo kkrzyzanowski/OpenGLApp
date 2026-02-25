@@ -12,7 +12,7 @@ struct MVP;
 struct SimpleLight;
 struct DefferedLight;
 class Shader;
-using ShaderParams = std::variant<glm::mat4, glm::vec3, glm::vec4, MVP, bool, float, unsigned int, unsigned short, std::vector<SimpleLight>, std::vector<DefferedLight>>;
+using ShaderParams = std::variant<glm::mat4, glm::vec3, glm::vec4, MVP, bool, float, unsigned int, unsigned short, std::vector<SimpleLight>, std::vector<DefferedLight>, std::vector<glm::vec3>>;
 using ShaderFunction = std::function<void(std::vector<Shader*>&, unsigned int, std::vector<ShaderParams>&)>;
 
 typedef std::vector<glm::vec3> Vertices;

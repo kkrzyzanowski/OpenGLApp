@@ -57,7 +57,8 @@ enum FrameBufferType
 	GBUFFER = 1 << 4, // 16
 	POSTPROCESSING = 1 << 5, // 32
 	COLOR = 1 << 6, // 64
-	MAIN = 1 << 7, // 128
+	SSAO = 1 << 7, // 128
+	MAIN = 1 << 8, // 256
 
 	// keep vertical as zero if your code relies on casting bool -> 0/1,
 	// but prefer defining an explicit flag instead (see note below)
