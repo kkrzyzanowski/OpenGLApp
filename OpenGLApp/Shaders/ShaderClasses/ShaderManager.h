@@ -7,7 +7,8 @@
 class ShaderManager
 {
 public:
-
+	ShaderManager() = default;
+	~ShaderManager();
 	void AddShaderFunction(const ShaderFunction& func, const std::vector<ShaderParams>& param);
 	void ExecuteShaderFunction(std::vector<Shader*> shaders, unsigned int program);
 	void AddShader(const char* path);

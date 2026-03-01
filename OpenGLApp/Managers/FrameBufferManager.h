@@ -3,6 +3,7 @@
 #include <map>
 #include <memory>
 #include "..\Enums.h"
+#include "..\glm\glm.hpp"
 
 class FrameBuffer;
 class RenderBuffer;
@@ -28,6 +29,8 @@ public:
 	static void SetTextureUnactive();
 
 	static void SetTextureActive();
+
+	static void AddKernelSamplesToSSAOBuffer(std::vector<glm::vec3>& samples);
 
 	static std::map<FrameBufferType, FRBufferContainer> FRbuffer_container;
 	~FrameBufferManager();

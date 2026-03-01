@@ -92,13 +92,13 @@ void FrameBuffer::InitializeBufferScreenCoords()
 	bm->CreateBuffers(quad, plane_indexes, vertexSize, indexSize, bufferDataSizes, bufferDataSize);
 }
 
-void FrameBuffer::TurnOffFrameBufferElements()
+void FrameBuffer::UnBindDrawBuffers()
 {
 	sc.DisableUse();
 	bm->UnbindBuffers();
 }
 
-void FrameBuffer::TurnOnFrameBufferElements()
+void FrameBuffer::BindDrawBuffers()
 {
 	sc.EnableUse();
 	bm->BindBuffers();
@@ -243,7 +243,7 @@ void FrameBuffer::SetFunctionShader(FrameBufferType type)
 	}
 	case BLUR:
 	{
-		func = ShaderTypeGenerator::HDRGaussianBlurShaderGenerator;	
+		func = ShaderTypeGenerator::HDRGaussianBlurShaderGenerator;
 		break;
 	}
 	case HDR:
@@ -275,8 +275,13 @@ void FrameBuffer::SetFunctionShader(FrameBufferType type)
 	case SSAO:
 		func = ShaderTypeGenerator::SSAOShaderGenerator;
 		break;
+
+	case SSAO_LIGHTNING:
+		func = ShaderTypeGenerator::UpdateSSAOShaderLightning;
+		break;
 	}
 }
+
 FrameBuffer::~FrameBuffer()
 {
 	delete tm;

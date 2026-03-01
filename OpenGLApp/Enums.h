@@ -58,7 +58,8 @@ enum FrameBufferType
 	POSTPROCESSING = 1 << 5, // 32
 	COLOR = 1 << 6, // 64
 	SSAO = 1 << 7, // 128
-	MAIN = 1 << 8, // 256
+	SSAO_LIGHTNING = 1 << 8, // 256
+	MAIN = 1 << 9, // 512
 
 	// keep vertical as zero if your code relies on casting bool -> 0/1,
 	// but prefer defining an explicit flag instead (see note below)

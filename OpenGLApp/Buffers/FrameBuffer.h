@@ -26,8 +26,8 @@ public:
 	void GenerateTexture();
 	void GenerateShadowTexture();
 	bool CheckFrameBuffer();
-	void TurnOffFrameBufferElements();
-	void TurnOnFrameBufferElements();
+	void UnBindDrawBuffers();
+	void BindDrawBuffers();
 	void InitializeShaders();
 	void ExecuteShader();
 	void UpdateFrameBuffer();

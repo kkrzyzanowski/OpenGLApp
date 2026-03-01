@@ -116,12 +116,23 @@ int OpenGLGameWindow::CreateWindow()
 
 	ShapeManager::shapes.emplace_back(shapesBuilder->ObjectState(CamView::DYNAMIC)
 		.SourceType(SourceShapeType::SHAPE)
+		.Shader(GBUFFER_VERT_PATH)
+		.Shader(GBUFFER_FRAG_PATH)
+		.SetShading(Shading::DEFFERED_SHADING)
+		.Color(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f))
+		.Position(glm::vec3(0.0f, 2.0f, -6.0f))
+		.Rotation(glm::vec3(1.0f, 0.0f, 0.0f), -90.0f)
+		.Scale(glm::vec3(5.0f, 5.0f, 1.0f))
+		.Create(ShapeType::PLANE));
+
+	ShapeManager::shapes.emplace_back(shapesBuilder->ObjectState(CamView::DYNAMIC)
+		.SourceType(SourceShapeType::SHAPE)
 		.Texture(TEMP_TEXTURE_DIFFUSE)
 		.Texture(TEMP_TEXTURE_SPECULAR)
 		.Shader(GBUFFER_VERT_PATH)
 		.Shader(GBUFFER_FRAG_PATH)
 		.SetShading(Shading::DEFFERED_SHADING)
-		.Position(glm::vec3(1.0f, 3.0f, 0.0f))
+		.Position(glm::vec3(1.0f, 2.0f, -3.0f))
 		.Create(ShapeType::CUBE));
 
 	ShapeManager::shapes.emplace_back(shapesBuilder->ObjectState(CamView::DYNAMIC)
@@ -191,7 +202,7 @@ int OpenGLGameWindow::CreateWindow()
 		.Create(LightType::DEFAULT));
 
 	LightManager::lights.push_back(lightBuilder->SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f))
-		.Position(glm::vec3(2.0f, 1.0f, -3.0f))
+		.Position(glm::vec3(-2.0f, 1.0f, -3.0f))
 		.Create(LightType::DEFAULT));
 
 	//Creation light
@@ -251,11 +262,28 @@ int OpenGLGameWindow::CreateWindow()
 
 	FrameBufferManager::CreateFRBuffer(FrameBufferType::SSAO, frameBufferBuilder->AddShaderByPath(SSAO_LIGHTNING_VERT_PATH)
 		.AddShaderByPath(SSAO_LIGHTNING_FRAG_PATH)
-		.AddTexture(TextureMode::ONE_COLOR)
+		.AddTexture(TextureMode::ONE_COLOR, 0, 0)
 		.Create(FrameBufferType::SSAO));
-	FrameBufferManager::InitializeFrameBuffers();
+	frameBufferBuilder->ResetData();
 
+	FrameBufferManager::CreateFRBuffer(FrameBufferType::SSAO_LIGHTNING, frameBufferBuilder->AddShaderByPath(SSAO_LIGHTNING_VERT_PATH)
+		.AddShaderByPath(SSAO_LIGHTNING_FRAG_PATH)
+		.AddTexture(TextureMode::FRAMEBUFFER)
+		.Create(FrameBufferType::SSAO_LIGHTNING));
+
+	frameBufferBuilder->ResetData();
+	
+	FrameBufferManager::InitializeFrameBuffers();
 	LightManager::AddLightsToFrameBuffer(FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer);
+	LightManager::AddLightsToFrameBuffer(FrameBufferManager::FRbuffer_container[SSAO_LIGHTNING].frameBuffer);
+
+	/// generate samples for SSAO
+	KernelSamplerGenerator kernelSampler;
+	std::vector<glm::vec3> ssaoKernel = kernelSampler.GenerateKernelSamples();
+	Texture* ssaoNoiseTexture = new Texture(2, 0, 5126, TEXTURE, 4, 4);
+	ssaoNoiseTexture->CreateNoiseTexture();
+	FrameBufferManager::AddKernelSamplesToSSAOBuffer(ssaoKernel);
+
 	for (auto fb : FrameBufferManager::FRbuffer_container)
 	{
 		fb.second.frameBuffer->InitializeShaders();
@@ -305,13 +333,8 @@ int OpenGLGameWindow::CreateWindow()
 	Paths paths;
 	paths.shadersPaths = { HDR_GAUSSIANBLUR_VERT_PATH, HDR_GAUSSIANBLUR_FRAG_PATH };
 	RendererScreen* screen = new RendererScreen(paths, sp);
-	//auto defferedShapes = filteredShapes(Shading::DEFFERED_SHADING);
+
 	/* Loop until the user closes the window */
-
-	/// generate samples for SSAO
-	KernelSamplerGenerator kernelSampler;
-	std::vector<glm::vec3> ssaoKernel = kernelSampler.GenerateKernelSamples();
-
 
 	/// TO-DO refactor this code, maybe create some functions for each step of rendering, and make it more clear and readable
 	while (!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS)
@@ -405,36 +428,96 @@ int OpenGLGameWindow::CreateWindow()
 		}
 		FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->UnBind();
 
-		FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->TurnOnFrameBufferElements();
-		for (int i = 0; i < FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->GetFramebufferTextures().size(); i++)
+		if (SSAO_LIGHT)
 		{
-			FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->GetFramebufferTextures()[i]->Bind(i);
+			FrameBufferManager::FRbuffer_container[SSAO].frameBuffer->Bind();
+			renderer->ClearColor();
+			FrameBufferManager::FRbuffer_container[SSAO].frameBuffer->BindDrawBuffers();
+
+			for (int i = 0; i < FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->GetFramebufferTextures().size()-1; i++)
+			{
+				FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->GetFramebufferTexture(i)->Bind(i);
+			}
+			ssaoNoiseTexture->Bind(2);
+
+
+			FrameBufferManager::FRbuffer_container[SSAO].frameBuffer->UpdateFrameBuffer();
+			renderer->DrawArrays(6, GL_TRIANGLES);
+			FrameBufferManager::FRbuffer_container[SSAO].frameBuffer->AfterUpdateFrameBuffer();
+
+			FrameBufferManager::FRbuffer_container[SSAO].frameBuffer->UnBind();
+			FrameBufferManager::FRbuffer_container[SSAO].frameBuffer->UnBindDrawBuffers();
+
+
+			//lightning pass with SSAO
+
+			FrameBufferManager::FRbuffer_container[SSAO_LIGHTNING].frameBuffer->Bind();
+			renderer->Clear();
+			FrameBufferManager::FRbuffer_container[SSAO_LIGHTNING].frameBuffer->BindDrawBuffers();
+
+			for (int i = 0; i < FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->GetFramebufferTextures().size(); i++)
+			{
+				FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->GetFramebufferTexture(i)->Bind(i);
+			}
+
+			FrameBufferManager::FRbuffer_container[SSAO].frameBuffer->GetFramebufferTexture(0)->Bind(3); // SSAO texture
+
+			FrameBufferManager::FRbuffer_container[SSAO_LIGHTNING].frameBuffer->UpdateFrameBuffer();
+			renderer->DrawArrays(6, GL_TRIANGLES);
+			FrameBufferManager::FRbuffer_container[SSAO_LIGHTNING].frameBuffer->AfterUpdateFrameBuffer();
+
+			FrameBufferManager::FRbuffer_container[SSAO_LIGHTNING].frameBuffer->UnBindDrawBuffers();
+			FrameBufferManager::FRbuffer_container[SSAO_LIGHTNING].frameBuffer->UnBind();
+
+
+
+
+			///// after unbinding SSAO_LIGHTNING FBO
+			FrameBufferManager::FRbuffer_container[SSAO_LIGHTNING].frameBuffer->ReadBind(); // binds GL_READ_FRAMEBUFFER = SSAO FBO
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // default framebuffer as draw target
+
+			// copy color (or add GL_DEPTH_BUFFER_BIT if you need depth too)
+			glBlitFramebuffer(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT,
+				0, 0, SCREEN_WIDTH, SCREEN_HEIGHT,
+				GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+			// restore
+			FrameBufferManager::FRbuffer_container[SSAO_LIGHTNING].frameBuffer->UnBind();
 		}
+		else
+		{
+			FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->BindDrawBuffers();
+			for (int i = 0; i < FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->GetFramebufferTextures().size(); i++)
+			{
+				FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->GetFramebufferTextures()[i]->Bind(i);
+			}
 
-		FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->UpdateFrameBuffer();
+			FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->UpdateFrameBuffer();
 
-		renderer->DrawArrays(6, GL_TRIANGLES);
-		FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->AfterUpdateFrameBuffer();
+			renderer->DrawArrays(6, GL_TRIANGLES);
+			FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->AfterUpdateFrameBuffer();
 
-		FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->ReadBind();
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-		glBlitFramebuffer(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-		FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->UnBind();
-
+			FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->ReadBind();
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+			glBlitFramebuffer(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+			FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->UnBind();
+		}
 		//Lights
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_ONE, GL_ONE);
-
-		for (auto& light : LightManager::lights)
+		if (LIGHT_OBJECTS)
 		{
-			light->Update();
-			int verticesCount = light->bm->GetIndexBuffer()->GetCount();
-			renderer->Draw(verticesCount, GL_TRIANGLES);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_ONE, GL_ONE);
+
+			for (auto& light : LightManager::lights)
+			{
+				light->Update();
+				int verticesCount = light->bm->GetIndexBuffer()->GetCount();
+				renderer->Draw(verticesCount, GL_TRIANGLES);
+			}
+
+			glDisable(GL_BLEND);
+			glEnable(GL_DEPTH_TEST);
 		}
-
-		glDisable(GL_BLEND);
-		glEnable(GL_DEPTH_TEST);
-
 
 		for (auto& shape : forwardShapes)
 		{
@@ -447,6 +530,7 @@ int OpenGLGameWindow::CreateWindow()
 				shape->AfterUpdate();
 			}
 		}
+
 
 		///Selected shapes
 		//renderer->ClearStencil();
@@ -474,13 +558,15 @@ int OpenGLGameWindow::CreateWindow()
 			glStencilMask(0xFF);
 			glEnable(GL_DEPTH_TEST);
 		}
-	
+
+		
+
 
 		// Fix for the initialization issue with FrameBufferType and bool
 		if (GAUSSIAN_BLUR)
 		{
 			FrameBufferManager::FRbuffer_container[BLUR].frameBuffer->UnBind();
-			FrameBufferManager::FRbuffer_container[BLUR].frameBuffer->TurnOffFrameBufferElements();
+			FrameBufferManager::FRbuffer_container[BLUR].frameBuffer->UnBindDrawBuffers();
 			//glDisable(GL_DEPTH_TEST);
 			bool firstIteration = true, horizontal = true;
 			for (int i = 0; i < 8; ++i)
@@ -497,13 +583,13 @@ int OpenGLGameWindow::CreateWindow()
 					FrameBufferManager::FRbuffer_container[static_cast<FrameBufferType>(horizontal)].frameBuffer->GetFramebufferTexture(0)->Bind(0);
 				}
 
-				FrameBufferManager::FRbuffer_container[static_cast<FrameBufferType>(horizontal)].frameBuffer->TurnOnFrameBufferElements();
+				FrameBufferManager::FRbuffer_container[static_cast<FrameBufferType>(horizontal)].frameBuffer->BindDrawBuffers();
 
 				// ustawiamy uniform horizontal = true
 				//FrameBufferManager::FRbuffer_container[GAUUSIAN_HORIZONTAL].frameBuffer->TurnOnFrameBufferElements();
 
 				renderer->DrawArrays(6, GL_TRIANGLES);
-				FrameBufferManager::FRbuffer_container[static_cast<FrameBufferType>(horizontal)].frameBuffer->TurnOffFrameBufferElements();
+				FrameBufferManager::FRbuffer_container[static_cast<FrameBufferType>(horizontal)].frameBuffer->UnBindDrawBuffers();
 				//
 				//horizontal = !horizontal;
 			}
@@ -512,7 +598,7 @@ int OpenGLGameWindow::CreateWindow()
 			renderer->Clear();
 			FrameBufferManager::FRbuffer_container[BLUR].frameBuffer->GetFramebufferTexture(0)->Bind(0);
 			//FrameBufferManager::FRbuffer_container[GAUSSIAN_HORIZONTAL].frameBuffer->GetFramebufferTexture(0)->Bind(0);
-			FrameBufferManager::FRbuffer_container[BLUR].frameBuffer->TurnOnFrameBufferElements();
+			FrameBufferManager::FRbuffer_container[BLUR].frameBuffer->BindDrawBuffers();
 
 
 			//ScreenBlock for test next will be on whole loop 
@@ -526,10 +612,10 @@ int OpenGLGameWindow::CreateWindow()
 		if (HDR_LIGHT)
 		{
 			FrameBufferManager::FRbuffer_container[HDR].frameBuffer->UnBind();
-			FrameBufferManager::FRbuffer_container[HDR].frameBuffer->TurnOffFrameBufferElements();
+			FrameBufferManager::FRbuffer_container[HDR].frameBuffer->UnBindDrawBuffers();
 			glDisable(GL_DEPTH_TEST);
 			renderer->ClearColor();
-			FrameBufferManager::FRbuffer_container[HDR].frameBuffer->TurnOnFrameBufferElements();
+			FrameBufferManager::FRbuffer_container[HDR].frameBuffer->BindDrawBuffers();
 			renderer->DrawArrays(6, GL_TRIANGLES);
 		}
 		if (POSTPROCESSING_EFFECTS)
@@ -538,16 +624,13 @@ int OpenGLGameWindow::CreateWindow()
 
 			glDisable(GL_DEPTH_TEST);
 			renderer->Clear();
-			FrameBufferManager::FRbuffer_container[POSTPROCESSING].frameBuffer->TurnOnFrameBufferElements();
+			FrameBufferManager::FRbuffer_container[POSTPROCESSING].frameBuffer->BindDrawBuffers();
 			FrameBufferManager::FRbuffer_container[POSTPROCESSING].frameBuffer->GetFramebufferTexture()->Bind();
 			renderer->DrawArrays(6, GL_TRIANGLES);
 
-			FrameBufferManager::FRbuffer_container[POSTPROCESSING].frameBuffer->TurnOffFrameBufferElements();
+			FrameBufferManager::FRbuffer_container[POSTPROCESSING].frameBuffer->UnBindDrawBuffers();
 		}
-		if (SSAO_LIGHT)
-		{
 
-		}
 
 		selectedShapes.clear();
 		/* Swap front and back buffers */

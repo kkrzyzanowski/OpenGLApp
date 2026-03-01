@@ -6,14 +6,14 @@
 SkyBoxCube::SkyBoxCube(ShapesBuilder& builder): Shape(builder)
 {
 	GLfloat g_vertex_buffer_data[] = {
-		-10.0f, -10.0f, 10.0f,//0
-		 10.0f, -10.0f, 10.0f,//1
-		10.0f,  -10.0f, -10.0f,//2
-		-10.0f, -10.0f, -10.0f,//3
-		-10.0f, 10.0f, 10.0f,// 4
-		10.0f, 10.0f, 10.0f,// 5
-		10.0f,  10.0f, -10.0f,// 6
-		-10.0f, 10.0f, -10.0f};// 7
+		-1.0f, -1.0f, 1.0f,//0
+		 1.0f, -1.0f, 1.0f,//1
+		1.0f,  -1.0f, -1.0f,//2
+		-1.0f, -1.0f, -1.0f,//3
+		-1.0f, 1.0f, 1.0f,// 4
+		1.0f, 1.0f, 1.0f,// 5
+		1.0f,  1.0f, -1.0f,// 6
+		-1.0f, 1.0f, -1.0f};// 7
 	unsigned int indexes[] = { 
 		// Right
 	1, 2, 6,
@@ -42,14 +42,14 @@ SkyBoxCube::SkyBoxCube(ShapesBuilder& builder): Shape(builder)
 SkyBoxCube::SkyBoxCube(ShapesBuilder&& builder) : Shape(std::move(builder))
 {
 	GLfloat g_vertex_buffer_data[] = {
-		-10.0f, -10.0f, 10.0f,//0
-		 10.0f, -10.0f, 10.0f,//1
-		10.0f,  -10.0f, -10.0f,//2
-		-10.0f, -10.0f, -10.0f,//3
-		-10.0f, 10.0f, 10.0f,// 4
-		10.0f, 10.0f, 10.0f,// 5
-		10.0f,  10.0f, -10.0f,// 6
-		-10.0f, 10.0f, -10.0f };// 7
+		-1.0f, -1.0f, 1.0f,//0
+		 1.0f, -1.0f, 1.0f,//1
+		1.0f,  -1.0f, -1.0f,//2
+		-1.0f, -1.0f, -1.0f,//3
+		-1.0f, 1.0f, 1.0f,// 4
+		1.0f, 1.0f, 1.0f,// 5
+		1.0f,  1.0f, -1.0f,// 6
+		-1.0f, 1.0f, -1.0f };// 7
 	unsigned int indexes[] = {
 		// Right
 	1, 2, 6,
@@ -119,6 +119,8 @@ void SkyBoxCube::AfterUpdate()
 
 void SkyBoxCube::CreateMVPMatrix()
 {
+	this->mvp.model = glm::mat4(1.0f);
+	glm::scale(this->mvp.model, glm::vec3(100.0f, 100.0f, 100.0f));
 }
 
 void SkyBoxCube::Update()

@@ -2,6 +2,7 @@
 #include <GL/glew.h>
 #include <string>
 #include "Stb_image_reader.h"
+#include "../Config.h"
 
 enum TextureMode
 {
@@ -12,7 +13,7 @@ class Texture
 {
 public:
 	Texture(const std::string& path, unsigned int slot, int mode = GL_CLAMP_TO_EDGE);
-	Texture(unsigned int slot = 0, unsigned short colorAttachment = 0, int colorMode = GL_FLOAT, TextureMode textureMode = TextureMode::TEXTURE);
+	Texture(unsigned int slot = 0, unsigned short colorAttachment = 0, int colorMode = GL_FLOAT, TextureMode textureMode = TextureMode::TEXTURE, unsigned int width = SCREEN_WIDTH, unsigned int height = SCREEN_HEIGHT);
 	~Texture();
 	void Bind(unsigned short slot) const;
 	virtual void Bind() const;
@@ -26,6 +27,8 @@ public:
 	void CreateTextureForFrameBuffer();
 	void CreateColorAlphaFramebufferTexture();
 	void CreateOneColorTexture();
+
+	void CreateNoiseTexture();
 
 	inline int GetWidth() const { return m_width; }
 	inline int GetHeight() const { return m_height; }

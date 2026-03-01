@@ -4,9 +4,11 @@ out float FragColor;
 
 in vec2 TexCoords;
 
-uniform sampler2D pos;
-uniform sampler2D normal;
-uniform sampler2D noise;
+uniform sampler2D gPosition;
+uniform sampler2D gNormal;
+uniform sampler2D texNoise;
+
+uniform mat4 projection;
 
 uniform vec3 samples[64];
 
@@ -16,13 +18,12 @@ float bias = 0.025;
 
 
 vec2 noiseScale = vec2(1920.0/4.0, 1080/4.0);
-uniform mat4 projection;
 
 void main()
 {
-    vec3 FragPos = texture(pos, TexCoords).rgb;
-    vec3 Normal = normalize(texture(normal, TexCoords).rgb);
-    vec3 RandomVec = normalize(texture(noise, TexCoords * noiseScale).rgb);
+    vec3 FragPos = texture(gPosition, TexCoords).rgb;
+    vec3 Normal = normalize(texture(gNormal, TexCoords).rgb);
+    vec3 RandomVec = normalize(texture(texNoise, TexCoords * noiseScale).rgb);
 
     vec3 tangent = normalize(RandomVec - Normal * dot(RandomVec, Normal));
     vec3 bitangent = cross(Normal, tangent);
@@ -38,7 +39,7 @@ void main()
         offset.xyz /= offset.w;
         offset.xyz = offset.xyz * 0.5 + 0.5;
 
-        float sampleDepth = texture(pos, offset.xy).z;
+        float sampleDepth = texture(gPosition, offset.xy).z;
 
         float rangeCheck = smoothstep(0.0, 1.0, radius / abs(FragPos.z - sampleDepth));
         occlusion += (sampleDepth >= samplePos.z + bias ? 1.0 : 0.0) * rangeCheck;

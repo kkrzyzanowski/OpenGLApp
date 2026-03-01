@@ -1,5 +1,4 @@
 #include "Texture.h"
-#include "..\Config.h"
 #include "..\Rendering\Renderer.h"
 
 Texture::Texture(const std::string& path, unsigned int slot, int mode) : m_path(path), Slot(slot), m_TextureID(0), m_localBuffer(nullptr),
@@ -24,8 +23,8 @@ m_width(0), m_height(0), m_BPP(0), canBeActive(true)
 		stbi_image_free(m_localBuffer);
 }
 
-Texture::Texture(unsigned int slot, unsigned short colorAttachment, int dataType, TextureMode textureMode) : m_path(""), Slot(slot), m_TextureID(0), m_localBuffer(nullptr),
-m_width(0), m_height(0), m_BPP(0), m_colorAttachment(colorAttachment), m_dataType(dataType), m_mode(textureMode), canBeActive(true)
+Texture::Texture(unsigned int slot, unsigned short colorAttachment, int dataType, TextureMode textureMode, unsigned int width, unsigned int height) : m_path(""), Slot(slot), m_TextureID(0), m_localBuffer(nullptr),
+m_width(width), m_height(height), m_BPP(0), m_colorAttachment(colorAttachment), m_dataType(dataType), m_mode(textureMode), canBeActive(true)
 {
 
 }
@@ -202,4 +201,15 @@ void Texture::CreateOneColorTexture()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + m_colorAttachment, GL_TEXTURE_2D, m_TextureID, 0);
+}
+
+void Texture::CreateNoiseTexture()
+{
+	glGenTextures(1, &m_TextureID);
+	glBindTexture(GL_TEXTURE_2D, m_TextureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_width, m_height, 0, GL_RGBA, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 }

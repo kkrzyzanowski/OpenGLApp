@@ -66,6 +66,12 @@ void FrameBufferManager::SetTextureActive()
 	FRbuffer_container[DEPTHMAP].frameBuffer->GetFramebufferTexture()->SetActive(true);
 }
 
+void FrameBufferManager::AddKernelSamplesToSSAOBuffer(std::vector<glm::vec3>& samples)
+{
+	if (FRBufferContainer* ssaoBuffer = &FRbuffer_container[SSAO]; ssaoBuffer != nullptr)
+		ssaoBuffer->frameBuffer->AddParams(samples);
+}
+
 FrameBufferManager::~FrameBufferManager()
 {
 }

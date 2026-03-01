@@ -1,5 +1,13 @@
 #include "ShaderManager.h"
 
+ShaderManager::~ShaderManager()
+{
+	for(auto shader : shaders)
+	{
+		delete shader;
+	}
+}
+
 void ShaderManager::AddShaderFunction(const ShaderFunction& func, const std::vector<ShaderParams>& params)
 {
 	shaderFunctions.emplace_back(func, params);

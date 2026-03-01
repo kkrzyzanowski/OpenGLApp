@@ -446,6 +446,7 @@ void Shape::AddParamsToShader()
 	case Shading::DEFFERED_SHADING:
 	{
 		functionParams.push_back(mvp.model);
+		functionParams.push_back(builder->color);
 		functionParams.push_back(mainLight);
 		break;
 	}

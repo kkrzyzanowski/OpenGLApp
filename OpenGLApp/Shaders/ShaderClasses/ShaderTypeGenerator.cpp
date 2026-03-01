@@ -51,7 +51,9 @@ void ShaderTypeGenerator::PassLightMatrixData(std::vector<Shader*>& shaders, uns
 void ShaderTypeGenerator::GBuffer(std::vector<Shader*>& shaders, unsigned int program, std::vector<ShaderParams>& params)
 {
 	glm::mat4 model = std::get<glm::mat4>(params[0]);
-	shaders[0]->SetUniformMat4f("model", model, program);
+	glm::vec4 color = std::get<glm::vec4>(params[1]);
+	UpdateModel(shaders, program, model);
+	UpdateColor(shaders, program, color);
 	shaders[1]->SetUniform1i("diffuse", 0, program);
 	shaders[1]->SetUniform1i("specular", 1, program);
 }
@@ -267,18 +269,18 @@ void ShaderTypeGenerator::DefferedShading(std::vector<Shader*>& shaders, unsigne
 	shaders[1]->SetUniform1i("pos", 0, program);
 	shaders[1]->SetUniform1i("normal", 1, program);
 	shaders[1]->SetUniform1i("albedoSpec", 2, program);
-	shaders[1]->SetUniform3f("viewPos", CameraManager::camManager->GetActiveCamera()->GetCamPos(), program);
+	auto camPos = CameraManager::camManager->GetActiveCamera()->GetCamPos();
+	shaders[1]->SetUniform3f("viewPos", camPos, program);
+
 	for (auto& light : lights)
 	{
-		for (auto& light : lights)
-		{
-			shaders[1]->SetUniform3f("lights[" + std::to_string(light.lightNumber) + "].position", light.position, program);
-			shaders[1]->SetUniform3f("lights[" + std::to_string(light.lightNumber) + "].color", light.color, program);
-			shaders[1]->SetUniform1f("lights[" + std::to_string(light.lightNumber) + "].linear", 0.09f, program);    // typical small linear
-			shaders[1]->SetUniform1f("lights[" + std::to_string(light.lightNumber) + "].quadratic", 0.032f, program); // typical quadratic
-			shaders[1]->SetUniform1f("lights[" + std::to_string(light.lightNumber) + "].radius", 10.0f, program);
-		}
+		shaders[1]->SetUniform3f("lights[" + std::to_string(light.lightNumber) + "].position", light.position, program);
+		shaders[1]->SetUniform3f("lights[" + std::to_string(light.lightNumber) + "].color", light.color, program);
+		shaders[1]->SetUniform1f("lights[" + std::to_string(light.lightNumber) + "].linear", 0.09f, program);    // typical small linear
+		shaders[1]->SetUniform1f("lights[" + std::to_string(light.lightNumber) + "].quadratic", 0.032f, program); // typical quadratic
+		shaders[1]->SetUniform1f("lights[" + std::to_string(light.lightNumber) + "].radius", 10.0f, program);
 	}
+
 }
 
 void ShaderTypeGenerator::SSAOShaderGenerator(std::vector<Shader*>& shaders, unsigned int program, std::vector<ShaderParams>& params)
@@ -287,10 +289,27 @@ void ShaderTypeGenerator::SSAOShaderGenerator(std::vector<Shader*>& shaders, uns
 	shaders[1]->SetUniform1i("gNormal", 1, program);
 	shaders[1]->SetUniform1i("texNoise", 2, program);
 	std::vector<glm::vec3> ssaoKernel = std::get<std::vector<glm::vec3>>(params[0]);
-	shaders[1]->SetUniformMat4f("projection", std::get<glm::mat4>(params[1]), program);
+	auto camProjection = CameraManager::camManager->GetActiveCamera()->GetProjection();
+	shaders[1]->SetUniformMat4f("projection", camProjection, program);
 	for (unsigned int i = 0; i < ssaoKernel.size(); ++i)
 	{
 		shaders[1]->SetUniform3f("samples[" + std::to_string(i) + "]", ssaoKernel[i], program);
+	}
+}
+
+void ShaderTypeGenerator::UpdateSSAOShaderLightning(std::vector<Shader*>& shaders, unsigned int program, std::vector<ShaderParams>& params)
+{
+	shaders[1]->SetUniform1i("gPosition", 0, program);
+	shaders[1]->SetUniform1i("gNormal", 1, program);
+	shaders[1]->SetUniform1i("gAlbedoSpec", 2, program);
+	shaders[1]->SetUniform1i("ssao", 3, program);
+	std::vector<SimpleLight> lights = std::get <std::vector<SimpleLight>>(params[0]);
+	for (auto& light : lights)
+	{
+		shaders[1]->SetUniform3f("lights[" + std::to_string(light.lightNumber) + "].position", light.position, program);
+		shaders[1]->SetUniform3f("lights[" + std::to_string(light.lightNumber) + "].color", light.color, program);
+		shaders[1]->SetUniform1f("lights[" + std::to_string(light.lightNumber) + "].linear", 0.09f, program);    // typical small linear
+		shaders[1]->SetUniform1f("lights[" + std::to_string(light.lightNumber) + "].quadratic", 0.032f, program); // typical quadratic
 	}
 }
 

@@ -9,11 +9,11 @@ in vec3 Normal;
 
 uniform sampler2D diffuse;
 uniform sampler2D specular;
-
+uniform vec4 color;
 void main()
 {
     position = FragPos;
     normal = normalize(Normal);
-    albedoSpec.rgb = texture(diffuse, TexCoords).rgb;
+    albedoSpec.rgb = texture(diffuse, TexCoords).rgb == vec3(0.0) ? color.rgb : texture(diffuse, TexCoords).rgb;
     albedoSpec.a = texture(specular, TexCoords).r;
 }
