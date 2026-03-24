@@ -6,7 +6,6 @@ Light::Light()
 	bm = new BufferManager();
 	sc = new ShaderCompiler();
 	sm = new ShaderManager();
-	lsm = new ShaderManager();
 	mvpManager = new MVPManager();
 	Position = glm::vec3(3.0f, 7.0f, -2.0f);
 	LightProjection = glm::ortho(-ortographicSize, ortographicSize, -ortographicSize, ortographicSize, nearPlane, farPlane);
@@ -82,7 +81,6 @@ Light::~Light()
 	delete sc;
 	delete bm;
 	delete sm;
-	delete lsm;
 }
 
 void Light::GenerateLightShape()

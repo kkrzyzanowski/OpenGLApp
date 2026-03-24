@@ -57,7 +57,7 @@ void Camera::CreateView(glm::vec3(&vecArray)[3], float radius, GLFWwindow* windo
 	lastFrame = 0.0f;
 	fov = glm::radians(90.0f); //field of view
 
-	projection = glm::perspective(fov, 16.0f / 9.0f, 0.01f, 100.0f); //projection create
+	projection = glm::perspective(fov, 16.0f / 9.0f, 0.01f, 1000.0f); //projection create
 	camView = glm::lookAt(camPos, camPos + camTarget, camDirection);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetMouseButtonCallback(window, mouseButtonCallback);

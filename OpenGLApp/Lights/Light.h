@@ -41,7 +41,6 @@ protected:
 	float farPlane = 20.0f;
 	ShaderCompiler* sc;
 	ShaderManager* sm;
-	ShaderManager* lsm;
 	glm::vec4 color;
 	VerticesShape* lightSphere;
 	float ortographicSize = 10.0;

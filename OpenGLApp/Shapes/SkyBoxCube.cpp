@@ -3,47 +3,11 @@
 
 
 
-SkyBoxCube::SkyBoxCube(ShapesBuilder& builder): Shape(builder)
+SkyBoxCube::SkyBoxCube(ShapesBuilder& builder) : Shape(builder)
 {
 	GLfloat g_vertex_buffer_data[] = {
-		-1.0f, -1.0f, 1.0f,//0
-		 1.0f, -1.0f, 1.0f,//1
-		1.0f,  -1.0f, -1.0f,//2
-		-1.0f, -1.0f, -1.0f,//3
-		-1.0f, 1.0f, 1.0f,// 4
-		1.0f, 1.0f, 1.0f,// 5
-		1.0f,  1.0f, -1.0f,// 6
-		-1.0f, 1.0f, -1.0f};// 7
-	unsigned int indexes[] = { 
-		// Right
-	1, 2, 6,
-	6, 5, 1,
-	// Left
-	0, 4, 7,
-	7, 3, 0,
-	// Top
-	4, 5, 6,
-	6, 7, 4,
-	// Bottom
-	0, 3, 2,
-	2, 1, 0,
-	// Back
-	0, 1, 5,
-	5, 4, 0,
-	// Front
-	3, 7, 6,
-	6, 2, 3
-	};
-	CreateType();
-	Create(g_vertex_buffer_data, indexes, 12, 36, nullptr, 8);
-}
-
-
-SkyBoxCube::SkyBoxCube(ShapesBuilder&& builder) : Shape(std::move(builder))
-{
-	GLfloat g_vertex_buffer_data[] = {
-		-1.0f, -1.0f, 1.0f,//0
-		 1.0f, -1.0f, 1.0f,//1
+		-.5f, -.5f, .5f,//0
+		 .5f, -.5f, .5f,//1
 		1.0f,  -1.0f, -1.0f,//2
 		-1.0f, -1.0f, -1.0f,//3
 		-1.0f, 1.0f, 1.0f,// 4
@@ -74,7 +38,42 @@ SkyBoxCube::SkyBoxCube(ShapesBuilder&& builder) : Shape(std::move(builder))
 	Create(g_vertex_buffer_data, indexes, 12, 36, nullptr, 8);
 }
 
-void SkyBoxCube::Create(const GLfloat * points, unsigned int * orderIndex, unsigned int countVertices, unsigned int countIndexes, unsigned int* bufferDataSizes, unsigned int dataSize)
+SkyBoxCube::SkyBoxCube(ShapesBuilder&& builder) : Shape(std::move(builder))
+{
+	GLfloat g_vertex_buffer_data[] = {
+		-0.5f, -0.5f,  0.5f,//0
+		 0.5f, -0.5f,  0.5f,//1
+		 0.5f, -0.5f, -0.5f,//2
+		-0.5f, -0.5f, -0.5f,//3
+		-0.5f,  0.5f,  0.5f,//4
+		 0.5f,  0.5f,  0.5f,//5
+		 0.5f,  0.5f, -0.5f,//6
+		-0.5f,  0.5f, -0.5f };//7
+	unsigned int indexes[] = {
+	// Right
+	1, 2, 6,
+	6, 5, 1,
+	// Left
+	0, 4, 7,
+	7, 3, 0,
+	// Top
+	4, 5, 6,
+	6, 7, 4,
+	// Bottom
+	0, 3, 2,
+	2, 1, 0,
+	// Back
+	0, 1, 5,
+	5, 4, 0,
+	// Front
+	3, 7, 6,
+	6, 2, 3
+	};
+	CreateType();
+	Create(g_vertex_buffer_data, indexes, 12, 36, nullptr, 8);
+}
+
+void SkyBoxCube::Create(const GLfloat* points, unsigned int* orderIndex, unsigned int countVertices, unsigned int countIndexes, unsigned int* bufferDataSizes, unsigned int dataSize)
 {
 	GLCall(glEnable(GL_BLEND));
 	GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
@@ -94,7 +93,7 @@ void SkyBoxCube::GenerateShaders()
 	paths.push_back(CUBEBOX_BOTTOM_PATH);
 	paths.push_back(CUBEBOX_FRONT_PATH);
 	paths.push_back(CUBEBOX_BACK_PATH);
-	
+
 	shapeState = ShapeState::EXISTING;
 }
 
@@ -104,6 +103,7 @@ void SkyBoxCube::ApplyShaders()
 	glDepthFunc(GL_LEQUAL);
 	cubeMapTexture = new CubeMapTexture(paths);
 	cubeMapTexture->Bind();
+	ShaderTypeGenerator::UpdateModel(sm->shaders, sc.GetCurrentProgram(), mvp.model);
 	ShaderTypeGenerator::ShaderSkyBoxGenerator(sm->shaders, sc.GetDefaultProgram());
 	cubeMapTexture->UnBind();
 	glDepthFunc(GL_LESS);
@@ -120,7 +120,7 @@ void SkyBoxCube::AfterUpdate()
 void SkyBoxCube::CreateMVPMatrix()
 {
 	this->mvp.model = glm::mat4(1.0f);
-	glm::scale(this->mvp.model, glm::vec3(100.0f, 100.0f, 100.0f));
+	this->mvp.model = glm::scale(this->mvp.model, glm::vec3(1000.0f, 1000.0f, 1000.0f));
 }
 
 void SkyBoxCube::Update()
@@ -129,9 +129,10 @@ void SkyBoxCube::Update()
 	glDepthFunc(GL_LEQUAL);
 	sc.EnableUse();
 	cubeMapTexture->Bind();
+	ShaderTypeGenerator::UpdateModel(sm->shaders, sc.GetCurrentProgram(), mvp.model);
 	bm->BindBuffers();
 }
-void SkyBoxCube::InitializeShapeView(glm::mat4 & view)
+void SkyBoxCube::InitializeShapeView(glm::mat4& view)
 {
 	if (shapeState == ShapeState::EXISTING)
 	{
@@ -153,4 +154,3 @@ SkyBoxCube::~SkyBoxCube()
 {
 	delete cubeMapTexture;
 }
-
