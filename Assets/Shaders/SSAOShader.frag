@@ -22,6 +22,8 @@ vec2 noiseScale = vec2(1920.0/4.0, 1080/4.0);
 void main()
 {
     vec3 FragPos = texture(gPosition, TexCoords).rgb;
+    if(length(FragPos) < 0.001)
+        discard;
     vec3 Normal = normalize(texture(gNormal, TexCoords).rgb);
     vec3 RandomVec = normalize(texture(texNoise, TexCoords * noiseScale).rgb);
 

@@ -470,18 +470,50 @@ int OpenGLGameWindow::CreateWindow()
 			FrameBufferManager::FRbuffer_container[SSAO_LIGHTNING].frameBuffer->UnBind();
 
 
+			// set state for full-screen pass
+			glDisable(GL_DEPTH_TEST);
+			glDisable(GL_BLEND);
+			glDisable(GL_STENCIL_TEST);
+	
 
+			//Activate SSAO_LIGHTNING framebuffer as "presenter"
+			FrameBuffer* ssaoLightFB = FrameBufferManager::FRbuffer_container[SSAO_LIGHTNING].frameBuffer.get();
+			FrameBuffer* gbufferFB = FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer.get();
+			FrameBuffer* ssaoFB = FrameBufferManager::FRbuffer_container[SSAO].frameBuffer.get();
 
-			///// after unbinding SSAO_LIGHTNING FBO
-			FrameBufferManager::FRbuffer_container[SSAO_LIGHTNING].frameBuffer->ReadBind(); // binds GL_READ_FRAMEBUFFER = SSAO FBO
-			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // default framebuffer as draw target
+			// 1) Prepare the SSAO_LIGHTNING pass: enable its shader/quad
+			ssaoLightFB->BindDrawBuffers(); // enables shader program, binds quad VAO
 
-			// copy color (or add GL_DEPTH_BUFFER_BIT if you need depth too)
-			glBlitFramebuffer(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT,
-				0, 0, SCREEN_WIDTH, SCREEN_HEIGHT,
-				GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT, GL_NEAREST);
+			// 2) Bind inputs to the units expected by the SSAO_LIGHTNING shader.
+			//    Ensure sampler uniform indices in that shader match these unit numbers.
+			if (gbufferFB)
+			{
+				auto gTextures = gbufferFB->GetFramebufferTextures();
+				for (int i = 0; i < (int)gTextures.size(); ++i)
+				{
+					if (gTextures[i]) gTextures[i]->Bind(i); // gPosition->0, gNormal->1, gAlbedoSpec->2 ...
+				}
+			}
+			if (ssaoFB && ssaoFB->GetFramebufferTexture(0))
+			{
+				ssaoFB->GetFramebufferTexture(0)->Bind(3); // ssao -> unit 3 (adjust if your shader expects different unit)
+			}
 
-			// restore
+			// 3) Let the framebuffer's shader set its uniforms (light positions, etc.)
+			ssaoLightFB->UpdateFrameBuffer(); // this should call your ShaderTypeGenerator::Update (sets uniforms)
+
+			// 4) Draw the full-screen quad (your renderer draws 6 verts quad)
+			renderer->DrawArrays(6, GL_TRIANGLES);
+
+			 //5) Cleanup (unbind shader/quad)
+			ssaoLightFB->AfterUpdateFrameBuffer();
+
+			// restore GL state
+			glEnable(GL_DEPTH_TEST);
+			glEnable(GL_BLEND);
+			glEnable(GL_STENCIL_TEST);
+		
+
 			FrameBufferManager::FRbuffer_container[SSAO_LIGHTNING].frameBuffer->UnBind();
 		}
 		else

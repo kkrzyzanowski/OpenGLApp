@@ -80,5 +80,5 @@ static bool SHADOW = false;
 static bool POSTPROCESSING_EFFECTS = false;
 static bool HDR_LIGHT = false;
 static bool GAUSSIAN_BLUR = false;
-static bool SSAO_LIGHT = false;
+static bool SSAO_LIGHT = true;
 static bool LIGHT_OBJECTS = false;
