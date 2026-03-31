@@ -510,3 +510,72 @@ void Shape::PrepareShaderMatricesFieldData()
 	sc.BindBlockData("Matrices");
 }
 
+void Shape::CalculateMath()
+{
+	glm::vec3 offsetToApply{ 0.0f };
+
+	{
+		std::lock_guard<std::mutex> lk(pendingMutex);
+		if (hasPendingOffset)
+		{
+			offsetToApply = pendingOffset;
+			pendingOffset = { 0.0f, 0.0f, 0.0f };
+			hasPendingOffset = false;
+		}
+	}
+
+	// ?? poza lockiem (wa¿ne!)
+	if (offsetToApply != glm::vec3(0.0f))
+	{
+		Translate(offsetToApply);
+	}
+
+	Rotate(0.0f);
+	Scale(0.0f);
+
+	MVPMatrix = mvp.proj * mvp.view * mvp.model;
+}
+
+
+
+void Shape::ApplyPendingModel()
+{
+	glm::mat4 model;
+	glm::mat4 mvp_mat;
+	bool doApply = false;
+	{
+		std::lock_guard<std::mutex> lk(pendingMutex);
+		if (!hasPendingModel)
+			return;
+		model = pendingModelMatrix;
+		mvp_mat = pendingMVPMatrix;
+		doApply = true;
+		hasPendingModel = false;
+	}
+
+	if (!doApply)
+		return;
+
+	glm::vec3 newPos = glm::vec3(model[3]);
+	{
+		std::lock_guard<std::mutex> lk(transformMutex);
+		builder->Pos = newPos;
+		mvp.model = model;
+		MVPMatrix = mvp_mat;
+	}
+}
+
+void Shape::SetPendingOffset(const glm::vec3 offset)
+{
+	std::lock_guard<std::mutex> lk(pendingMutex);
+	pendingOffset = offset;
+	hasPendingOffset = true;
+}
+
+void Shape::SetPendingViewProj(const glm::mat4& view, const glm::mat4& proj)
+{
+	std::lock_guard<std::mutex> lk(pendingMutex);
+	pendingView = view;
+	pendingProj = proj;
+	hasPendingViewProj = true;
+}

@@ -158,7 +158,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 				if(RayCastDetection(startPoint, startDir, shape->GetTriangles(), intersectedDragPoint))
 				{
 					glm::vec3 offset = intersectedDragPoint - storedIntersectedPoint;
-					shape->Translate(offset);
+					shape->SetPendingOffset(offset);
 					storedIntersectedPoint = intersectedDragPoint;
 				}
 			}
@@ -176,7 +176,6 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mode)
 		//RAYCAS failed to-do
 		float distance = 1000.0f;
 		camInstance->mouseRayCast = new Raycast(mx, my, distance, camInstance->GetProjection(), camInstance->GetView());
-
 
 		for (auto& shape : ShapeManager::shapes)
 		{

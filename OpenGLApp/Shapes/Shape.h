@@ -19,6 +19,7 @@
 #include "..\Rendering\Renderer.h"
 #include "VerticesCreator.h"
 #include "..\glm\gtx\rotate_vector.hpp"
+#include <mutex>
 
 class ShapesBuilder;
 
@@ -91,6 +92,15 @@ public:
 	virtual void UpdateLight();
 
 	virtual void AddParamsToShader();
+	
+	virtual void CalculateMath();
+
+	void ApplyPendingModel();
+
+	void SetPendingOffset(const glm::vec3 point);
+
+	void SetPendingViewProj(const glm::mat4& view, const glm::mat4& proj);
+
 
 	ShapeParameters shapeParams;
 	ShapeElements shapeElements;
@@ -114,12 +124,27 @@ protected:
 	void GeneratePickedShaders();
 	void PrepareShaderMatricesFieldData();
 
+	std::mutex transformMutex;
+	std::mutex pendingMutex;
+
+	glm::vec3 pendingOffset = glm::vec3(0.0f);
+	bool hasPendingOffset = false;
+	glm::vec3 pendingPosition = glm::vec3(0.0f);
+	bool hasPendingModel = false;
+	glm::mat4 pendingModelMatrix = glm::mat4(1.0f);
+	glm::mat4 pendingMVPMatrix = glm::mat4(1.0f);
+	bool hasPendingViewProj = false;
+	glm::mat4 pendingView = glm::mat4(1.0f);
+	glm::mat4 pendingProj = glm::mat4(1.0f);
+
 	VertexManager vm;
 	
 	std::vector<std::string> paths;
 
 	std::vector<glm::vec3> normals;
 	MVP mvp;
+
+	glm::mat4 MVPMatrix;
 	std::string ShapeName;
 	glm::vec3 shapeCoords;
 

@@ -6,6 +6,7 @@
 #include "PlaneView.h"
 #include "RendererScreen.h"
 #include "SSAO/KernelSamplerGenerator.h"
+#include <future>
 
 
 // to-do do textures for framebuffer (maybe class or something like that) to prepare connection beetween framebuffers
@@ -272,7 +273,7 @@ int OpenGLGameWindow::CreateWindow()
 		.Create(FrameBufferType::SSAO_LIGHTNING));
 
 	frameBufferBuilder->ResetData();
-	
+
 	FrameBufferManager::InitializeFrameBuffers();
 	LightManager::AddLightsToFrameBuffer(FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer);
 	LightManager::AddLightsToFrameBuffer(FrameBufferManager::FRbuffer_container[SSAO_LIGHTNING].frameBuffer);
@@ -434,7 +435,7 @@ int OpenGLGameWindow::CreateWindow()
 			renderer->ClearColor();
 			FrameBufferManager::FRbuffer_container[SSAO].frameBuffer->BindDrawBuffers();
 
-			for (int i = 0; i < FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->GetFramebufferTextures().size()-1; i++)
+			for (int i = 0; i < FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->GetFramebufferTextures().size() - 1; i++)
 			{
 				FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->GetFramebufferTexture(i)->Bind(i);
 			}
@@ -474,7 +475,7 @@ int OpenGLGameWindow::CreateWindow()
 			glDisable(GL_DEPTH_TEST);
 			glDisable(GL_BLEND);
 			glDisable(GL_STENCIL_TEST);
-	
+
 
 			//Activate SSAO_LIGHTNING framebuffer as "presenter"
 			FrameBuffer* ssaoLightFB = FrameBufferManager::FRbuffer_container[SSAO_LIGHTNING].frameBuffer.get();
@@ -505,14 +506,14 @@ int OpenGLGameWindow::CreateWindow()
 			// 4) Draw the full-screen quad (your renderer draws 6 verts quad)
 			renderer->DrawArrays(6, GL_TRIANGLES);
 
-			 //5) Cleanup (unbind shader/quad)
+			//5) Cleanup (unbind shader/quad)
 			ssaoLightFB->AfterUpdateFrameBuffer();
 
 			// restore GL state
 			glEnable(GL_DEPTH_TEST);
 			glEnable(GL_BLEND);
 			glEnable(GL_STENCIL_TEST);
-		
+
 
 			FrameBufferManager::FRbuffer_container[SSAO_LIGHTNING].frameBuffer->UnBind();
 		}
@@ -550,6 +551,39 @@ int OpenGLGameWindow::CreateWindow()
 			glDisable(GL_BLEND);
 			glEnable(GL_DEPTH_TEST);
 		}
+
+		std::vector<std::future<void>> futures;
+		futures.reserve(forwardShapes.size());
+		for (size_t i = 0; i < forwardShapes.size(); ++i)
+		{
+
+			auto shapePtr = forwardShapes[i];
+			// skip Selected early to avoid scheduling unnecessary tasks
+			if (shapePtr->Selected)
+				continue;
+
+			// force asynchronous launch
+			futures.emplace_back(std::async(std::launch::async, [shapePtr]()
+				{
+					// CalculateMath must be pure CPU work and thread-safe
+					shapePtr->CalculateMath();
+				}));
+
+		}
+
+		for (auto& f : futures)
+		{
+			try
+			{
+				f.get();
+			}
+			catch (const std::exception& e)
+			{
+				// handle/log error — nie przerywaj natychmiast jeœli chcesz kontynuowaæ render
+				std::cerr << "Worker exception: " << e.what() << '\n';
+			}
+		}
+
 
 		for (auto& shape : forwardShapes)
 		{
@@ -591,7 +625,7 @@ int OpenGLGameWindow::CreateWindow()
 			glEnable(GL_DEPTH_TEST);
 		}
 
-		
+
 
 
 		// Fix for the initialization issue with FrameBufferType and bool
