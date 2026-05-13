@@ -261,8 +261,8 @@ int OpenGLGameWindow::CreateWindow()
 		.Create(FrameBufferType::GBUFFER));
 	frameBufferBuilder->ResetData();
 
-	FrameBufferManager::CreateFRBuffer(FrameBufferType::SSAO, frameBufferBuilder->AddShaderByPath(SSAO_LIGHTNING_VERT_PATH)
-		.AddShaderByPath(SSAO_LIGHTNING_FRAG_PATH)
+	FrameBufferManager::CreateFRBuffer(FrameBufferType::SSAO, frameBufferBuilder->AddShaderByPath(SSAO_VERT_PATH)
+		.AddShaderByPath(SSAO_FRAG_PATH)
 		.AddTexture(TextureMode::ONE_COLOR, 0, 0)
 		.Create(FrameBufferType::SSAO));
 	frameBufferBuilder->ResetData();
