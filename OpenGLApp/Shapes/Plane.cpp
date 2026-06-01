@@ -44,9 +44,9 @@ void Plane::GetSourceLight(glm::vec3 lightSource)
 {
 	m_sourceLight = lightSource;
 }
-void Plane::Translate(const glm::vec3& valueToMove)
+void Plane::Translate()
 {
-	Shape::Translate(valueToMove);
+	Shape::Translate();
 }
 glm::vec3 Plane::GetNormal()
 {
@@ -65,15 +65,6 @@ void Plane::CreateMVPMatrix()
 	shapeElements.triangles = InitializeTriangles(verts->Indexes, verts->IndexesCount, shapeElements.vertices);
 }
 
-void Plane::Update()
-{
-	sc.ActivateDefaultProgram();
-	sc.EnableUse();
-	for (Texture* texture : tm.Textures)
-		texture->Bind();
-	ShaderTypeGenerator::UpdateModel(sm->shaders, sc.GetCurrentProgram(), mvp.model);
-	bm->BindBuffers();
-}
 
 Plane::~Plane()
 {

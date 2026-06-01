@@ -11,7 +11,7 @@ public:
 	void Create(const GLfloat* points, unsigned int* orderIndex, unsigned int countVertices, unsigned int countIndexes, unsigned int dataSize);
 	glm::vec3 GetNormal()  override;
 	void Update() override;
-	void Translate(const glm::vec3& valueToMove) override;
+	void Translate() override;
 	void SetPoints(std::vector<glm::vec3> points) override;
 	~Line();
 

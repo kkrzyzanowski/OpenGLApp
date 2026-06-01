@@ -7,7 +7,6 @@ public:
 	Sphere();
 	Sphere(ShapesBuilder& builder);
 	Sphere(ShapesBuilder&& builder);
-	void Update() override;
 	glm::vec3 GetNormal() override;
 	float GetRadius() const;
 	~Sphere();

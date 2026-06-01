@@ -56,6 +56,7 @@ void Shape::DeactivateShapeBufferParts()
 
 void Shape::Update()
 {
+	Translate();
 	sc.ActivateDefaultProgram();
 	sc.EnableUse();
 	for (Texture* texture : tm.Textures)
@@ -134,13 +135,16 @@ void Shape::RotateNormals(float rotation, glm::vec3 rotationAxis)
 			<< normal.z << std::endl;
 	}
 }
-void Shape::Translate(const glm::vec3& valueToMove)
+void Shape::Translate()
 {
+	if(pendingOffset == glm::vec3(0.0f))
+		return;
 	glm::mat4 translationMatrix = glm::mat4(1.0f);
-	translationMatrix = glm::translate(translationMatrix, valueToMove);
+	translationMatrix = glm::translate(translationMatrix, pendingOffset);
 	mvp.model = translationMatrix * mvp.model;
 	TranslatePoints(translationMatrix, shapeElements.vertices);
 	shapeElements.triangles = InitializeTriangles(verts->Indexes, verts->IndexesCount, shapeElements.vertices);
+	pendingOffset = glm::vec3(0.0f);
 }
 
 void Shape::SetPosition(const glm::vec3& pos)
@@ -512,23 +516,6 @@ void Shape::PrepareShaderMatricesFieldData()
 
 void Shape::CalculateMath()
 {
-	glm::vec3 offsetToApply{ 0.0f };
-
-	{
-		std::lock_guard<std::mutex> lk(pendingMutex);
-		if (hasPendingOffset)
-		{
-			offsetToApply = pendingOffset;
-			pendingOffset = { 0.0f, 0.0f, 0.0f };
-			hasPendingOffset = false;
-		}
-	}
-
-	// ?? poza lockiem (wa¿ne!)
-	if (offsetToApply != glm::vec3(0.0f))
-	{
-		Translate(offsetToApply);
-	}
 
 	Rotate(0.0f);
 	Scale(0.0f);
@@ -567,7 +554,6 @@ void Shape::ApplyPendingModel()
 
 void Shape::SetPendingOffset(const glm::vec3 offset)
 {
-	std::lock_guard<std::mutex> lk(pendingMutex);
 	pendingOffset = offset;
 	hasPendingOffset = true;
 }

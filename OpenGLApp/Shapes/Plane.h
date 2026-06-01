@@ -5,9 +5,8 @@ class Plane: public Shape
 public:
 	Plane(ShapesBuilder& builder);
 	Plane(ShapesBuilder&& builder);
-	void Update() override;
 	void GetSourceLight(glm::vec3 lightSource);
-	void Translate(const glm::vec3& valueToMove);
+	void Translate();
 	glm::vec3 GetNormal() override;
 	~Plane();
 private:

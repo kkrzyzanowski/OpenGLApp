@@ -179,6 +179,7 @@
     <ClCompile Include="Buffers\VertexBuffer.cpp" />
     <ClCompile Include="OpenGLGameWindow.cpp" />
     <ClCompile Include="Managers\VertexManager.cpp" />
+    <ClCompile Include="ThreadPool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Builders\FrameBufferBuilder.h" />
@@ -239,6 +240,7 @@
     <ClInclude Include="Buffers\VertexBufferLayout.h" />
     <ClInclude Include="OpenGLGameWindow.h" />
     <ClInclude Include="Managers\VertexManager.h" />
+    <ClInclude Include="ThreadPool.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\AlphaFragmentShader.frag" />

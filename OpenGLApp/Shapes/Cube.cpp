@@ -50,17 +50,6 @@ void Cube::CreateMVPMatrix()
 	shapeElements.triangles = InitializeTriangles(verts->Indexes, verts->IndexesCount, shapeElements.vertices);
 }
 
-
-void Cube::Update()
-{
-	sc.ActivateDefaultProgram();
-	sc.EnableUse();
-	for (Texture* texture : tm.Textures)
-		texture->Bind();
-	ShaderTypeGenerator::UpdateModel(sm->shaders, sc.GetCurrentProgram(), mvp.model);
-	bm->BindBuffers();
-}
-
 glm::vec3 Cube::GetNormal()
 {
 	return glm::vec3();

@@ -6,7 +6,6 @@ class Cube: public Shape
 public:
 	Cube(ShapesBuilder& builder);
 	Cube(ShapesBuilder&& builder);
-	void Update() override;
 	glm::vec3 GetNormal() override;
 	~Cube();
 private:

@@ -37,7 +37,7 @@ void Line::Update()
 	sc.DisableUse();
 }
 
-void Line::Translate(const glm::vec3& valueToMove)
+void Line::Translate()
 {
 }
 

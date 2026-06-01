@@ -38,17 +38,6 @@ Sphere::Sphere(ShapesBuilder&& builder) : Shape(std::move(builder))
 	ShapeName = "Sphere";
 }
 
-
-void Sphere::Update()
-{
-	sc.EnableUse();
-	for(Texture* texture: tm.Textures)
-		texture->Bind();
-	ShaderTypeGenerator::UpdateModel(sm->shaders, sc.GetDefaultProgram(), mvp.model);
-	bm->BindBuffers();
-}
-
-
 void Sphere::CreateMVPMatrix()
 {
 	mvp.model = glm::mat4(1.0f);

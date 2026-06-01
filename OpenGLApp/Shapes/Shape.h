@@ -60,7 +60,7 @@ public:
 	void SetEyeCamPos(const glm::vec3& pos);
 	const SourceShapeType GetSourceShapeType() const;
 	void RotateNormals(float rotation, glm::vec3 rotationAxis);
-	virtual void Translate(const glm::vec3& valueToMove);
+	virtual void Translate();
 	void SetPosition(const glm::vec3& pos);
 	void Scale(float value);
 	void Rotate(float value);

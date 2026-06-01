@@ -7,6 +7,7 @@
 #include "RendererScreen.h"
 #include "SSAO/KernelSamplerGenerator.h"
 #include <future>
+#include "ThreadPool.h"
 
 
 // to-do do textures for framebuffer (maybe class or something like that) to prepare connection beetween framebuffers
@@ -115,16 +116,16 @@ int OpenGLGameWindow::CreateWindow()
 		.Position(glm::vec3(-2.0f, 2.0f, -4.0f))
 		.Create(ShapeType::CUBE));
 
-	ShapeManager::shapes.emplace_back(shapesBuilder->ObjectState(CamView::DYNAMIC)
-		.SourceType(SourceShapeType::SHAPE)
-		.Shader(GBUFFER_VERT_PATH)
-		.Shader(GBUFFER_FRAG_PATH)
-		.SetShading(Shading::DEFFERED_SHADING)
-		.Color(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f))
-		.Position(glm::vec3(0.0f, 2.0f, -6.0f))
-		.Rotation(glm::vec3(1.0f, 0.0f, 0.0f), -90.0f)
-		.Scale(glm::vec3(5.0f, 5.0f, 1.0f))
-		.Create(ShapeType::PLANE));
+	//ShapeManager::shapes.emplace_back(shapesBuilder->ObjectState(CamView::DYNAMIC)
+	//	.SourceType(SourceShapeType::SHAPE)
+	//	.Shader(GBUFFER_VERT_PATH)
+	//	.Shader(GBUFFER_FRAG_PATH)
+	//	.SetShading(Shading::DEFFERED_SHADING)
+	//	.Color(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f))
+	//	.Position(glm::vec3(0.0f, 2.0f, -6.0f))
+	//	.Rotation(glm::vec3(1.0f, 0.0f, 0.0f), -90.0f)
+	//	.Scale(glm::vec3(5.0f, 5.0f, 1.0f))
+	//	.Create(ShapeType::PLANE));
 
 	ShapeManager::shapes.emplace_back(shapesBuilder->ObjectState(CamView::DYNAMIC)
 		.SourceType(SourceShapeType::SHAPE)
@@ -159,17 +160,17 @@ int OpenGLGameWindow::CreateWindow()
 		.Position(glm::vec3(3.0f, 0.5f, -3.0f))
 		.Create(ShapeType::PLANE));
 
-	ShapeManager::shapes.emplace_back(shapesBuilder->ObjectState(CamView::DYNAMIC)
-		.SourceType(SourceShapeType::SHAPE)
-		.Texture(TEMP_TEXTURE_DIFFUSE)
-		.Shader(LIGHTNING_HDR_VERT)
-		.Shader(LIGHTNING_HDR_FRAG)
-		.SetShading(HDR_SHADING)
-		.SetHDR(true)
-		.Rotation(glm::vec3(1.0f, 0.0f, 0.0f), -90.0f)
-		.Position(glm::vec3(5.0f, 1.0f, -3.0f))
-		.Scale(glm::vec3(2.0f, 2.0f, 1.0f))
-		.Create(ShapeType::PLANE));
+	//ShapeManager::shapes.emplace_back(shapesBuilder->ObjectState(CamView::DYNAMIC)
+	//	.SourceType(SourceShapeType::SHAPE)
+	//	.Texture(TEMP_TEXTURE_DIFFUSE)
+	//	.Shader(LIGHTNING_HDR_VERT)
+	//	.Shader(LIGHTNING_HDR_FRAG)
+	//	.SetShading(HDR_SHADING)
+	//	.SetHDR(true)
+	//	.Rotation(glm::vec3(1.0f, 0.0f, 0.0f), -90.0f)
+	//	.Position(glm::vec3(5.0f, 1.0f, -3.0f))
+	//	.Scale(glm::vec3(2.0f, 2.0f, 1.0f))
+	//	.Create(ShapeType::PLANE));
 
 	ShapeManager::shapes.emplace_back(shapesBuilder->ObjectState(CamView::DYNAMIC)
 		.SourceType(SourceShapeType::SHAPE)
@@ -335,6 +336,9 @@ int OpenGLGameWindow::CreateWindow()
 	paths.shadersPaths = { HDR_GAUSSIANBLUR_VERT_PATH, HDR_GAUSSIANBLUR_FRAG_PATH };
 	RendererScreen* screen = new RendererScreen(paths, sp);
 
+	static ThreadPool threadPool(std::thread::hardware_concurrency());
+	std::vector<std::future<void>> futures;
+	futures.reserve(forwardShapes.size());
 	/* Loop until the user closes the window */
 
 	/// TO-DO refactor this code, maybe create some functions for each step of rendering, and make it more clear and readable
@@ -552,20 +556,11 @@ int OpenGLGameWindow::CreateWindow()
 			glEnable(GL_DEPTH_TEST);
 		}
 
-		std::vector<std::future<void>> futures;
-		futures.reserve(forwardShapes.size());
 		for (size_t i = 0; i < forwardShapes.size(); ++i)
 		{
-
-			auto shapePtr = forwardShapes[i];
-			// skip Selected early to avoid scheduling unnecessary tasks
-			if (shapePtr->Selected)
-				continue;
-
-			// force asynchronous launch
-			futures.emplace_back(std::async(std::launch::async, [shapePtr]()
+			auto& shapePtr = forwardShapes[i];
+			futures.emplace_back(threadPool.Enqueue([shapePtr]()
 				{
-					// CalculateMath must be pure CPU work and thread-safe
 					shapePtr->CalculateMath();
 				}));
 
@@ -579,10 +574,11 @@ int OpenGLGameWindow::CreateWindow()
 			}
 			catch (const std::exception& e)
 			{
-				// handle/log error — nie przerywaj natychmiast jeœli chcesz kontynuowaæ render
 				std::cerr << "Worker exception: " << e.what() << '\n';
 			}
 		}
+
+		futures.clear();
 
 
 		for (auto& shape : forwardShapes)
