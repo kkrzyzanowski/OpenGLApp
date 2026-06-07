@@ -4,14 +4,13 @@ class Sphere :
 	public Shape
 {
 public:
-	Sphere();
+	Sphere() = default;
 	Sphere(ShapesBuilder& builder);
 	Sphere(ShapesBuilder&& builder);
 	glm::vec3 GetNormal() override;
 	float GetRadius() const;
 	~Sphere();
 private:
-	void CreateMVPMatrix() override;
 	glm::vec3 normalLight;
 	float radius;
 	/*GLfloat* vertices;

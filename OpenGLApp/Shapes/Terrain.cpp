@@ -87,7 +87,7 @@ void Terrain::GenerateShaders()
 	sc.EnableUse();
 	PrepareShaderMatricesFieldData();
 	AddParamsToShader();
-	CreateMVPMatrix();
+	CreateModelMatrix();
 	
 	shapeState = ShapeState::EXISTING;
 }
@@ -115,7 +115,7 @@ void Terrain::AddParamsToShader()
 	functionParams.push_back(unsigned int(0));
 }
 
-void Terrain::CreateMVPMatrix()
+void Terrain::CreateModelMatrix()
 {
 	mvp.model = glm::mat4(1.0f);
 	mvp.model = glm::translate(mvp.model, builder->Pos);

@@ -19,13 +19,13 @@ Raycast::Raycast(double xPos, double yPos, float distance, glm::mat4 projection,
 void Raycast::InverseToEyeCoords()
 {
 	rayStartCamera = glm::inverse(proj) * rayStartClip;
-	rayStartCamera /= rayStartCamera.w;
-	rayStartWorld = glm::inverse(view) * rayStartCamera;
-	rayStartWorld /= rayStartWorld.w;
 	rayEndCamera = glm::inverse(proj) * rayEndClip;
+
+	rayStartCamera /= rayStartCamera.w;
 	rayEndCamera /= rayEndCamera.w;
+
+	rayStartWorld = glm::inverse(view) * rayStartCamera;
 	rayEndWorld = glm::inverse(view) * rayEndCamera;
-	rayEndWorld /= rayEndWorld.w;
 	//startRay = glm::vec4(startRay.x, startRay.y, -1.0f, 0.0f);
 }
 
@@ -33,7 +33,7 @@ void Raycast::InverseToWorldCoords()
 {
 	/*glm::vec4 worldCoords = glm::inverse(view) * startRay;
 	worldRay = glm::vec3(-worldCoords.x, -worldCoords.y, worldCoords.z);*/
-	rayDirWorld = (rayEndWorld - rayStartWorld);
+	rayDirWorld = glm::normalize(rayEndWorld - rayStartWorld);
 	origin = glm::vec3(rayStartWorld);
 	worldRay = (glm::vec3)rayDirWorld;
 	worldRayNormalized = glm::normalize(glm::vec3(rayDirWorld.x, rayDirWorld.y, rayDirWorld.z));

@@ -83,7 +83,7 @@ void Shape::GenerateShaders()
 	sc.AddShadersToProgram(sm->shaders);
 	sc.EnableUse();
 	PrepareShaderMatricesFieldData();
-	CreateMVPMatrix();
+	CreateModelMatrix();
 	AddParamsToShader();
 
 	shapeState = ShapeState::EXISTING;
@@ -564,4 +564,15 @@ void Shape::SetPendingViewProj(const glm::mat4& view, const glm::mat4& proj)
 	pendingView = view;
 	pendingProj = proj;
 	hasPendingViewProj = true;
+}
+
+void Shape::CreateModelMatrix()
+{
+	mvp.model = glm::mat4(1.0f);
+	if (builder->Angle != 0.0f)
+		mvp.model = glm::rotate(mvp.model, builder->Angle, builder->Axis);
+	mvp.model = glm::translate(mvp.model, builder->Pos);
+	mvp.model = glm::scale(mvp.model, builder->ScaleVector);
+	TranslatePoints(mvp.model, shapeElements.vertices);
+	shapeElements.triangles = InitializeTriangles(verts->Indexes, verts->IndexesCount, shapeElements.vertices);
 }

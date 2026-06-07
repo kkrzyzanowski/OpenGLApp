@@ -86,7 +86,7 @@ void SkyBoxCube::GenerateShaders()
 	sc.AddShadersToProgram(sm->shaders);
 	sc.EnableUse();
 	PrepareShaderMatricesFieldData();
-	CreateMVPMatrix();
+	CreateModelMatrix();
 	paths.push_back(CUBEBOX_RIGHT_PATH);
 	paths.push_back(CUBEBOX_LEFT_PATH);
 	paths.push_back(CUBEBOX_TOP_PATH);
@@ -117,7 +117,7 @@ void SkyBoxCube::AfterUpdate()
 	glDepthFunc(GL_LESS);
 }
 
-void SkyBoxCube::CreateMVPMatrix()
+void SkyBoxCube::CreateModelMatrix()
 {
 	this->mvp.model = glm::mat4(1.0f);
 	this->mvp.model = glm::scale(this->mvp.model, glm::vec3(1000.0f, 1000.0f, 1000.0f));

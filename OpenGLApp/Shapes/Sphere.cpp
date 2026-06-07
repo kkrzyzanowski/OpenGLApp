@@ -38,17 +38,6 @@ Sphere::Sphere(ShapesBuilder&& builder) : Shape(std::move(builder))
 	ShapeName = "Sphere";
 }
 
-void Sphere::CreateMVPMatrix()
-{
-	mvp.model = glm::mat4(1.0f);
-	mvp.model = glm::translate(mvp.model, builder->Pos);
-	if(builder->Angle != 0.0f)
-		mvp.model = glm::rotate(mvp.model, builder->Angle, builder->Axis);
-	TranslatePoints(mvp.model, shapeElements.vertices);
-	shapeElements.triangles = InitializeTriangles(verts->Indexes, verts->IndexesCount, shapeElements.vertices);
-}
-
-
 glm::vec3 Sphere::GetNormal()
 {
 	return glm::vec3();

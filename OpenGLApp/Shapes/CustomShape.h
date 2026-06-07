@@ -16,16 +16,15 @@ public:
 	CustomShape(ShapesBuilder& builder);
 	CustomShape(ShapesBuilder&& builder);
 	//void CreateShape(const GLfloat* points, unsigned int* orderIndex, unsigned int countVertices) override;
-	void Update() override;
 	~CustomShape();
 private:
 	MeshObject* meshObject;
 	void GetBufferVertices(aiMesh* mesh, const aiScene* scene);
 	void GetBufferIndices(aiMesh* mesh, const aiScene* scene);
+	void InitializeShapeElements();
 	void SetMaterials(aiMesh* mesh, const aiScene* scene, aiTextureType type);
 	void SetTextures(aiMaterial* mat, aiTextureType type);
 	void ProcessNode(aiNode* node, const aiScene* scene);
-	void CreateMVPMatrix() override;
 	glm::vec3 GetNormal() override;
 };
 

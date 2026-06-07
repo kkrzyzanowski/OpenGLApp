@@ -119,7 +119,7 @@ public:
 	virtual ~Shape();
 
 protected:
-	virtual void CreateMVPMatrix() {};
+	virtual void CreateModelMatrix();
 	void CreateType();
 	void GeneratePickedShaders();
 	void PrepareShaderMatricesFieldData();

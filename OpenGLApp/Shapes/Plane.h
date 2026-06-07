@@ -10,7 +10,6 @@ public:
 	glm::vec3 GetNormal() override;
 	~Plane();
 private:
-	void CreateMVPMatrix() override;
 	glm::vec3 m_sourceLight;
 	Texture* specularTexture;
 };

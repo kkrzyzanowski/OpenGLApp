@@ -96,7 +96,7 @@ Line::~Line()
 {
 }
 
-void Line::CreateMVPMatrix()
+void Line::CreateModelMatrix()
 {
 	mvp.model = glm::mat4(1.0f);
 }

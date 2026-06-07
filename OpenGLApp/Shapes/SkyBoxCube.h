@@ -18,7 +18,7 @@ public:
 	~SkyBoxCube();
 protected:
 	CubeMapTexture* cubeMapTexture;
-	void CreateMVPMatrix() override;
+	void CreateModelMatrix() override;
 	std::vector<std::string> paths;
 };
 

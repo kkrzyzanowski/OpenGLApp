@@ -17,7 +17,7 @@ public:
 
 	std::vector<glm::vec3> points;
 protected:
-	void CreateMVPMatrix() override;
+	void CreateModelMatrix() override;
 private:
 	std::vector<Shader*> shaders;
 	ShaderCompiler sm;

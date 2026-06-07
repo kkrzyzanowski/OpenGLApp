@@ -357,7 +357,14 @@ void ObjectPicking(int mx, int my, std::vector<std::shared_ptr<Shape>>& shapes)
 			std::cout << "Selected Shape " << std::endl;
 	}
 }
-
+/// <summary>
+/// Ray detection using Moller-Trumbore algorithm, returns true if ray intersects with triangle and false if not, also returns intersected point in case of intersection
+/// </summary>
+/// <param name="rayOrigin"></param>
+/// <param name="rayDirection"></param>
+/// <param name="triangles"></param>
+/// <param name="intersectedPoint"></param>
+/// <returns></returns>
 
 bool RayCastDetection(glm::vec3 rayOrigin, glm::vec3 rayDirection, const Triangles& triangles, glm::vec3& intersectedPoint)
 {

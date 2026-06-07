@@ -53,19 +53,6 @@ glm::vec3 Plane::GetNormal()
 	return normals[0];
 }
 
-void Plane::CreateMVPMatrix()
-{
-	mvp.model = glm::mat4(1.0f);
-	mvp.model = glm::translate(mvp.model, builder->Pos);
-	mvp.model = glm::scale(mvp.model, builder->ScaleVector);
-	if(builder->Angle != 0.0f)
-		mvp.model = glm::rotate(mvp.model, glm::radians(builder->Angle), builder->Axis);
-	mvp.model = glm::scale(mvp.model, builder->ScaleVector);
-	TranslatePoints(mvp.model, shapeElements.vertices);
-	shapeElements.triangles = InitializeTriangles(verts->Indexes, verts->IndexesCount, shapeElements.vertices);
-}
-
-
 Plane::~Plane()
 {
 

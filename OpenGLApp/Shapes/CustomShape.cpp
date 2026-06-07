@@ -6,7 +6,8 @@ CustomShape::CustomShape(ShapesBuilder& builder): Shape(builder)
 	//stuff with getting model;
 	Assimp::Importer importer;
 	meshObject = new MeshObject();
-	const aiScene* scene = importer.ReadFile(this->builder->_path, aiProcess_Triangulate | aiProcess_FlipUVs);
+	const aiScene* scene = importer.ReadFile(this->builder->_path, aiProcess_Triangulate | aiProcess_FlipWindingOrder
+		| aiProcess_FlipUVs);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
@@ -19,6 +20,7 @@ CustomShape::CustomShape(ShapesBuilder& builder): Shape(builder)
 	unsigned int* indices = &meshObject->indices[0];
 	unsigned int bufferDataSizes[3] = { 3, 2, 3 };
 	Create(vertices, indices, meshObject->vertices.size() / 8, meshObject->indices.size(), bufferDataSizes, 8);
+	InitializeShapeElements();
 	ShapeName = "Custom";
 }
 
@@ -40,6 +42,7 @@ CustomShape::CustomShape(ShapesBuilder&& builder) : Shape(std::move(builder))
 	unsigned int* indices = &meshObject->indices[0];
 	unsigned int bufferDataSizes[3] = { 3, 2, 3 };
 	Create(vertices, indices, meshObject->vertices.size() / 8, meshObject->indices.size(), bufferDataSizes, 8);
+	InitializeShapeElements();
 	ShapeName = "Custom";
 }
 
@@ -84,6 +87,18 @@ void CustomShape::GetBufferIndices(aiMesh * mesh, const aiScene * scene)
 	 meshObject->indices.insert(meshObject->indices.end(), bufferData.begin(), bufferData.end());
 }
 
+void CustomShape::InitializeShapeElements()
+{
+	verts = std::unique_ptr<VerticesShape>(new VerticesShape());
+	verts->Points = &meshObject->vertices[0];
+	verts->Indexes = &meshObject->indices[0];
+	verts->PointsCount = meshObject->vertices.size() / 8;
+	verts->IndexesCount = meshObject->indices.size();
+	shapeElements.vertices = GetVertices(&meshObject->vertices[0], meshObject->vertices.size(), 8);
+	shapeElements.triangles = InitializeTriangles(&meshObject->indices[0], meshObject->indices.size(), shapeElements.vertices);
+}
+
+
 void CustomShape::SetMaterials(aiMesh * mesh, const aiScene * scene, aiTextureType type)
 {
 	if (mesh->mMaterialIndex >= 0)
@@ -119,12 +134,6 @@ void CustomShape::ProcessNode(aiNode* node, const aiScene* scene)
 	}
 }
 
-void CustomShape::CreateMVPMatrix()
-{
-	mvp.model = glm::mat4(1.0f);
-	mvp.model = glm::translate(mvp.model, builder->Pos);
-}
-
 glm::vec3 CustomShape::GetNormal()
 {
 	return glm::vec3();
@@ -136,12 +145,5 @@ CustomShape::~CustomShape()
 {
 }
 
-void CustomShape::Update()
-{
-	sc.EnableUse();
-	for(Texture* texture: tm.Textures)
-		texture->Bind();
-	ShaderTypeGenerator::UpdateModel(sm->shaders, sc.GetCurrentProgram(), mvp.model);
-	bm->BindBuffers();
-}
+
 

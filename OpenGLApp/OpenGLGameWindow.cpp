@@ -179,7 +179,7 @@ int OpenGLGameWindow::CreateWindow()
 		.PathModel(TEMP_MODEL_PATH)
 		.SetShading(Shading::ONLY_COLOR)
 		.Color(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f))
-		.Position(glm::vec3(3.0f, 1.0f, -8.0f))
+		.Position(glm::vec3(3.0f, 1.0f, -4.0f))
 		.Create(ShapeType::CUSTOM));
 
 	//ShapeManager::shapes.push_back(shapesBuilder->ObjectState(CamView::MOVABLE)

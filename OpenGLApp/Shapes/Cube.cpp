@@ -39,17 +39,6 @@ void Cube::GenerateTextures(std::vector<Texture*>& textures)
 	tm.AddTextures(textures);
 }
 
-void Cube::CreateMVPMatrix()
-{
-	mvp.model = glm::mat4(1.0f);
-	mvp.model = glm::translate(mvp.model, builder->Pos);
-	if(builder->Angle != 0.0f)
-		mvp.model = glm::rotate(mvp.model, builder->Angle, builder->Axis);
-	mvp.model = glm::scale(mvp.model, builder->ScaleVector);
-	TranslatePoints(mvp.model, shapeElements.vertices);
-	shapeElements.triangles = InitializeTriangles(verts->Indexes, verts->IndexesCount, shapeElements.vertices);
-}
-
 glm::vec3 Cube::GetNormal()
 {
 	return glm::vec3();

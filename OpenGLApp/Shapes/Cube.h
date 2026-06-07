@@ -12,7 +12,6 @@ private:
 	
 	/*template <typename Matrix, typename ... glm::mat4>
 	void TransformateShape(Matrix arg, glm::mat4&... rest);*/
-	void CreateMVPMatrix() override;
 	void GenerateTextures(std::vector<Texture*>& textures) override;
 };
 

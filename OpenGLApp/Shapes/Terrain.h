@@ -17,7 +17,7 @@ public:
 	inline TerrainProperties& GetTerrainProperties() { return tp; }
 	~Terrain();
 private:
-	void CreateMVPMatrix() override;
+	void CreateModelMatrix() override;
 	TerrainProperties tp;
 	glm::vec3* squareOffsets;
 };
