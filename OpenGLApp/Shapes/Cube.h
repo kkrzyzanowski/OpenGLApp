@@ -6,6 +6,10 @@ class Cube: public Shape
 public:
 	Cube(ShapesBuilder& builder);
 	Cube(ShapesBuilder&& builder);
+	Cube(const Cube&) = default;
+	Cube(Cube&&) = default;
+	Cube& operator=(const Cube&) = default;
+	Cube& operator=(Cube&&) = default;
 	glm::vec3 GetNormal() override;
 	~Cube();
 private:

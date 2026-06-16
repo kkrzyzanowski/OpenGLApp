@@ -9,8 +9,8 @@ void MenuGUI::ShowTopMenu(bool* p_open)
 {
 	ImGuiViewport* viewport = ImGui::GetMainViewport();
 	ImGuiWindowFlags flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking |
-	ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-	ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+		ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 	ImGui::SetNextWindowPos(viewport->Pos);
 	ImGui::SetNextWindowSize(viewport->Size);
 	ImGui::SetNextWindowViewport(viewport->ID);
@@ -22,111 +22,129 @@ void MenuGUI::ShowTopMenu(bool* p_open)
 	{
 
 		ImGui::PopStyleVar(3);
-	ImGuiIO io = ImGui::GetIO();
-	ImGuiID dockspaceId = ImGui::GetID("test1");
-	ImGuiContext* context = ImGui::GetCurrentContext();
-	ImGuiDockNodeFlags nodeFlags =	NULL;
-	ImGuiContext* ctx = ImGui::GetCurrentContext();
-	ImGui::DockBuilderRemoveNode(dockspaceId);
-	ImGui::DockBuilderAddNode(dockspaceId, nodeFlags);
-	ImGui::DockBuilderSetNodeSize(dockspaceId, viewport->Size);
-	ImGuiID dock_main_id = dockspaceId;
-	ImGuiID dock_id_prop = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, .2f, NULL, &dock_main_id);
-	ImGuiID dock_id_bottom = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 1.0f, NULL, &dock_main_id);
-	ImGuiID dock_id_gameWindow = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.2f, NULL, &dock_main_id);
+		ImGuiIO io = ImGui::GetIO();
+		ImGuiID dockspaceId = ImGui::GetID("test1");
+		ImGuiContext* context = ImGui::GetCurrentContext();
+		ImGuiDockNodeFlags nodeFlags = NULL;
+		ImGuiContext* ctx = ImGui::GetCurrentContext();
+		ImGui::DockBuilderRemoveNode(dockspaceId);
+		ImGui::DockBuilderAddNode(dockspaceId, nodeFlags);
+		ImGui::DockBuilderSetNodeSize(dockspaceId, viewport->Size);
+		ImGuiID dock_main_id = dockspaceId;
+		ImGuiID dock_id_prop = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, .2f, NULL, &dock_main_id);
+		ImGuiID dock_id_gameWindow = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.2f, NULL, &dock_main_id);
+		ImGuiID dock_id_bottom = ImGui::DockBuilderSplitNode(dock_id_gameWindow, ImGuiDir_Down, .1f, NULL, &dock_id_gameWindow);
 
 
-	ImGui::DockBuilderDockWindow("Shapes", dock_id_prop);
-	ImGui::DockBuilderDockWindow("log", dock_id_bottom);
-	ImGui::DockBuilderFinish(dock_main_id);
-	ImVec2 menuBarSize = ImVec2();
-	ImVec2 propSize = ImVec2();
+		ImGui::DockBuilderDockWindow("Shapes", dock_id_prop);
+		ImGui::DockBuilderDockWindow("log", dock_id_bottom);
+		ImGui::DockBuilderFinish(dock_main_id);
+		ImVec2 menuBarSize = ImVec2();
+		ImVec2 propSize = ImVec2();
 
-	ImVec2 propPosition = ImVec2();
+		ImVec2 propPosition = ImVec2();
 
-	if (ImGui::BeginMenuBar())
-	{
-		menuBarSize = ImGui::GetItemRectSize();
-		if (ImGui::BeginMenu("Menu"))
+		if (ImGui::BeginMenuBar())
 		{
-			ImGui::EndMenu();
-		}
-		if (ImGui::BeginMenu("Examples"))
-		{
-			ImGui::EndMenu();
-		}
-		if (ImGui::BeginMenu("Tools"))
-		{
-			ImGui::EndMenu();
-		}
-		ImGui::EndMenuBar();
-	}
-
-
-	ImVec2 leftPanelSize = ImVec2(viewport->Size.x * 0.2f, 0);
-	ImGuiWindowFlags tabBarflags =NULL;
-	
-	if(ImGui::BeginChild(dock_id_prop, leftPanelSize, true, tabBarflags))
-	{
-		propSize = ImGui::GetWindowSize();
-		propPosition = ImGui::GetWindowPos();
-		if (ImGui::BeginTabBar("blah"))
-		{
-			if (ImGui::BeginTabItem("Shapes"))
+			menuBarSize = ImGui::GetItemRectSize();
+			if (ImGui::BeginMenu("Menu"))
 			{
-				if (ImGui::Button("Square"))
-					openAddDialog = true;
-				if(openAddDialog)
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("Examples"))
+			{
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("Tools"))
+			{
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenuBar();
+		}
+
+
+		ImVec2 leftPanelSize = ImVec2(viewport->Size.x * 0.2f, 0);
+		ImGuiWindowFlags tabBarflags = NULL;
+
+		if (ImGui::BeginChild(dock_id_prop, leftPanelSize, true, tabBarflags))
+		{
+			propSize = ImGui::GetWindowSize();
+			propPosition = ImGui::GetWindowPos();
+			if (ImGui::BeginTabBar("blah"))
+			{
+				if (ImGui::BeginTabItem("Shapes"))
 				{
-					MenuGUI::CreateAddWindow(&openAddDialog);
+					if (ImGui::Button("Square"))
+						openAddDialog = true;
+					if (openAddDialog)
+					{
+						MenuGUI::CreateAddWindow(&openAddDialog);
+					}
+					ImGui::Button("Plane");
+					ImGui::Button("Sphere");
+					ImGui::Button("Custom");
+					ImGui::EndTabItem();
 				}
-				ImGui::Button("Plane");
-				ImGui::Button("Sphere");
-				ImGui::Button("Custom");
-				ImGui::EndTabItem();
+				ImGui::EndTabBar();
 			}
-			ImGui::EndTabBar();
 		}
-	}
-	ImGui::EndChild();
+		ImGui::EndChild();
 
-	ImVec2 downPanelSize = ImVec2((viewport->Size.x - leftPanelSize.x), propSize.y);
-	ImGuiWindowFlags downBarflags = ImGuiTabBarFlags_None;
-
-	ImGui::SetNextWindowPos(ImVec2(leftPanelSize.x, propPosition.y));
-	if (ImGui::BeginChild(dock_id_bottom, downPanelSize, true, downBarflags))
-	{
-		//ImGuiStyle& downBarStyle = ImGui::GetStyle();
-		//downBarStyle.WindowPadding = ImVec2(15.0f, 15.0f);
-		//downBarStyle.
-		if (ImGui::BeginTabBar("blah"))
+		ImVec2 availSize = ImGui::GetContentRegionAvail();
+		float sceneHeightScene = 0.85f * propSize.y;
+		float sceneHeightConsole = 0.10f * availSize.y;
+		ImVec2 downPanelSize = ImVec2((viewport->Size.x - leftPanelSize.x), sceneHeightScene);
+		ImVec2 consolePanelSize = ImVec2((viewport->Size.x - leftPanelSize.x), sceneHeightConsole);
+		ImGuiWindowFlags downBarflags = ImGuiTabBarFlags_None;
+		float endPosSceneBarY = propPosition.y + sceneHeightScene;
+		ImGui::SetNextWindowPos(ImVec2(leftPanelSize.x, propPosition.y));
+		if (ImGui::BeginChild(dock_id_gameWindow, downPanelSize, true, downBarflags))
 		{
-			if (ImGui::BeginTabItem("Scene"))
+			if (ImGui::BeginTabBar("SceneTabBar"))
 			{
-				ImGui::EndTabItem();
+				if (ImGui::BeginTabItem("Scene"))
+				{
+					ImGui::EndTabItem();
+				}
+				ImGui::EndTabBar();
 			}
-			ImGui::EndTabBar();
 		}
-	}
-	ImGui::EndChild();
+		ImGui::EndChild();
 
-	/*ImVec2 windowPanelSize = ImVec2((viewport->Size.x - leftPanelSize.x) , (viewport->Size.y - menuBarSize.y));
-	ImGuiWindowFlags windowBarFlags = NULL;
-	ImGui::SetNextWindowPos(ImVec2(viewport->Size., viewport->Size.y* 0.91f));
-	if (ImGui::BeginChild(dock_id_gameWindow, windowPanelSize, true, windowBarFlags))
-	{
-		if (ImGui::BeginTabBar("blah"))
+		ImGui::SetNextWindowPos(ImVec2(leftPanelSize.x, endPosSceneBarY));
+		if (ImGui::BeginChild(dock_id_bottom, consolePanelSize, false, downBarflags))
 		{
-			if (ImGui::BeginTabItem("Console"))
+			if (ImGui::BeginTabBar("ConsoleTabBar"))
 			{
+				ImGui::BeginTabItem("Console");
+				{
+					// render console messages tutaj
+					ImGui::TextWrapped("Console output...");
+				}
 				ImGui::EndTabItem();
 			}
 			ImGui::EndTabBar();
 		}
-	}
-	ImGui::EndChild();*/
+
+		ImGui::EndChild();
+
+		/*ImVec2 windowPanelSize = ImVec2((viewport->Size.x - leftPanelSize.x) , (viewport->Size.y - menuBarSize.y));
+		ImGuiWindowFlags windowBarFlags = NULL;
+		ImGui::SetNextWindowPos(ImVec2(viewport->Size., viewport->Size.y* 0.91f));
+		if (ImGui::BeginChild(dock_id_gameWindow, windowPanelSize, true, windowBarFlags))
+		{
+			if (ImGui::BeginTabBar("blah"))
+			{
+				if (ImGui::BeginTabItem("Console"))
+				{
+					ImGui::EndTabItem();
+				}
+				ImGui::EndTabBar();
+			}
+		}
+		ImGui::EndChild();*/
 
 	}
-	
+
 	ImGui::End();
 }

@@ -322,6 +322,7 @@ int OpenGLGameWindow::CreateWindow()
 
 	std::vector<std::shared_ptr<Shape>> selectedShapes;
 	auto skyboxShape = ShapeManager::FilterShape(Shading::CUBEMAP)[0];
+	auto terrainShape = ShapeManager::FilterShape(ShapeType::TERRAIN)[0];
 	auto forwardShapes = ShapeManager::FilterShape({ Shading::FORWARD_SHADING, Shading::DISPLACEMENT, Shading::TEXTURE_COLOR, Shading::DISPLACEMENT,
 		Shading::ONLY_COLOR });
 	auto deferredShapes = ShapeManager::FilterShape(Shading::DEFFERED_SHADING);
@@ -407,6 +408,11 @@ int OpenGLGameWindow::CreateWindow()
 		renderer->Draw(skyboxShape->bm->GetIndexBuffer()->GetCount(), GL_TRIANGLES);
 		skyboxShape->AfterUpdate();
 
+		terrainShape->SetMainLight(light->Position);
+		terrainShape->Update();
+		renderer->DrawArrayInstances(terrainShape->bm->GetIndexBuffer()->GetCount(), GL_TRIANGLE_STRIP, 256);
+		terrainShape->AfterUpdate();
+
 		for (auto& shape : ShapeManager::shapes)
 		{
 			if (shape->Selected)
@@ -418,6 +424,7 @@ int OpenGLGameWindow::CreateWindow()
 
 		glDepthMask(GL_TRUE);
 		glDepthFunc(GL_LESS);
+
 
 
 		//deffered
