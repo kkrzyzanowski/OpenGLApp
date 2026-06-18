@@ -2,11 +2,15 @@
 #include "imgui_internal.h"
 #include "menu.h"
 #include "AddWindow.h"
+#include "EventHandler.h"
 #include <vector>
+#include <filesystem>
+#include <iostream>
 bool openAddDialog = false;
-
+bool openSceneWindow = false;
 void MenuGUI::ShowTopMenu(bool* p_open)
 {
+	
 	ImGuiViewport* viewport = ImGui::GetMainViewport();
 	ImGuiWindowFlags flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking |
 		ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
@@ -104,6 +108,22 @@ void MenuGUI::ShowTopMenu(bool* p_open)
 			{
 				if (ImGui::BeginTabItem("Scene"))
 				{
+					if(ImGui::Button("Play"))
+					{
+						EventHandler::GetInstance().HandleEvent(EventType::OPEN_SCENE);
+						// do something
+						
+					}
+					if(ImGui::Button("Pause"))
+					{
+						// do something
+					}
+					if(ImGui::Button("Stop"))
+					{
+						EventHandler::GetInstance().HandleEvent(EventType::CLOSE_SCENE);
+
+						// do something
+					}
 					ImGui::EndTabItem();
 				}
 				ImGui::EndTabBar();
@@ -147,4 +167,15 @@ void MenuGUI::ShowTopMenu(bool* p_open)
 	}
 
 	ImGui::End();
+}
+
+void MenuGUI::ShowScene(bool* p_open)
+{
+	if (!openSceneWindow)
+	{
+		std::filesystem::path scenePath = std::filesystem::current_path() / ".." /
+			"Debug" / "OpenGLApp.exe";
+		std::system(scenePath.string().c_str());
+		openSceneWindow = true;
+	}
 }

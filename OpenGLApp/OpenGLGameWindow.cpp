@@ -425,8 +425,6 @@ int OpenGLGameWindow::CreateWindow()
 		glDepthMask(GL_TRUE);
 		glDepthFunc(GL_LESS);
 
-
-
 		//deffered
 		FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->Bind();
 		renderer->Clear();

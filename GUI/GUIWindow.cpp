@@ -1,4 +1,5 @@
 #include "GUIWindow.h"
+#include "EventHandler.h"
 #include "menu.h"
 
 GUIWindow::GUIWindow()
@@ -10,7 +11,6 @@ void GUIWindow::RunGUIWindow(short int x, short int y)
 	glfwSetErrorCallback(glfw_error_callback);
 	if (!glfwInit())
 		return;
-
 	// Decide GL+GLSL versions
 #if __APPLE__
 	// GL 3.2 + GLSL 150
@@ -34,7 +34,6 @@ void GUIWindow::RunGUIWindow(short int x, short int y)
 		return;
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1); // Enable vsync
-
 	// Initialize OpenGL loader
 #if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
 	bool err = gl3wInit() != 0;
@@ -72,6 +71,7 @@ void GUIWindow::RunGUIWindow(short int x, short int y)
 	//flags
 	bool topMenu = true;
 	bool demo = true;
+	bool scene = false;
 	// Load Fonts
 	// - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use ImGui::PushFont()/PopFont() to select them.
 	// - AddFontFromFileTTF() will return the ImFont* so you can store it if you need to select the font among multiple.
@@ -89,6 +89,9 @@ void GUIWindow::RunGUIWindow(short int x, short int y)
 
 	// Our state
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+	EventHandler::GetInstance().subscribe(EventType::OPEN_SCENE, [&scene]() { scene = true; });
+	EventHandler::GetInstance().subscribe(EventType::CLOSE_SCENE, [&scene]() { scene = false; });
 
 	// Main loop
 	while (!glfwWindowShouldClose(window))
@@ -109,6 +112,10 @@ void GUIWindow::RunGUIWindow(short int x, short int y)
 		if (topMenu)
 		{ 
 			MenuGUI::ShowTopMenu(&topMenu);
+		}
+		if(scene)
+		{
+			MenuGUI::ShowScene(&scene);
 		}
 		if (demo)
 		{
