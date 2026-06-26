@@ -2,8 +2,8 @@
 
 #include "GameWindow.h"
 class DirectXGameWindow :
-    public GameWindow
+    public GameScene
 {
-    int CreateWindow() override;
+    int CreateScene() override;
 };
 

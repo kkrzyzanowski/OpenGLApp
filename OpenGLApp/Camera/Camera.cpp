@@ -281,10 +281,6 @@ Camera::~Camera()
 CameraManager::CameraManager()
 {
 
-	if (camManager == nullptr)
-	{
-		camManager = this;
-	}
 }
 void CameraManager::AddCamera(Camera* cam)
 {
@@ -323,6 +319,10 @@ Camera* CameraManager::GetActiveCamera()
 
 CameraManager* CameraManager::GetInstance()
 {
+	if(camManager == nullptr)
+	{
+		camManager = new CameraManager();
+	}
 	return camManager;
 }
 

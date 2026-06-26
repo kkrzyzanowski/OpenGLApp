@@ -37,7 +37,7 @@ void ShaderTypeGenerator::ShaderDiffuseGenerator(std::vector<Shader*>& shaders, 
 	shaders[1]->SetUniform3f("material.ambient", glm::vec3(1.0f, 1.0f, 1.0f), program);
 	shaders[1]->SetUniform1f("material.shininess", 32.0f, program);
 
-	shaders[1]->SetUniform3f("camPos", CameraManager::camManager->GetActiveCamera()->GetCamPos(), program);
+	shaders[1]->SetUniform3f("camPos", CameraManager::GetInstance()->GetActiveCamera()->GetCamPos(), program);
 	shaders[1]->SetUniform3f("sunLight", 0.99f, 0.71f, 0.32f, program);
 	shaders[1]->SetUniform3f("skyLight", 0.51f, 0.80f, 0.92f, program);
 
@@ -114,7 +114,7 @@ void ShaderTypeGenerator::ShaderDisplacementGenerator(std::vector<Shader*>& shad
 	outsideLight = glm::vec3(0.0f);
 
 	shaders[0]->SetUniformMat4f("model", model, program);
-	shaders[0]->SetUniform3f("camPos", CameraManager::camManager->GetActiveCamera()->GetCamPos(), program);
+	shaders[0]->SetUniform3f("camPos", CameraManager::GetInstance()->GetActiveCamera()->GetCamPos(), program);
 	shaders[0]->SetUniform3f("lightPos", outsideLight, program);
 
 	shaders[1]->SetUniform1i("diffuse", 0, program);
@@ -157,7 +157,7 @@ void ShaderTypeGenerator::InstancedTerrainShaderGenerator(std::vector<Shader*>& 
 	shaders[1]->SetUniform3f("material.ambient", glm::vec3(1.0f, 1.0f, 1.0f), program);
 	shaders[1]->SetUniform1f("material.shininess", 32.0f, program);
 
-	shaders[1]->SetUniform3f("camPos", CameraManager::camManager->GetActiveCamera()->GetCamPos(), program);
+	shaders[1]->SetUniform3f("camPos", CameraManager::GetInstance()->GetActiveCamera()->GetCamPos(), program);
 	shaders[1]->SetUniform3f("sunLight", 0.99f, 0.71f, 0.32f, program);
 	shaders[1]->SetUniform3f("skyLight", 0.51f, 0.80f, 0.92f, program);
 }
@@ -228,7 +228,7 @@ void ShaderTypeGenerator::UpdateLightiningHDR(std::vector<Shader*>& shaders, uns
 {
 	glm::mat4 model = std::get<glm::mat4>(params[0]);
 	UpdateModel(shaders, program, model);
-	shaders[0]->SetUniform3f("camPos", CameraManager::camManager->GetActiveCamera()->GetCamPos(), program);
+	shaders[0]->SetUniform3f("camPos", CameraManager::GetInstance()->GetActiveCamera()->GetCamPos(), program);
 	std::vector<SimpleLight> lights = std::get <std::vector<SimpleLight>>(params[2]);
 
 	for (auto& light : lights)
@@ -269,7 +269,7 @@ void ShaderTypeGenerator::DefferedShading(std::vector<Shader*>& shaders, unsigne
 	shaders[1]->SetUniform1i("pos", 0, program);
 	shaders[1]->SetUniform1i("normal", 1, program);
 	shaders[1]->SetUniform1i("albedoSpec", 2, program);
-	auto camPos = CameraManager::camManager->GetActiveCamera()->GetCamPos();
+	auto camPos = CameraManager::GetInstance()->GetActiveCamera()->GetCamPos();
 	shaders[1]->SetUniform3f("viewPos", camPos, program);
 
 	for (auto& light : lights)
@@ -289,7 +289,7 @@ void ShaderTypeGenerator::SSAOShaderGenerator(std::vector<Shader*>& shaders, uns
 	shaders[1]->SetUniform1i("gNormal", 1, program);
 	shaders[1]->SetUniform1i("texNoise", 2, program);
 	std::vector<glm::vec3> ssaoKernel = std::get<std::vector<glm::vec3>>(params[0]);
-	auto camProjection = CameraManager::camManager->GetActiveCamera()->GetProjection();
+	auto camProjection = CameraManager::GetInstance()->GetActiveCamera()->GetProjection();
 	shaders[1]->SetUniformMat4f("projection", camProjection, program);
 	for (unsigned int i = 0; i < ssaoKernel.size(); ++i)
 	{

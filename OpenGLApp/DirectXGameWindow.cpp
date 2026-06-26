@@ -1,6 +1,6 @@
 #include "DirectXGameWindow.h"
 
-int DirectXGameWindow::CreateWindow()
+int DirectXGameWindow::CreateScene()
 {
 	return 0;
 }

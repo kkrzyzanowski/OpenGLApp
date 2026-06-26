@@ -76,8 +76,8 @@ private:
 class CameraManager
 {
 public:
-	CameraManager();
-	static CameraManager* camManager;
+	
+	
 	void AddCamera(Camera* cam);
 	void RemoveCamera(Camera* cam);
 	void SetActiveCamera(Camera* cam);
@@ -88,4 +88,7 @@ public:
 	std::vector<Camera*> Cameras;
 
 	~CameraManager();
+private:
+	CameraManager();
+	static CameraManager* camManager;
 };

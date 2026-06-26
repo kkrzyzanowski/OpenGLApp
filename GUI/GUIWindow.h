@@ -3,7 +3,9 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include <stdio.h>
+#include <OpenGLScene.h>
 
+using namespace AppEngine;
 // About Desktop OpenGL function loaders:
 //  Modern desktop OpenGL doesn't have a standard portable header file to load OpenGL function pointers.
 //  Helper libraries are often used for this purpose! Here we are supporting a few common ones (gl3w, glew, glad).
@@ -44,6 +46,7 @@ public:
 	GUIWindow();
 	void RunGUIWindow(short int x, short int y);
 	~GUIWindow();
-	
+private:
+	OpenGLScene* engineScene;
 };
 

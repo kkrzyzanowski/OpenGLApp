@@ -27,7 +27,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
@@ -78,7 +78,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)assimp-4.1.0\include;$(SolutionDir)Stb_image_reader;$(SolutionDir)glfw-3.2.1.bin.WIN32\include;$(SolutionDir)glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GLEW_STATIC;_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -164,7 +164,6 @@
     <ClCompile Include="Managers\ShaderCompiler.cpp" />
     <ClCompile Include="Shaders\ShaderClasses\ShaderTypeGenerator.cpp" />
     <ClCompile Include="Shapes\Shape.cpp" />
-    <ClCompile Include="OpenGL_main.cpp" />
     <ClCompile Include="Managers\ShapeManager.cpp" />
     <ClCompile Include="Builders\ShapesBuilder.cpp" />
     <ClCompile Include="ShapesFactory.cpp" />
@@ -177,7 +176,7 @@
     <ClCompile Include="Buffers\UniformBuffer.cpp" />
     <ClCompile Include="Buffers\VertexArray.cpp" />
     <ClCompile Include="Buffers\VertexBuffer.cpp" />
-    <ClCompile Include="OpenGLGameWindow.cpp" />
+    <ClCompile Include="OpenGLScene.cpp" />
     <ClCompile Include="Managers\VertexManager.cpp" />
     <ClCompile Include="ThreadPool.cpp" />
   </ItemGroup>
@@ -238,7 +237,7 @@
     <ClInclude Include="Buffers\VertexArray.h" />
     <ClInclude Include="Buffers\VertexBuffer.h" />
     <ClInclude Include="Buffers\VertexBufferLayout.h" />
-    <ClInclude Include="OpenGLGameWindow.h" />
+    <ClInclude Include="OpenGLScene.h" />
     <ClInclude Include="Managers\VertexManager.h" />
     <ClInclude Include="ThreadPool.h" />
   </ItemGroup>

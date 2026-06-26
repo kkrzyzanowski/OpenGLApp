@@ -21,9 +21,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="OpenGL_main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Shapes\Shape.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -123,7 +120,7 @@
     <ClCompile Include="PointTranslator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OpenGLGameWindow.cpp">
+    <ClCompile Include="OpenGLScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GameWindow.cpp">
@@ -305,7 +302,7 @@
     <ClInclude Include="PointTranslator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGLGameWindow.h">
+    <ClInclude Include="OpenGLScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameWindow.h">

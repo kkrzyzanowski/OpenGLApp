@@ -24,12 +24,12 @@
 //
 //RayDrawer* rayDrawer;
 
-OpenGLGameWindow::OpenGLGameWindow()
+OpenGLScene::OpenGLScene()
 {
-	CreateWindow();
+	CreateScene();
 }
 
-int OpenGLGameWindow::CreateWindow()
+int OpenGLScene::CreateScene()
 {
 	// Creation window
 	if (!glfwInit())
@@ -96,7 +96,7 @@ int OpenGLGameWindow::CreateWindow()
 
 	return 0;
 }
-OpenGLGameWindow::~OpenGLGameWindow()
+OpenGLScene::~OpenGLScene()
 {
 	//delete renderer;
 	delete this;

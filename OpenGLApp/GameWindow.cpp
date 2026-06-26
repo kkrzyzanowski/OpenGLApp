@@ -1,6 +1,6 @@
 #include "GameWindow.h"
 
-GameWindow::GameWindow()
+GameScene::GameScene()
 {
-	CreateWindow();
+	CreateScene();
 }

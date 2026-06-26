@@ -6,6 +6,7 @@
 #include <vector>
 #include <filesystem>
 #include <iostream>
+
 bool openAddDialog = false;
 bool openSceneWindow = false;
 void MenuGUI::ShowTopMenu(bool* p_open)
@@ -111,6 +112,9 @@ void MenuGUI::ShowTopMenu(bool* p_open)
 					if(ImGui::Button("Play"))
 					{
 						EventHandler::GetInstance().HandleEvent(EventType::OPEN_SCENE);
+						ImGui::SetWindowFocus("Scene");
+						glViewport(0, 0, (int)downPanelSize.x, (int)downPanelSize.y);
+
 						// do something
 						
 					}
@@ -169,13 +173,15 @@ void MenuGUI::ShowTopMenu(bool* p_open)
 	ImGui::End();
 }
 
-void MenuGUI::ShowScene(bool* p_open)
+void MenuGUI::ShowScene(bool* p_open, OpenGLScene*& scene, GLFWwindow* window)
 {
 	if (!openSceneWindow)
 	{
-		std::filesystem::path scenePath = std::filesystem::current_path() / ".." /
-			"Debug" / "OpenGLApp.exe";
-		std::system(scenePath.string().c_str());
+		scene = new OpenGLScene(window);
 		openSceneWindow = true;
+	}
+	else
+	{
+		scene->RenderScene();
 	}
 }

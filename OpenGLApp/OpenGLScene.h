@@ -2,6 +2,7 @@
 #include <GL\glew.h>
 #include <GLFW\glfw3.h>
 #include <iostream>
+#include <future>
 #include "GameWindow.h"
 #include "Shapes\Shape.h"
 #include "Shaders\ShaderClasses\Shader.h"
@@ -29,15 +30,37 @@
 #include "Builders\ShapesBuilder.h"
 #include "Builders/LightBuilder.h"
 #include "Managers/LightManager.h"
-class OpenGLGameWindow: public GameWindow
-{
-public:
-	OpenGLGameWindow();
-	int CreateWindow() override;
-	~OpenGLGameWindow();
-private:
-	
-	Renderer *renderer;
-};
+#include "SSAO/KernelSamplerGenerator.h"
+#include "ThreadPool.h"
+#include "RendererScreen.h"
 
+namespace AppEngine
+{
+	class OpenGLScene : public GameScene
+	{
+	public:
+		OpenGLScene(GLFWwindow* window);
+		int CreateScene() override;
+		void RenderScene();
+		~OpenGLScene();
+	private:
+
+		Renderer* renderer;
+		GLFWwindow* window;
+		std::shared_ptr<Camera> cam;
+		SkyBoxCube* skyboxShape;
+		Terrain* terrainShape;
+		Light* mainLight;
+		std::vector<std::shared_ptr<Shape>> forwardShapes;
+		std::vector<std::shared_ptr<Shape>> deferredShapes;
+		std::vector<std::shared_ptr<Shape>> shadowShapes;
+		std::vector<std::shared_ptr<Shape>> selectedShapes;
+
+
+		/// temporary ssao texture
+		Texture* ssaoNoiseTexture;
+		std::vector<std::future<void>> futures;
+		RendererScreen* screen;
+	};
+}
 

@@ -1,8 +1,8 @@
 #pragma once
-class GameWindow
+class GameScene
 {
 public:
-	GameWindow();
-	virtual int CreateWindow() { return 0; };
+	GameScene();
+	virtual int CreateScene() { return 0; };
 };
 

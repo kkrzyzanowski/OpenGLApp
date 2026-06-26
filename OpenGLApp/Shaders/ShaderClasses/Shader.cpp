@@ -96,7 +96,7 @@ void Shader::UnBind() const
 	 bool isExtensionLine = false;
 	 while (getline(stream, line))
 	 {
-		 if (line.contains("#include"))
+		 if (line.find("#include") != std::string::npos)
 		 {
 			 isExtensionLine = true;
 			 int firstPos = line.find_first_of('"');

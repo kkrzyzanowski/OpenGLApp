@@ -22,8 +22,9 @@ void GUIWindow::RunGUIWindow(short int x, short int y)
 #else
 	// GL 3.0 + GLSL 130
 	const char* glsl_version = "#version 130";
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
 	//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
 	//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
 #endif
@@ -33,6 +34,12 @@ void GUIWindow::RunGUIWindow(short int x, short int y)
 	if (window == NULL)
 		return;
 	glfwMakeContextCurrent(window);
+
+	GLenum errGlew = glewInit();
+		if (GLEW_OK != errGlew)
+		{
+			return;
+		}
 	glfwSwapInterval(1); // Enable vsync
 	// Initialize OpenGL loader
 #if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
@@ -115,7 +122,7 @@ void GUIWindow::RunGUIWindow(short int x, short int y)
 		}
 		if(scene)
 		{
-			MenuGUI::ShowScene(&scene);
+			MenuGUI::ShowScene(&scene, engineScene, window);
 		}
 		if (demo)
 		{
@@ -172,4 +179,5 @@ void GUIWindow::RunGUIWindow(short int x, short int y)
 
 GUIWindow::~GUIWindow()
 {
+	delete engineScene;
 }

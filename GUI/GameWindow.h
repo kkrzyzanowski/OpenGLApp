@@ -4,12 +4,12 @@
 //#include "Shader.h"
 //#include "ShapeManager.h"
 
-class OpenGLGameWindow
+class OpenGLScene
 {
 public:
-	OpenGLGameWindow();
-	int CreateWindow();
-	~OpenGLGameWindow();
+	OpenGLScene();
+	int CreateScene();
+	~OpenGLScene();
 private:
 
 	//Renderer *renderer;
