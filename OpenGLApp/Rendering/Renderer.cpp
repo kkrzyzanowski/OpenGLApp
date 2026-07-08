@@ -41,11 +41,13 @@ void Renderer::DrawLine(glm::vec3 start, glm::vec3 end)
 
 void Renderer::Clear() const
 {
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 }
 
 void Renderer::ClearColor() const
 {
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 

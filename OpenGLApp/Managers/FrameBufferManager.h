@@ -22,7 +22,7 @@ public:
 	FrameBufferManager();
 	static void CreateFRBuffer(FrameBufferType type, std::shared_ptr<FrameBuffer> fb);
 	//static void CopyFRBuffer(FrameBufferType type, FrameBuffer& other);
-	static void InitializeFrameBuffers();
+	static void InitializeFrameBuffers(unsigned int renderTargetFBO);
 
 	static void PassShadowDataToShader(std::shared_ptr<Shape> shape);
 

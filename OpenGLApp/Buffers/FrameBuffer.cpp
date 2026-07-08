@@ -26,8 +26,8 @@ FrameBuffer::FrameBuffer()
 	GLCall(glGenFramebuffers(1, &fbo));
 	bm = std::unique_ptr<BufferManager>(new BufferManager());
 	sm = new ShaderManager();
-	InitializeBufferScreenCoords();
 	tm = new TextureManager();
+	InitializeBufferScreenCoords();
 }
 
 FrameBuffer::FrameBuffer(FrameBufferBuilder& builder)
@@ -35,8 +35,9 @@ FrameBuffer::FrameBuffer(FrameBufferBuilder& builder)
 	GLCall(glGenFramebuffers(1, &fbo));
 	bm = std::unique_ptr<BufferManager>(new BufferManager());
 	sm = new ShaderManager();
-	InitializeBufferScreenCoords();
 	tm = new TextureManager();
+	SetRenderTarget(builder.renderTargetFBO);
+	InitializeBufferScreenCoords();
 	AddTexturesToBuffer(builder.textures, builder.type);
 	AddShaders(builder.ShaderPaths);
 	SetFunctionShader(builder.type);
@@ -59,9 +60,9 @@ void FrameBuffer::DrawBind()
 }
 
 
-void FrameBuffer::UnBind()
+void FrameBuffer::UnBind(unsigned int renderTargetFBO)
 {
-	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, renderTargetFBO));
 }
 
 
@@ -157,6 +158,11 @@ void FrameBuffer::UpdateFrameBuffer()
 	ExecuteShader();
 }
 
+void FrameBuffer::SetRenderTarget(unsigned int renderTargetFBO)
+{
+	this->renderTargetFBO = renderTargetFBO;
+}
+
 void FrameBuffer::AfterUpdateFrameBuffer()
 {
 	sc.DisableUse();
@@ -171,7 +177,7 @@ void FrameBuffer::AddTexturesToBuffer(std::vector<Texture*>& textures, FrameBuff
 	tm->AddTextures(textures);
 	tm->InitializeTextures();
 	DrawBuffers(type);
-	UnBind();
+	UnBind(renderTargetFBO);
 }
 
 void FrameBuffer::AddTexturesToBuffer(std::vector<Texture*>&& textures)

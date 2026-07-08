@@ -19,6 +19,11 @@ void RenderBuffer::UnBind()
 	GLCall(glBindRenderbuffer(GL_RENDERBUFFER, 0));
 }
 
+void RenderBuffer::BindRenderTarget(unsigned int renderTargetRBO)
+{
+	GLCall(glBindRenderbuffer(GL_RENDERBUFFER, renderTargetRBO));
+}
+
 void RenderBuffer::GenerateRenderBuffer()
 {
 	GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCREEN_WIDTH, SCREEN_HEIGHT));

@@ -7,6 +7,7 @@ public:
 	RenderBuffer();
 	void Bind();
 	void UnBind();
+	void BindRenderTarget(unsigned int renderTargetRBO);
 	void GenerateRenderBuffer();
 	void AttachStencilDepthFrameRenderBuffer();
 	void GenerateDepthRenderBuffer();

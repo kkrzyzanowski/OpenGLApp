@@ -6,8 +6,9 @@
 using namespace AppEngine;
 namespace MenuGUI
 {
-	MENU_API void ShowTopMenu(bool* p_open);
+	MENU_API void ShowEditor(bool* p_open);
 	MENU_API void ShowScene(bool* p_open, OpenGLScene*& scene, GLFWwindow* window);
+	MENU_API void RenderSceneToGUI();
 	MENU_API void ShowLeftMenu(bool* p_open);
 	MENU_API void ShowRightMenu(bool* p_open);
 	MENU_API void ShowBottomMenu(bool* p_open);

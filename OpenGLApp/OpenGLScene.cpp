@@ -208,18 +208,31 @@ namespace AppEngine
 		}
 		mainLight = LightManager::lights[0].get();
 
+
+
 		std::unique_ptr<FrameBufferBuilder> frameBufferBuilder = std::make_unique<FrameBufferBuilder>();
+
+		FrameBufferManager::CreateFRBuffer(FrameBufferType::MAIN, frameBufferBuilder->AddTexture(TextureMode::FRAMEBUFFER)
+			.AddShaderByPath(MAIN_TEXTURE_RENDER_VERT)
+			.AddShaderByPath(MAIN_TEXTURE_RENDER_FRAG)
+			.Create(FrameBufferType::MAIN));
+		frameBufferBuilder->ResetData();
+		auto mainFBOHandler = FrameBufferManager::FRbuffer_container[MAIN].frameBuffer->GetFrameBuffer();
+
 		FrameBufferManager::CreateFRBuffer(FrameBufferType::DEPTHMAP, frameBufferBuilder->AddTexture(TextureMode::SHADOWMAP)
+			.RenderTarget(mainFBOHandler)
 			.Create(FrameBufferType::DEPTHMAP));
 		frameBufferBuilder->ResetData();
 
 		FrameBufferManager::CreateFRBuffer(FrameBufferType::POSTPROCESSING, frameBufferBuilder->AddShaderByPath(POSTPROCESSING_VERT_PATH)
+			.RenderTarget(mainFBOHandler)
 			.AddShaderByPath(POSTPROCESSING_FRAG_PATH)
 			.AddTexture(TextureMode::FRAMEBUFFER)
 			.Create(FrameBufferType::POSTPROCESSING));
 		frameBufferBuilder->ResetData();
 
 		FrameBufferManager::CreateFRBuffer(FrameBufferType::HDR, frameBufferBuilder->AddShaderByPath(HDR_VERT_PATH)
+			.RenderTarget(mainFBOHandler)
 			.AddShaderByPath(HDR_FRAG_PATH)
 			.AddTexture(TextureMode::HDR_TEXTURE)
 			.Create(FrameBufferType::HDR));
@@ -227,6 +240,7 @@ namespace AppEngine
 
 
 		FrameBufferManager::CreateFRBuffer(FrameBufferType::BLUR, frameBufferBuilder->AddShaderByPath(HDR_GAUSSIANBLUR_VERT_PATH)
+			.RenderTarget(mainFBOHandler)
 			.AddShaderByPath(HDR_GAUSSIANBLUR_FRAG_PATH)
 			.AddTexture(TextureMode::HDR_TEXTURE, 0, 0)
 			.AddTexture(TextureMode::HDR_TEXTURE, 0, 1)
@@ -235,18 +249,14 @@ namespace AppEngine
 
 
 		FrameBufferManager::CreateFRBuffer(FrameBufferType::GAUSSIAN_HORIZONTAL, frameBufferBuilder->AddShaderByPath(GAUSSIANBLUR_VERT_PATH)
+			.RenderTarget(mainFBOHandler)
 			.AddShaderByPath(GAUSSIANBLUR_FRAG_PATH)
 			.AddTexture(TextureMode::HDR_TEXTURE, 0)
 			.Create(FrameBufferType::GAUSSIAN_HORIZONTAL));
 		frameBufferBuilder->ResetData();
 
-		FrameBufferManager::CreateFRBuffer(FrameBufferType::MAIN, frameBufferBuilder->AddTexture(TextureMode::FRAMEBUFFER)
-			.AddShaderByPath(MAIN_TEXTURE_RENDER_VERT)
-			.AddShaderByPath(MAIN_TEXTURE_RENDER_FRAG)
-			.Create(FrameBufferType::MAIN));
-		frameBufferBuilder->ResetData();
-
 		FrameBufferManager::CreateFRBuffer(FrameBufferType::GBUFFER, frameBufferBuilder->AddShaderByPath(DEFFERED_VERT_PATH)
+			.RenderTarget(mainFBOHandler)
 			.AddShaderByPath(DEFFERED_FRAG_PATH)
 			.AddTexture(TextureMode::G_BUFFER_TRANSFORM, 0, 0)
 			.AddTexture(TextureMode::G_BUFFER_NORMAL, 0, 1)
@@ -255,19 +265,22 @@ namespace AppEngine
 		frameBufferBuilder->ResetData();
 
 		FrameBufferManager::CreateFRBuffer(FrameBufferType::SSAO, frameBufferBuilder->AddShaderByPath(SSAO_VERT_PATH)
+			.RenderTarget(mainFBOHandler)
 			.AddShaderByPath(SSAO_FRAG_PATH)
 			.AddTexture(TextureMode::ONE_COLOR, 0, 0)
 			.Create(FrameBufferType::SSAO));
 		frameBufferBuilder->ResetData();
 
 		FrameBufferManager::CreateFRBuffer(FrameBufferType::SSAO_LIGHTNING, frameBufferBuilder->AddShaderByPath(SSAO_LIGHTNING_VERT_PATH)
+			.RenderTarget(mainFBOHandler)
 			.AddShaderByPath(SSAO_LIGHTNING_FRAG_PATH)
 			.AddTexture(TextureMode::FRAMEBUFFER)
 			.Create(FrameBufferType::SSAO_LIGHTNING));
 
 		frameBufferBuilder->ResetData();
 
-		FrameBufferManager::InitializeFrameBuffers();
+
+		FrameBufferManager::InitializeFrameBuffers(mainFBOHandler);
 		LightManager::AddLightsToFrameBuffer(FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer);
 		LightManager::AddLightsToFrameBuffer(FrameBufferManager::FRbuffer_container[SSAO_LIGHTNING].frameBuffer);
 
@@ -336,16 +349,13 @@ namespace AppEngine
 		return 0;
 	}
 
-	void OpenGLScene::RenderScene()
+	std::shared_ptr<FrameBuffer> OpenGLScene::RenderScene(ImVec2 size, ImVec2 position)
 	{
-		std::cout << this << std::endl;
-		FrameBuffer::UnBind();
-		std::cout << cam.use_count() << std::endl;
-		cam->Update();
 		renderer->Clear();
+		cam->Update();
 		glStencilMask(0x00);
-
-		glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+		auto& mainFBO = FrameBufferManager::FRbuffer_container[MAIN].frameBuffer;
+		mainFBO->Bind();
 
 		if (POSTPROCESSING_EFFECTS)
 		{
@@ -377,8 +387,9 @@ namespace AppEngine
 				shape->DeactivateShapeBufferParts();
 			}
 
-			FrameBufferManager::FRbuffer_container[DEPTHMAP].frameBuffer->UnBind();
+			mainFBO->Bind();
 
+			//to-do pass gui screen size
 			glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 			renderer->ClearColor();
 			renderer->ClearDepth();
@@ -390,7 +401,7 @@ namespace AppEngine
 			renderer->Clear();
 		}
 
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		mainFBO->Bind();
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
 
@@ -422,6 +433,7 @@ namespace AppEngine
 
 		//deffered
 		FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->Bind();
+		renderer->ClearColor();
 		renderer->Clear();
 		for (auto& shape : deferredShapes)
 		{
@@ -431,7 +443,7 @@ namespace AppEngine
 			renderer->Draw(verticesCount, GL_TRIANGLES);
 			shape->AfterUpdate();
 		}
-		FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->UnBind();
+		mainFBO->Bind();
 
 		if (SSAO_LIGHT)
 		{
@@ -450,8 +462,8 @@ namespace AppEngine
 			renderer->DrawArrays(6, GL_TRIANGLES);
 			FrameBufferManager::FRbuffer_container[SSAO].frameBuffer->AfterUpdateFrameBuffer();
 
-			FrameBufferManager::FRbuffer_container[SSAO].frameBuffer->UnBind();
 			FrameBufferManager::FRbuffer_container[SSAO].frameBuffer->UnBindDrawBuffers();
+			mainFBO->Bind();
 
 
 			//lightning pass with SSAO
@@ -472,8 +484,7 @@ namespace AppEngine
 			FrameBufferManager::FRbuffer_container[SSAO_LIGHTNING].frameBuffer->AfterUpdateFrameBuffer();
 
 			FrameBufferManager::FRbuffer_container[SSAO_LIGHTNING].frameBuffer->UnBindDrawBuffers();
-			FrameBufferManager::FRbuffer_container[SSAO_LIGHTNING].frameBuffer->UnBind();
-
+			mainFBO->Bind();
 
 			// set state for full-screen pass
 			glDisable(GL_DEPTH_TEST);
@@ -518,8 +529,7 @@ namespace AppEngine
 			glEnable(GL_BLEND);
 			glEnable(GL_STENCIL_TEST);
 
-
-			FrameBufferManager::FRbuffer_container[SSAO_LIGHTNING].frameBuffer->UnBind();
+			mainFBO->Bind();
 		}
 		else
 		{
@@ -535,9 +545,9 @@ namespace AppEngine
 			FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->AfterUpdateFrameBuffer();
 
 			FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->ReadBind();
-			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-			glBlitFramebuffer(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-			FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->UnBind();
+			mainFBO->DrawBind();
+			glBlitFramebuffer(position.x, position.y, size.x, size.y, position.x, position.y, size.x, size.y, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+			mainFBO->Bind();
 		}
 		//Lights
 		if (LIGHT_OBJECTS)
@@ -627,7 +637,7 @@ namespace AppEngine
 		// Fix for the initialization issue with FrameBufferType and bool
 		if (GAUSSIAN_BLUR)
 		{
-			FrameBufferManager::FRbuffer_container[BLUR].frameBuffer->UnBind();
+			mainFBO->Bind();
 			FrameBufferManager::FRbuffer_container[BLUR].frameBuffer->UnBindDrawBuffers();
 			//glDisable(GL_DEPTH_TEST);
 			bool firstIteration = true, horizontal = true;
@@ -655,7 +665,7 @@ namespace AppEngine
 				//
 				//horizontal = !horizontal;
 			}
-			FrameBufferManager::FRbuffer_container[GAUSSIAN_HORIZONTAL].frameBuffer->UnBind();
+			mainFBO->Bind();
 
 			renderer->Clear();
 			FrameBufferManager::FRbuffer_container[BLUR].frameBuffer->GetFramebufferTexture(0)->Bind(0);
@@ -673,7 +683,7 @@ namespace AppEngine
 		}
 		if (HDR_LIGHT)
 		{
-			FrameBufferManager::FRbuffer_container[HDR].frameBuffer->UnBind();
+			mainFBO->Bind();
 			FrameBufferManager::FRbuffer_container[HDR].frameBuffer->UnBindDrawBuffers();
 			glDisable(GL_DEPTH_TEST);
 			renderer->ClearColor();
@@ -682,8 +692,7 @@ namespace AppEngine
 		}
 		if (POSTPROCESSING_EFFECTS)
 		{
-			FrameBufferManager::FRbuffer_container[POSTPROCESSING].frameBuffer->UnBind();
-
+			mainFBO->Bind();
 			glDisable(GL_DEPTH_TEST);
 			renderer->Clear();
 			FrameBufferManager::FRbuffer_container[POSTPROCESSING].frameBuffer->BindDrawBuffers();
@@ -693,12 +702,12 @@ namespace AppEngine
 			FrameBufferManager::FRbuffer_container[POSTPROCESSING].frameBuffer->UnBindDrawBuffers();
 		}
 
-		selectedShapes.clear();
-		/* Swap front and back buffers */
-		glfwSwapBuffers(window);
+		glDisable(GL_BLEND);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		/* Poll for and process events */
-		glfwPollEvents();
+		selectedShapes.clear();
+		return mainFBO;
+
 	}
 	OpenGLScene::~OpenGLScene()
 	{

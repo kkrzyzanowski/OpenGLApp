@@ -67,6 +67,12 @@ FrameBufferBuilder& FrameBufferBuilder::Name(const char* name)
 	return *this;
 }
 
+FrameBufferBuilder& FrameBufferBuilder::RenderTarget(unsigned int renderTargetFBO)
+{
+	this->renderTargetFBO = renderTargetFBO;
+	return *this;
+}
+
 FrameBufferBuilder& FrameBufferBuilder::AddTexture(TextureMode mode, unsigned short slot, unsigned short colorAttachment)
 {
 	textures.push_back(new Texture(slot, colorAttachment, 5126, mode));

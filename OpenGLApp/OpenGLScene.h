@@ -33,6 +33,7 @@
 #include "SSAO/KernelSamplerGenerator.h"
 #include "ThreadPool.h"
 #include "RendererScreen.h"
+#include "../ImGUI/imgui.h"
 
 namespace AppEngine
 {
@@ -41,7 +42,7 @@ namespace AppEngine
 	public:
 		OpenGLScene(GLFWwindow* window);
 		int CreateScene() override;
-		void RenderScene();
+		std::shared_ptr<FrameBuffer> RenderScene(ImVec2 size, ImVec2 position);
 		~OpenGLScene();
 	private:
 

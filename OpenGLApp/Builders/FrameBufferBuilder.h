@@ -21,6 +21,7 @@ public:
 	FrameBufferBuilder& AddShaders(std::vector<Shader*>&& shaders);
 	FrameBufferBuilder& AddTexture(TextureMode mode, unsigned short slot = 0, unsigned short colorAttachment = 0);
 	FrameBufferBuilder& Name(const char* name);
+	FrameBufferBuilder& RenderTarget(unsigned int renderTargetFBO);
 	std::shared_ptr<FrameBuffer> Create(const FrameBufferType frameBufferType) override;
 	void ResetData();
 
@@ -29,6 +30,7 @@ public:
 	std::vector<Texture*> textures;
 	std::vector<Shader*> shaders;
 	char* name;
+	unsigned int renderTargetFBO;
 	ShaderFunction func;
 	FrameBufferType type = POSTPROCESSING;
 	~FrameBufferBuilder() = default;

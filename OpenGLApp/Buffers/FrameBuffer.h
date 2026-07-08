@@ -22,7 +22,7 @@ public:
 	void Bind();
 	void ReadBind();
 	void DrawBind();
-	static void UnBind();
+	static void UnBind(unsigned int renderTargetFBO);
 	void GenerateTexture();
 	void GenerateShadowTexture();
 	bool CheckFrameBuffer();
@@ -31,6 +31,7 @@ public:
 	void InitializeShaders();
 	void ExecuteShader();
 	void UpdateFrameBuffer();
+	void SetRenderTarget(unsigned int renderTargetFBO);
 
 	void AfterUpdateFrameBuffer();
 
@@ -57,6 +58,7 @@ private:
 	unsigned int texColorBuffer;
 	unsigned int fbo;
 	unsigned int ftbo;
+	unsigned int renderTargetFBO;
 
 	RenderBuffer* rbo;
 	ShaderManager* sm;

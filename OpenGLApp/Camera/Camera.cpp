@@ -2,9 +2,12 @@
 #include <math.h>
 #include <iostream>
 #include "Camera.h"
+#include "../../ImGUI/imgui_impl_glfw.h"
 
 
 static Camera* camInstance;
+static GLFWcursorposfun prevCursorPosCallback = nullptr;
+static GLFWmousebuttonfun prevMouseButtonCallback = nullptr;
 CameraManager* CameraManager::camManager;
 float lastX;
 float lastY;
@@ -59,8 +62,9 @@ void Camera::CreateView(glm::vec3(&vecArray)[3], float radius, GLFWwindow* windo
 
 	projection = glm::perspective(fov, 16.0f / 9.0f, 0.01f, 1000.0f); //projection create
 	camView = glm::lookAt(camPos, camPos + camTarget, camDirection);
-	glfwSetCursorPosCallback(window, mouse_callback);
-	glfwSetMouseButtonCallback(window, mouseButtonCallback);
+	
+	prevCursorPosCallback = glfwSetCursorPosCallback(window, mouse_callback);
+	prevMouseButtonCallback = glfwSetMouseButtonCallback(window, mouseButtonCallback);
 }
 
 void Camera::Update()
@@ -94,6 +98,13 @@ void Camera::CameraMove()
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
+	if(prevCursorPosCallback)
+		prevCursorPosCallback(window, xpos, ypos);
+	ImGuiIO& io = ImGui::GetIO();
+
+	if(io.WantCaptureMouse)
+		return;
+
 	mx = xpos;
 	my = ypos;
 	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
@@ -170,6 +181,13 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mode)
 {
+	if(prevMouseButtonCallback)
+		prevMouseButtonCallback(window, button, action, mode);
+	ImGuiIO& io = ImGui::GetIO();
+
+	if (io.WantCaptureMouse)
+		return;
+
 	glfwGetCursorPos(window, &mx, &my);
 	if (button == GLFW_MOUSE_BUTTON_LEFT)
 	{
@@ -275,7 +293,8 @@ void Camera::PassViewToShaders()
 
 Camera::~Camera()
 {
-
+	prevCursorPosCallback = nullptr;
+	prevMouseButtonCallback = nullptr;
 }
 
 CameraManager::CameraManager()

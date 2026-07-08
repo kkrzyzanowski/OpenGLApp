@@ -9,7 +9,13 @@
 
 bool openAddDialog = false;
 bool openSceneWindow = false;
-void MenuGUI::ShowTopMenu(bool* p_open)
+ImVec2 sceneSize;
+ImVec2 downPanelSize;
+ImVec2 scenePosition;
+std::shared_ptr<FrameBuffer> sceneFrameBuffer = nullptr;
+void SetSceneSizeAndPosition(ImVec2 size);
+
+void MenuGUI::ShowEditor(bool* p_open)
 {
 	
 	ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -23,6 +29,8 @@ void MenuGUI::ShowTopMenu(bool* p_open)
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+
+	EventHandler::GetInstance().subscribe(EventType::OPEN_SCENE, []() { SetSceneSizeAndPosition(downPanelSize); });
 	if (ImGui::Begin("testDock", p_open, flags))
 	{
 
@@ -70,7 +78,7 @@ void MenuGUI::ShowTopMenu(bool* p_open)
 
 		ImVec2 leftPanelSize = ImVec2(viewport->Size.x * 0.2f, 0);
 		ImGuiWindowFlags tabBarflags = NULL;
-
+		scenePosition.x = leftPanelSize.x;
 		if (ImGui::BeginChild(dock_id_prop, leftPanelSize, true, tabBarflags))
 		{
 			propSize = ImGui::GetWindowSize();
@@ -98,23 +106,28 @@ void MenuGUI::ShowTopMenu(bool* p_open)
 		ImVec2 availSize = ImGui::GetContentRegionAvail();
 		float sceneHeightScene = 0.85f * propSize.y;
 		float sceneHeightConsole = 0.10f * availSize.y;
-		ImVec2 downPanelSize = ImVec2((viewport->Size.x - leftPanelSize.x), sceneHeightScene);
+		downPanelSize = ImVec2((viewport->Size.x - leftPanelSize.x), sceneHeightScene);
 		ImVec2 consolePanelSize = ImVec2((viewport->Size.x - leftPanelSize.x), sceneHeightConsole);
-		ImGuiWindowFlags downBarflags = ImGuiTabBarFlags_None;
+		ImGuiWindowFlags downBarflags = ImGuiWindowFlags_NoBackground;
 		float endPosSceneBarY = propPosition.y + sceneHeightScene;
+		scenePosition.y = viewport->Size.y - endPosSceneBarY;
 		ImGui::SetNextWindowPos(ImVec2(leftPanelSize.x, propPosition.y));
 		if (ImGui::BeginChild(dock_id_gameWindow, downPanelSize, true, downBarflags))
 		{
 			if (ImGui::BeginTabBar("SceneTabBar"))
 			{
-				if (ImGui::BeginTabItem("Scene"))
+				if (ImGui::BeginTabItem("Scene", p_open))
 				{
+					if (openSceneWindow)
+					{
+						sceneSize = ImGui::GetContentRegionAvail();
+						ImGui::Image((void*)(intptr_t)sceneFrameBuffer->GetFramebufferTexture()->GetTextureID(), { sceneSize.x, sceneSize.y }, ImVec2(0,1), ImVec2(1, 0));
+
+					}
 					if(ImGui::Button("Play"))
 					{
 						EventHandler::GetInstance().HandleEvent(EventType::OPEN_SCENE);
-						ImGui::SetWindowFocus("Scene");
-						glViewport(0, 0, (int)downPanelSize.x, (int)downPanelSize.y);
-
+						
 						// do something
 						
 					}
@@ -179,9 +192,13 @@ void MenuGUI::ShowScene(bool* p_open, OpenGLScene*& scene, GLFWwindow* window)
 	{
 		scene = new OpenGLScene(window);
 		openSceneWindow = true;
+
 	}
-	else
-	{
-		scene->RenderScene();
-	}
+	sceneFrameBuffer = scene->RenderScene(sceneSize, scenePosition);
+
+}
+
+void SetSceneSizeAndPosition(ImVec2 size)
+{
+	sceneSize = size;
 }

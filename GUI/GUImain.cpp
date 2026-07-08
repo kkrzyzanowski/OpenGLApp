@@ -3,7 +3,7 @@
 int main(int, char**)
 {
 	GUIWindow* gui = new GUIWindow();
-	gui->RunGUIWindow(1280, 720);
+	gui->RunGUIWindow(SCREEN_WIDTH, SCREEN_HEIGHT);
 	delete gui;
 	return 0;
 }
