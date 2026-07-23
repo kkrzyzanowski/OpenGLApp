@@ -98,7 +98,7 @@ void GUIWindow::RunGUIWindow(short int x, short int y)
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 	EventHandler::GetInstance().subscribe(EventType::OPEN_SCENE, [&scene]() { scene = true; });
-	EventHandler::GetInstance().subscribe(EventType::CLOSE_SCENE, [&scene]() { scene = false; });
+	EventHandler::GetInstance().subscribe(EventType::CLOSE_SCENE, [this, &scene]() { MenuGUI::CloseScene(engineScene); scene = false; });
 
 	// Main loop
 	while (!glfwWindowShouldClose(window))

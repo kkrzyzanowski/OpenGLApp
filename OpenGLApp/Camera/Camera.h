@@ -40,6 +40,8 @@ public:
 	inline glm::vec3 GetCamTarget() const { return camTarget; };
 	inline void SetCamTarget(glm::vec3 camTarget) { this->camTarget = camTarget; };
 	inline void SetMoving(bool m_isMoving) { this->isMoving = m_isMoving; };
+	inline void SetSceneHovered(bool hovered) { this->hovered = hovered; };
+	inline bool GetSceneHovered() const { return hovered; };
 
 	glm::mat4 GetView() const;
 	glm::mat4 GetProjection() const;
@@ -72,6 +74,7 @@ private:
 	float currentFrame;
 	float fov;
 	bool isMoving;
+	bool hovered;
 };
 class CameraManager
 {

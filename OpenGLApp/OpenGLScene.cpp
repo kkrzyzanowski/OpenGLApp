@@ -349,6 +349,11 @@ namespace AppEngine
 		return 0;
 	}
 
+	void OpenGLScene::SetSceneHovered(bool hovered)
+	{
+		CameraManager::GetInstance()->GetActiveCamera()->SetSceneHovered(hovered);
+	}
+
 	std::shared_ptr<FrameBuffer> OpenGLScene::RenderScene(ImVec2 size, ImVec2 position)
 	{
 		renderer->Clear();
@@ -709,6 +714,19 @@ namespace AppEngine
 		return mainFBO;
 
 	}
+
+	void OpenGLScene::ClearScene()
+	{
+		auto& mainFBO = FrameBufferManager::FRbuffer_container[MAIN].frameBuffer;
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		renderer->Clear();
+		ShapeManager::shapes.clear();
+		LightManager::lights.clear();
+		FrameBufferManager::FRbuffer_container.clear();
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
 	OpenGLScene::~OpenGLScene()
 	{
 		delete renderer;

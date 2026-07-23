@@ -9,6 +9,7 @@
 
 bool openAddDialog = false;
 bool openSceneWindow = false;
+bool isSceneHovered = false;
 ImVec2 sceneSize;
 ImVec2 downPanelSize;
 ImVec2 scenePosition;
@@ -122,7 +123,11 @@ void MenuGUI::ShowEditor(bool* p_open)
 					{
 						sceneSize = ImGui::GetContentRegionAvail();
 						ImGui::Image((void*)(intptr_t)sceneFrameBuffer->GetFramebufferTexture()->GetTextureID(), { sceneSize.x, sceneSize.y }, ImVec2(0,1), ImVec2(1, 0));
-
+						isSceneHovered = ImGui::IsItemHovered();
+					}
+					else
+					{
+						ImGui::Text("Scene is not open");
 					}
 					if(ImGui::Button("Play"))
 					{
@@ -164,23 +169,6 @@ void MenuGUI::ShowEditor(bool* p_open)
 		}
 
 		ImGui::EndChild();
-
-		/*ImVec2 windowPanelSize = ImVec2((viewport->Size.x - leftPanelSize.x) , (viewport->Size.y - menuBarSize.y));
-		ImGuiWindowFlags windowBarFlags = NULL;
-		ImGui::SetNextWindowPos(ImVec2(viewport->Size., viewport->Size.y* 0.91f));
-		if (ImGui::BeginChild(dock_id_gameWindow, windowPanelSize, true, windowBarFlags))
-		{
-			if (ImGui::BeginTabBar("blah"))
-			{
-				if (ImGui::BeginTabItem("Console"))
-				{
-					ImGui::EndTabItem();
-				}
-				ImGui::EndTabBar();
-			}
-		}
-		ImGui::EndChild();*/
-
 	}
 
 	ImGui::End();
@@ -194,9 +182,17 @@ void MenuGUI::ShowScene(bool* p_open, OpenGLScene*& scene, GLFWwindow* window)
 		openSceneWindow = true;
 
 	}
+	scene->SetSceneHovered(isSceneHovered);
 	sceneFrameBuffer = scene->RenderScene(sceneSize, scenePosition);
 
 }
+
+void MenuGUI::CloseScene(OpenGLScene*& scene)
+{
+	openSceneWindow = false;
+	scene->ClearScene();
+}
+
 
 void SetSceneSizeAndPosition(ImVec2 size)
 {

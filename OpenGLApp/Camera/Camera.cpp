@@ -28,6 +28,7 @@ double mx, my;
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mode);
+void hover_callback(GLFWwindow* window, double xpos, double ypos);
 
 bool RayCastDetection(glm::vec3 rayOrigin, glm::vec3 rayDirection, const Triangles& triangles, glm::vec3& intersectedPoint);
 void ObjectPicking(int mx, int my, std::vector<std::shared_ptr<Shape>>& shapes);
@@ -65,6 +66,7 @@ void Camera::CreateView(glm::vec3(&vecArray)[3], float radius, GLFWwindow* windo
 	
 	prevCursorPosCallback = glfwSetCursorPosCallback(window, mouse_callback);
 	prevMouseButtonCallback = glfwSetMouseButtonCallback(window, mouseButtonCallback);
+	
 }
 
 void Camera::Update()
@@ -80,6 +82,8 @@ void Camera::Update()
 	PassViewToShaders();
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
+
+	
 
 }
 
@@ -98,85 +102,85 @@ void Camera::CameraMove()
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	if(prevCursorPosCallback)
-		prevCursorPosCallback(window, xpos, ypos);
-	ImGuiIO& io = ImGui::GetIO();
+	
+		if (prevCursorPosCallback)
+			prevCursorPosCallback(window, xpos, ypos);
 
-	if(io.WantCaptureMouse)
-		return;
-
-	mx = xpos;
-	my = ypos;
-	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-	{
-		if (firstMouse)
+		if (camInstance->GetSceneHovered())
 		{
+		mx = xpos;
+		my = ypos;
+		if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+		{
+			if (firstMouse)
+			{
+				lastX = xpos;
+				lastY = ypos;
+				firstMouse = false;
+			}
+			float xoffset = xpos - lastX;
+			float yoffset = ypos - lastY;
 			lastX = xpos;
 			lastY = ypos;
-			firstMouse = false;
+
+			float sensivity = 0.05f;
+			xoffset *= sensivity;
+			yoffset *= sensivity;
+
+			pitch -= yoffset;
+			yaw += xoffset;
+
+			if (pitch > 89.0f)
+				pitch = 89.0f;
+			if (pitch < -89.0f)
+				pitch = -89.0f;
+
+			glm::vec3 front{};
+
+			front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+			front.y = sin(glm::radians(pitch));
+			front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+			camInstance->SetCamTarget(glm::normalize(front));
 		}
-		float xoffset = xpos - lastX;
-		float yoffset = ypos - lastY;
-		lastX = xpos;
-		lastY = ypos;
-
-		float sensivity = 0.05f;
-		xoffset *= sensivity;
-		yoffset *= sensivity;
-
-		pitch -= yoffset;
-		yaw += xoffset;
-
-		if (pitch > 89.0f)
-			pitch = 89.0f;
-		if (pitch < -89.0f)
-			pitch = -89.0f;
-
-		glm::vec3 front{};
-
-		front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-		front.y = sin(glm::radians(pitch));
-		front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-		camInstance->SetCamTarget(glm::normalize(front));
-	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE)
-	{
-		firstMouse = true;
-	}
-	if (lbuttonDown)
-	{
-		glm::mat4 proj, view;
-
-
-		proj = camInstance->GetProjection();
-		view = camInstance->GetView();
-
-		PointTranslator mp;
-		mp.proj = proj;
-		mp.view = view;
-		mp.SetMousePoint(mx, my);
-		mp.CalculateScaledMousePoint();
-
-		for (auto& shape : ShapeManager::shapes)
+		if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_RELEASE)
 		{
-			if (shape->Selected)
-			{
-				camInstance->mouseRayCast = new Raycast(mx, my, 1000.0f, camInstance->GetProjection(), camInstance->GetView());
-				glm::vec3 startPoint = camInstance->mouseRayCast->GetRayOrigin();
-				glm::vec3 startDir = camInstance->mouseRayCast->GetWorldRayDirection();
-				glm::vec3 intersectedDragPoint;
+			firstMouse = true;
+		}
+		if (lbuttonDown)
+		{
+			glm::mat4 proj, view;
 
-				if(RayCastDetection(startPoint, startDir, shape->GetTriangles(), intersectedDragPoint))
+
+			proj = camInstance->GetProjection();
+			view = camInstance->GetView();
+
+			PointTranslator mp;
+			mp.proj = proj;
+			mp.view = view;
+			mp.SetMousePoint(mx, my);
+			mp.CalculateScaledMousePoint();
+
+			for (auto& shape : ShapeManager::shapes)
+			{
+				if (shape->Selected)
 				{
-					glm::vec3 offset = intersectedDragPoint - storedIntersectedPoint;
-					shape->SetPendingOffset(offset);
-					storedIntersectedPoint = intersectedDragPoint;
+					camInstance->mouseRayCast = new Raycast(mx, my, 1000.0f, camInstance->GetProjection(), camInstance->GetView());
+					glm::vec3 startPoint = camInstance->mouseRayCast->GetRayOrigin();
+					glm::vec3 startDir = camInstance->mouseRayCast->GetWorldRayDirection();
+					glm::vec3 intersectedDragPoint;
+
+					if (RayCastDetection(startPoint, startDir, shape->GetTriangles(), intersectedDragPoint))
+					{
+						glm::vec3 offset = intersectedDragPoint - storedIntersectedPoint;
+						shape->SetPendingOffset(offset);
+						storedIntersectedPoint = intersectedDragPoint;
+					}
 				}
 			}
 		}
+		previousPos.x = mx;
+		previousPos.y = my;
 	}
-	previousPos.x = mx;
-	previousPos.y = my;
 }
 
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mode)
@@ -224,6 +228,7 @@ void mouseButtonCallback(GLFWwindow* window, int button, int action, int mode)
 
 	}
 }
+
 void Camera::scroll_callback(float xoffset, float yoffset)
 {
 	if (fov >= 1.0f && fov <= 108.0f)
