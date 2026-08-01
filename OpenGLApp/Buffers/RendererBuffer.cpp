@@ -4,7 +4,7 @@
 #include "..\Rendering\Renderer.h"
 #include "..\Config.h"
 
-RenderBuffer::RenderBuffer()
+RenderBuffer::RenderBuffer(glm::vec2 size) : size(size)
 {
 	GLCall(glGenRenderbuffers(1, &rbo));
 }
@@ -26,7 +26,7 @@ void RenderBuffer::BindRenderTarget(unsigned int renderTargetRBO)
 
 void RenderBuffer::GenerateRenderBuffer()
 {
-	GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCREEN_WIDTH, SCREEN_HEIGHT));
+	GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, size.x, size.y));
 }
 
 
@@ -37,12 +37,12 @@ void RenderBuffer::AttachStencilDepthFrameRenderBuffer()
 
 void RenderBuffer::GenerateDepthRenderBuffer()
 {
-	GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SCREEN_WIDTH, SCREEN_HEIGHT));
+	GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, size.x, size.y));
 }
 
 void RenderBuffer::GenerateDepthStencilRenderBuffer()
 {
-	GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCREEN_WIDTH, SCREEN_HEIGHT));
+	GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, size.x, size.y));
 }
 
 

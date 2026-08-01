@@ -23,7 +23,8 @@ enum CameraState
 class Camera
 {
 public:
-	Camera();
+	Camera() = default;
+	Camera(glm::vec2 size, glm::vec2 sceneSize, glm::vec2 pos);
 	void CreateView(glm::vec3(&vecArray)[3], float radius, GLFWwindow* window);
 	void Update();
 	void MouseMove(float movementSpeed);

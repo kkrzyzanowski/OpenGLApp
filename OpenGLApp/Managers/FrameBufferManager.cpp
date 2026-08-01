@@ -11,7 +11,7 @@ FrameBufferManager::FrameBufferManager()
 
 void FrameBufferManager::CreateFRBuffer(FrameBufferType type, std::shared_ptr<FrameBuffer> fb)
 {
-	FRbuffer_container.insert({ type, { fb, std::make_shared<RenderBuffer>() } });
+	FRbuffer_container.insert({ type, { fb, std::make_shared<RenderBuffer>(fb->GetSize()) } });
 }
 
 //void FrameBufferManager::CopyFRBuffer(FrameBufferType type, FrameBuffer& other)

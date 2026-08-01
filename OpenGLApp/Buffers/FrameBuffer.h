@@ -41,8 +41,10 @@ public:
 
 	Texture* GetFramebufferTexture(unsigned int slot = 0);
 	std::vector<Texture*> GetFramebufferTextures();
-	IndexBuffer* GetIndexBuffer();
+	IndexBuffer* GetIndexBuffer() const;
 	unsigned int GetFrameBuffer() const;
+	glm::vec2 GetSize() const;
+
 	void DrawBuffers(unsigned short colorAtachhment);
 	void DrawBuffers(FrameBufferType type);
 	void SetFunctionShader(FrameBufferType type);
@@ -53,12 +55,16 @@ public:
 	std::vector<Shader*> GetFrameBufferShaders();
 
 	~FrameBuffer();
+
 private:
+
 	void InitializeBufferScreenCoords();
 	unsigned int texColorBuffer;
 	unsigned int fbo;
 	unsigned int ftbo;
 	unsigned int renderTargetFBO;
+	
+	glm::vec2 size;
 
 	RenderBuffer* rbo;
 	ShaderManager* sm;

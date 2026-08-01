@@ -13,7 +13,7 @@ class Texture
 {
 public:
 	Texture(const std::string& path, unsigned int slot, int mode = GL_CLAMP_TO_EDGE);
-	Texture(unsigned int slot = 0, unsigned short colorAttachment = 0, int colorMode = GL_FLOAT, TextureMode textureMode = TextureMode::TEXTURE, unsigned int width = SCREEN_WIDTH, unsigned int height = SCREEN_HEIGHT);
+	Texture(unsigned int width = SCREEN_WIDTH, unsigned int height = SCREEN_HEIGHT, unsigned int slot = 0, unsigned short colorAttachment = 0, int colorMode = GL_FLOAT, TextureMode textureMode = TextureMode::TEXTURE);
 	~Texture();
 	void Bind(unsigned short slot) const;
 	virtual void Bind() const;

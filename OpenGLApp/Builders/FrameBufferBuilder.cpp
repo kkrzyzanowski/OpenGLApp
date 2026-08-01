@@ -73,9 +73,15 @@ FrameBufferBuilder& FrameBufferBuilder::RenderTarget(unsigned int renderTargetFB
 	return *this;
 }
 
-FrameBufferBuilder& FrameBufferBuilder::AddTexture(TextureMode mode, unsigned short slot, unsigned short colorAttachment)
+FrameBufferBuilder& FrameBufferBuilder::Size(glm::vec2 size)
 {
-	textures.push_back(new Texture(slot, colorAttachment, 5126, mode));
+	this->size = size;
+	return *this;
+}
+
+FrameBufferBuilder& FrameBufferBuilder::AddTexture(TextureMode mode, unsigned int width, unsigned int height, unsigned short slot, unsigned short colorAttachment)
+{
+	textures.push_back(new Texture(width, height, slot, colorAttachment, 5126, mode));
 	return *this;
 }
 	
@@ -93,7 +99,8 @@ void FrameBufferBuilder::ResetData()
 	this->Angle = 0.0f;
 	this->Axis = glm::vec3(0.0f, 0.0f, 0.0f);
 	this->type = POSTPROCESSING;
-
+	this->renderTargetFBO = 0;
+	this->size = glm::vec2(0.0f, 0.0f);
 	this->ShaderPaths.clear();
 	this->textures.clear();
 	this->func = nullptr;

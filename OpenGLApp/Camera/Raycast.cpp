@@ -2,13 +2,13 @@
 #include "Raycast.h"
 #include "..\Config.h"
 
-Raycast::Raycast(double xPos, double yPos, float distance, glm::mat4 projection, glm::mat4 view)
+Raycast::Raycast(double xPos, double yPos, float distance, glm::mat4 projection, glm::mat4 view, glm::vec2 windowSize)
 {
 	this->proj = projection;
 	this->view = view;
 	rayDistance = distance;
-	x = (xPos * 2.0f) / SCREEN_WIDTH  - 1.0f;
-	y = 1.0f - (yPos * 2.0f) / SCREEN_HEIGHT;
+	x = (xPos * 2.0f) / windowSize.x  - 1.0f;
+	y = 1.0f - (yPos * 2.0f) / windowSize.y;
 	z = -1.0f;
 	ray_nds = glm::vec3(x, y, 1.0f);
 	rayStartClip = glm::vec4(x, y, -1.0f, 1.0f);

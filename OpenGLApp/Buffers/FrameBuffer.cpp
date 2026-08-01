@@ -36,6 +36,7 @@ FrameBuffer::FrameBuffer(FrameBufferBuilder& builder)
 	bm = std::unique_ptr<BufferManager>(new BufferManager());
 	sm = new ShaderManager();
 	tm = new TextureManager();
+	size = builder.size;
 	SetRenderTarget(builder.renderTargetFBO);
 	InitializeBufferScreenCoords();
 	AddTexturesToBuffer(builder.textures, builder.type);
@@ -68,7 +69,7 @@ void FrameBuffer::UnBind(unsigned int renderTargetFBO)
 
 void FrameBuffer::GenerateTexture()
 {
-	tm->Textures.push_back(new Texture());
+	tm->Textures.push_back(new Texture(size.x, size.y));
 	tm->Textures[0]->CreateFrameBufferTexture();
 }
 
@@ -195,7 +196,7 @@ std::vector<Texture*> FrameBuffer::GetFramebufferTextures()
 	return tm->Textures;
 }
 
-IndexBuffer* FrameBuffer::GetIndexBuffer()
+IndexBuffer* FrameBuffer::GetIndexBuffer() const
 {
 	return ib;
 }
@@ -286,6 +287,11 @@ void FrameBuffer::SetFunctionShader(FrameBufferType type)
 		func = ShaderTypeGenerator::UpdateSSAOShaderLightning;
 		break;
 	}
+}
+
+glm::vec2 FrameBuffer::GetSize() const
+{
+	return size;
 }
 
 FrameBuffer::~FrameBuffer()

@@ -40,7 +40,7 @@ namespace AppEngine
 	class OpenGLScene : public GameScene
 	{
 	public:
-		OpenGLScene(GLFWwindow* window);
+		OpenGLScene(GLFWwindow* window, ImVec2 size, ImVec2 position);
 		int CreateScene() override;
 		void SetSceneHovered(bool hovered);
 		std::shared_ptr<FrameBuffer> RenderScene(ImVec2 size, ImVec2 position);
@@ -64,6 +64,8 @@ namespace AppEngine
 		Texture* ssaoNoiseTexture;
 		std::vector<std::future<void>> futures;
 		RendererScreen* screen;
+		ImVec2 lastSize;
+		ImVec2 lastPosition;
 	};
 }
 

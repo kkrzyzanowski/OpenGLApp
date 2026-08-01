@@ -13,47 +13,16 @@ namespace AppEngine
 
 	RayDrawer* rayDrawer;
 	static ThreadPool threadPool(std::thread::hardware_concurrency());
-	OpenGLScene::OpenGLScene(GLFWwindow* window) : window(window)
+	OpenGLScene::OpenGLScene(GLFWwindow* window, ImVec2 size, ImVec2 position) : window(window), lastSize(size), lastPosition(position)
 	{
 		CreateScene();
 	}
 
 	int OpenGLScene::CreateScene()
 	{
-		// Creation window
-		//if (!glfwInit())
-		//	return -1;
-
-		//glfwWindowHint(GLFW_SAMPLES, 4);
-
-		//window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Hello World", NULL, NULL);
-		//if (!window)
-		//{
-		//	glfwTerminate();
-		//	return -1;
-		//}
-
-		//// OpenGL params
-
-		//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-		//glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
-		//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-		///* Make the window's context current */
-		//glfwMakeContextCurrent(window);
-		//// glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-		//GLenum err = glewInit();
-		//if (GLEW_OK != err)
-		//{
-		//	return -1;
-		//}
-		//glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-
-
 		/* Set cameras */
 		auto camManager = CameraManager::GetInstance();
-		cam = std::make_shared<Camera>();
+		cam = std::make_shared<Camera, glm::vec2>(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT), glm::vec2(lastSize.x, lastSize.y), glm::vec2(lastPosition.x, lastPosition.y));
 		glm::vec3 camProps[3] = {
 			glm::vec3(0.0f, 0.0f, 0.0f), // position
 			glm::vec3(0.0f, 0.0f, -1.0f), // looking
@@ -212,14 +181,15 @@ namespace AppEngine
 
 		std::unique_ptr<FrameBufferBuilder> frameBufferBuilder = std::make_unique<FrameBufferBuilder>();
 
-		FrameBufferManager::CreateFRBuffer(FrameBufferType::MAIN, frameBufferBuilder->AddTexture(TextureMode::FRAMEBUFFER)
+		FrameBufferManager::CreateFRBuffer(FrameBufferType::MAIN, frameBufferBuilder->AddTexture(TextureMode::FRAMEBUFFER, SCREEN_WIDTH, SCREEN_HEIGHT)
 			.AddShaderByPath(MAIN_TEXTURE_RENDER_VERT)
 			.AddShaderByPath(MAIN_TEXTURE_RENDER_FRAG)
+			.Size(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT))
 			.Create(FrameBufferType::MAIN));
 		frameBufferBuilder->ResetData();
 		auto mainFBOHandler = FrameBufferManager::FRbuffer_container[MAIN].frameBuffer->GetFrameBuffer();
 
-		FrameBufferManager::CreateFRBuffer(FrameBufferType::DEPTHMAP, frameBufferBuilder->AddTexture(TextureMode::SHADOWMAP)
+		FrameBufferManager::CreateFRBuffer(FrameBufferType::DEPTHMAP, frameBufferBuilder->AddTexture(TextureMode::SHADOWMAP, SCREEN_WIDTH, SCREEN_HEIGHT)
 			.RenderTarget(mainFBOHandler)
 			.Create(FrameBufferType::DEPTHMAP));
 		frameBufferBuilder->ResetData();
@@ -227,14 +197,16 @@ namespace AppEngine
 		FrameBufferManager::CreateFRBuffer(FrameBufferType::POSTPROCESSING, frameBufferBuilder->AddShaderByPath(POSTPROCESSING_VERT_PATH)
 			.RenderTarget(mainFBOHandler)
 			.AddShaderByPath(POSTPROCESSING_FRAG_PATH)
-			.AddTexture(TextureMode::FRAMEBUFFER)
+			.AddTexture(TextureMode::FRAMEBUFFER, SCREEN_WIDTH, SCREEN_HEIGHT)
+			.Size(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT))
 			.Create(FrameBufferType::POSTPROCESSING));
 		frameBufferBuilder->ResetData();
 
 		FrameBufferManager::CreateFRBuffer(FrameBufferType::HDR, frameBufferBuilder->AddShaderByPath(HDR_VERT_PATH)
 			.RenderTarget(mainFBOHandler)
 			.AddShaderByPath(HDR_FRAG_PATH)
-			.AddTexture(TextureMode::HDR_TEXTURE)
+			.AddTexture(TextureMode::HDR_TEXTURE, SCREEN_WIDTH, SCREEN_HEIGHT)
+			.Size(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT))
 			.Create(FrameBufferType::HDR));
 		frameBufferBuilder->ResetData();
 
@@ -242,8 +214,9 @@ namespace AppEngine
 		FrameBufferManager::CreateFRBuffer(FrameBufferType::BLUR, frameBufferBuilder->AddShaderByPath(HDR_GAUSSIANBLUR_VERT_PATH)
 			.RenderTarget(mainFBOHandler)
 			.AddShaderByPath(HDR_GAUSSIANBLUR_FRAG_PATH)
-			.AddTexture(TextureMode::HDR_TEXTURE, 0, 0)
-			.AddTexture(TextureMode::HDR_TEXTURE, 0, 1)
+			.AddTexture(TextureMode::HDR_TEXTURE, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0)
+			.AddTexture(TextureMode::HDR_TEXTURE, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 1)
+			.Size(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT))
 			.Create(FrameBufferType::BLUR));
 		frameBufferBuilder->ResetData();
 
@@ -251,30 +224,34 @@ namespace AppEngine
 		FrameBufferManager::CreateFRBuffer(FrameBufferType::GAUSSIAN_HORIZONTAL, frameBufferBuilder->AddShaderByPath(GAUSSIANBLUR_VERT_PATH)
 			.RenderTarget(mainFBOHandler)
 			.AddShaderByPath(GAUSSIANBLUR_FRAG_PATH)
-			.AddTexture(TextureMode::HDR_TEXTURE, 0)
+			.AddTexture(TextureMode::HDR_TEXTURE, SCREEN_WIDTH, SCREEN_HEIGHT, 0)
+			.Size(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT))
 			.Create(FrameBufferType::GAUSSIAN_HORIZONTAL));
 		frameBufferBuilder->ResetData();
 
 		FrameBufferManager::CreateFRBuffer(FrameBufferType::GBUFFER, frameBufferBuilder->AddShaderByPath(DEFFERED_VERT_PATH)
 			.RenderTarget(mainFBOHandler)
 			.AddShaderByPath(DEFFERED_FRAG_PATH)
-			.AddTexture(TextureMode::G_BUFFER_TRANSFORM, 0, 0)
-			.AddTexture(TextureMode::G_BUFFER_NORMAL, 0, 1)
-			.AddTexture(TextureMode::G_BUFFER_COLOR_SPECULAR, 0, 2)
+			.AddTexture(TextureMode::G_BUFFER_TRANSFORM, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0)
+			.AddTexture(TextureMode::G_BUFFER_NORMAL, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 1)
+			.AddTexture(TextureMode::G_BUFFER_COLOR_SPECULAR, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 2)
+			.Size(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT))
 			.Create(FrameBufferType::GBUFFER));
 		frameBufferBuilder->ResetData();
 
 		FrameBufferManager::CreateFRBuffer(FrameBufferType::SSAO, frameBufferBuilder->AddShaderByPath(SSAO_VERT_PATH)
 			.RenderTarget(mainFBOHandler)
 			.AddShaderByPath(SSAO_FRAG_PATH)
-			.AddTexture(TextureMode::ONE_COLOR, 0, 0)
+			.AddTexture(TextureMode::ONE_COLOR, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0)
+			.Size(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT))
 			.Create(FrameBufferType::SSAO));
 		frameBufferBuilder->ResetData();
 
 		FrameBufferManager::CreateFRBuffer(FrameBufferType::SSAO_LIGHTNING, frameBufferBuilder->AddShaderByPath(SSAO_LIGHTNING_VERT_PATH)
 			.RenderTarget(mainFBOHandler)
 			.AddShaderByPath(SSAO_LIGHTNING_FRAG_PATH)
-			.AddTexture(TextureMode::FRAMEBUFFER)
+			.AddTexture(TextureMode::FRAMEBUFFER, SCREEN_WIDTH, SCREEN_HEIGHT)
+			.Size(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT))
 			.Create(FrameBufferType::SSAO_LIGHTNING));
 
 		frameBufferBuilder->ResetData();
@@ -287,7 +264,7 @@ namespace AppEngine
 		/// generate samples for SSAO
 		KernelSamplerGenerator kernelSampler;
 		std::vector<glm::vec3> ssaoKernel = kernelSampler.GenerateKernelSamples();
-		Texture* ssaoNoiseTexture = new Texture(2, 0, 5126, TEXTURE, 4, 4);
+		Texture* ssaoNoiseTexture = new Texture(4, 4, 2, 0, 5126, TEXTURE);
 		ssaoNoiseTexture->CreateNoiseTexture();
 		FrameBufferManager::AddKernelSamplesToSSAOBuffer(ssaoKernel);
 
@@ -395,7 +372,7 @@ namespace AppEngine
 			mainFBO->Bind();
 
 			//to-do pass gui screen size
-			glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+			glViewport(0, 0, size.x, size.y);
 			renderer->ClearColor();
 			renderer->ClearDepth();
 		}

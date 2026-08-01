@@ -5,7 +5,7 @@
 class Raycast
 {
 public:
-	Raycast(double xPos, double yPos, float distance, glm::mat4 projection, glm::mat4 view);
+	Raycast(double xPos, double yPos, float distance, glm::mat4 projection, glm::mat4 view, glm::vec2 windowSize);
 	void InverseToEyeCoords();
 	void InverseToWorldCoords();
 	void CalculateMouseRay();

@@ -63,11 +63,11 @@ void TextureManager::InitializeTextures()
 		tex->CreateTexture();
 }
 
-void TextureManager::CreateHDRTextures(short int size)
+void TextureManager::CreateHDRTextures(short int size, unsigned int width, unsigned int height)
 {
 	for (int i = 0; i < size; ++i)
 	{
-		Texture* tex = new Texture();
+		Texture* tex = new Texture(width, height);
 		tex->CreateHDRTexture();
 		Textures.push_back(tex);
 	}

@@ -1,10 +1,11 @@
 #pragma once
-
+#include "..\glm\glm.hpp"
 
 class RenderBuffer
 {
 public:
-	RenderBuffer();
+	RenderBuffer() = default;
+	RenderBuffer(glm::vec2 size);
 	void Bind();
 	void UnBind();
 	void BindRenderTarget(unsigned int renderTargetRBO);
@@ -17,5 +18,6 @@ public:
 	~RenderBuffer();
 private:
 	unsigned int rbo;
+	glm::vec2 size;
 };
 

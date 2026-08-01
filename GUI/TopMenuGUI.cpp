@@ -111,7 +111,7 @@ void MenuGUI::ShowEditor(bool* p_open)
 		ImVec2 consolePanelSize = ImVec2((viewport->Size.x - leftPanelSize.x), sceneHeightConsole);
 		ImGuiWindowFlags downBarflags = ImGuiWindowFlags_NoBackground;
 		float endPosSceneBarY = propPosition.y + sceneHeightScene;
-		scenePosition.y = viewport->Size.y - endPosSceneBarY;
+		scenePosition.y = propPosition.y;
 		ImGui::SetNextWindowPos(ImVec2(leftPanelSize.x, propPosition.y));
 		if (ImGui::BeginChild(dock_id_gameWindow, downPanelSize, true, downBarflags))
 		{
@@ -119,9 +119,9 @@ void MenuGUI::ShowEditor(bool* p_open)
 			{
 				if (ImGui::BeginTabItem("Scene", p_open))
 				{
+					sceneSize = ImGui::GetContentRegionAvail();
 					if (openSceneWindow)
 					{
-						sceneSize = ImGui::GetContentRegionAvail();
 						ImGui::Image((void*)(intptr_t)sceneFrameBuffer->GetFramebufferTexture()->GetTextureID(), { sceneSize.x, sceneSize.y }, ImVec2(0,1), ImVec2(1, 0));
 						isSceneHovered = ImGui::IsItemHovered();
 					}
@@ -178,7 +178,7 @@ void MenuGUI::ShowScene(bool* p_open, OpenGLScene*& scene, GLFWwindow* window)
 {
 	if (!openSceneWindow)
 	{
-		scene = new OpenGLScene(window);
+		scene = new OpenGLScene(window, sceneSize, scenePosition);
 		openSceneWindow = true;
 
 	}

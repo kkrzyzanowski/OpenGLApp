@@ -16,7 +16,7 @@ public:
 	void BindTexture(short int index = 0);
 	void UnBindTexture(short int index = 0);
 	void InitializeTextures();
-	void CreateHDRTextures(short int size);
+	void CreateHDRTextures(short int size, unsigned int width, unsigned int height);
 	std::vector<Texture*> Textures;
 	~TextureManager();
 private:
