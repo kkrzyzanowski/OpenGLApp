@@ -75,8 +75,6 @@ SkyBoxCube::SkyBoxCube(ShapesBuilder&& builder) : Shape(std::move(builder))
 
 void SkyBoxCube::Create(const GLfloat* points, unsigned int* orderIndex, unsigned int countVertices, unsigned int countIndexes, unsigned int* bufferDataSizes, unsigned int dataSize)
 {
-	GLCall(glEnable(GL_BLEND));
-	GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 	bm->CreateBuffersOnlyVertex(points, orderIndex, countVertices, countIndexes);
 }
 
@@ -99,22 +97,17 @@ void SkyBoxCube::GenerateShaders()
 
 void SkyBoxCube::ApplyShaders()
 {
-	glDepthMask(GL_FALSE);
-	glDepthFunc(GL_LEQUAL);
 	cubeMapTexture = new CubeMapTexture(paths);
 	cubeMapTexture->Bind();
 	ShaderTypeGenerator::UpdateModel(sm->shaders, sc.GetCurrentProgram(), mvp.model);
 	ShaderTypeGenerator::ShaderSkyBoxGenerator(sm->shaders, sc.GetDefaultProgram());
 	cubeMapTexture->UnBind();
-	glDepthFunc(GL_LESS);
 }
 
 void SkyBoxCube::AfterUpdate()
 {
 	cubeMapTexture->UnBind();
 	sc.DisableUse();
-	glDepthMask(GL_TRUE);
-	glDepthFunc(GL_LESS);
 }
 
 void SkyBoxCube::CreateModelMatrix()
@@ -126,7 +119,6 @@ void SkyBoxCube::CreateModelMatrix()
 void SkyBoxCube::Update()
 {
 	sc.ActivateDefaultProgram();
-	glDepthFunc(GL_LEQUAL);
 	sc.EnableUse();
 	cubeMapTexture->Bind();
 	ShaderTypeGenerator::UpdateModel(sm->shaders, sc.GetCurrentProgram(), mvp.model);

@@ -384,10 +384,9 @@ namespace AppEngine
 		}
 
 		mainFBO->Bind();
+
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
-
-
 		glDepthFunc(GL_LEQUAL);
 		glDepthMask(GL_FALSE);
 
@@ -395,6 +394,9 @@ namespace AppEngine
 		skyboxShape->Update();
 		renderer->Draw(skyboxShape->bm->GetIndexBuffer()->GetCount(), GL_TRIANGLES);
 		skyboxShape->AfterUpdate();
+		renderer->ClearDepth();
+		glDepthMask(GL_TRUE);
+		glDepthFunc(GL_LESS);
 
 		terrainShape->SetMainLight(mainLight->Position);
 		terrainShape->Update();
@@ -410,12 +412,9 @@ namespace AppEngine
 			}
 		}
 
-		glDepthMask(GL_TRUE);
-		glDepthFunc(GL_LESS);
 
 		//deffered
 		FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->Bind();
-		renderer->ClearColor();
 		renderer->Clear();
 		for (auto& shape : deferredShapes)
 		{
@@ -426,6 +425,42 @@ namespace AppEngine
 			shape->AfterUpdate();
 		}
 		mainFBO->Bind();
+
+		for (size_t i = 0; i < forwardShapes.size(); ++i)
+		{
+			auto& shapePtr = forwardShapes[i];
+			futures.emplace_back(threadPool.Enqueue([shapePtr]()
+				{
+					shapePtr->CalculateMath();
+				}));
+
+		}
+
+		for (auto& f : futures)
+		{
+			try
+			{
+				f.get();
+			}
+			catch (const std::exception& e)
+			{
+				std::cerr << "Worker exception: " << e.what() << '\n';
+			}
+		}
+
+		futures.clear();
+
+		for (auto& shape : forwardShapes)
+		{
+			if (!shape->Selected)
+			{
+				shape->SetMainLight(mainLight->Position);
+				shape->Update();
+				int verticesCount = shape->bm->GetIndexBuffer()->GetCount();
+				renderer->Draw(verticesCount, GL_TRIANGLES);
+				shape->AfterUpdate();
+			}
+		}
 
 		if (SSAO_LIGHT)
 		{
@@ -530,6 +565,7 @@ namespace AppEngine
 			mainFBO->DrawBind();
 			glBlitFramebuffer(position.x, position.y, size.x, size.y, position.x, position.y, size.x, size.y, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 			mainFBO->Bind();
+			renderer->ClearDepth();
 		}
 		//Lights
 		if (LIGHT_OBJECTS)
@@ -548,43 +584,7 @@ namespace AppEngine
 			glEnable(GL_DEPTH_TEST);
 		}
 
-		for (size_t i = 0; i < forwardShapes.size(); ++i)
-		{
-			auto& shapePtr = forwardShapes[i];
-			futures.emplace_back(threadPool.Enqueue([shapePtr]()
-				{
-					shapePtr->CalculateMath();
-				}));
-
-		}
-
-		for (auto& f : futures)
-		{
-			try
-			{
-				f.get();
-			}
-			catch (const std::exception& e)
-			{
-				std::cerr << "Worker exception: " << e.what() << '\n';
-			}
-		}
-
-		futures.clear();
-
-
-		for (auto& shape : forwardShapes)
-		{
-			if (!shape->Selected)
-			{
-				shape->SetMainLight(mainLight->Position);
-				shape->Update();
-				int verticesCount = shape->bm->GetIndexBuffer()->GetCount();
-				renderer->Draw(verticesCount, GL_TRIANGLES);
-				shape->AfterUpdate();
-			}
-		}
-
+		
 
 		///Selected shapes
 		//renderer->ClearStencil();

@@ -21,7 +21,7 @@ void FrameBufferManager::CreateFRBuffer(FrameBufferType type, std::shared_ptr<Fr
 
 void FrameBufferManager::InitializeFrameBuffers(unsigned int renderTargetFBO)
 {
-	constexpr int ANY_OF_INTEREST = POSTPROCESSING | BLUR | HDR | DEPTHMAP;
+	constexpr int ANY_OF_INTEREST = MAIN | POSTPROCESSING | BLUR | HDR | DEPTHMAP;
 	for (auto& [key, val] : FRbuffer_container)
 	{
 		if (key & ANY_OF_INTEREST)
