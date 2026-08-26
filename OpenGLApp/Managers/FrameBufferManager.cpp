@@ -9,9 +9,11 @@ FrameBufferManager::FrameBufferManager()
 	FRbuffer_container[MAIN] = {std::make_shared<FrameBuffer>(), nullptr};
 }
 
-void FrameBufferManager::CreateFRBuffer(FrameBufferType type, std::shared_ptr<FrameBuffer> fb)
+void FrameBufferManager::CreateFRBuffer(FrameBufferType type, std::shared_ptr<FrameBuffer> fb, std::shared_ptr<RenderBuffer> rb)
 {
-	FRbuffer_container.insert({ type, { fb, std::make_shared<RenderBuffer>(fb->GetSize()) } });
+	if(rb == nullptr)
+		rb = std::make_shared<RenderBuffer>(fb->GetSize());
+	FRbuffer_container.insert({ type, { fb, rb } });
 }
 
 //void FrameBufferManager::CopyFRBuffer(FrameBufferType type, FrameBuffer& other)
@@ -30,16 +32,16 @@ void FrameBufferManager::InitializeFrameBuffers(unsigned int renderTargetFBO)
 			val.rendererBuffer->Bind();
 			val.rendererBuffer->GenerateDepthStencilRenderBuffer();
 			val.rendererBuffer->UnBind();
-			val.rendererBuffer->AttachDepthFrameRenderBuffer();
+			val.rendererBuffer->AttachDepthStencilFrameRenderBuffer();
 			//val.frameBuffer->UnBind(renderTargetFBO);
 		}
 		if(key & GBUFFER)
 		{
 			val.frameBuffer->Bind();
 			val.rendererBuffer->Bind();
-			val.rendererBuffer->GenerateDepthRenderBuffer();
+			val.rendererBuffer->GenerateDepthStencilRenderBuffer();
 			val.rendererBuffer->UnBind();
-			val.rendererBuffer->AttachDepthFrameRenderBuffer();
+			val.rendererBuffer->AttachDepthStencilFrameRenderBuffer();
 			//val.frameBuffer->UnBind(renderTargetFBO);
 		}
 	}

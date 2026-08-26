@@ -20,7 +20,7 @@ static class FrameBufferManager
 {
 public:
 	FrameBufferManager();
-	static void CreateFRBuffer(FrameBufferType type, std::shared_ptr<FrameBuffer> fb);
+	static void CreateFRBuffer(FrameBufferType type, std::shared_ptr<FrameBuffer> fb, std::shared_ptr<RenderBuffer> rb = nullptr);
 	//static void CopyFRBuffer(FrameBufferType type, FrameBuffer& other);
 	static void InitializeFrameBuffers(unsigned int renderTargetFBO);
 

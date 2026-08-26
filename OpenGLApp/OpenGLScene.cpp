@@ -188,7 +188,7 @@ namespace AppEngine
 			.Create(FrameBufferType::MAIN));
 		frameBufferBuilder->ResetData();
 		auto mainFBOHandler = FrameBufferManager::FRbuffer_container[MAIN].frameBuffer->GetFrameBuffer();
-
+		auto mainRBOHandler = FrameBufferManager::FRbuffer_container[MAIN].rendererBuffer;
 		FrameBufferManager::CreateFRBuffer(FrameBufferType::DEPTHMAP, frameBufferBuilder->AddTexture(TextureMode::SHADOWMAP, SCREEN_WIDTH, SCREEN_HEIGHT)
 			.RenderTarget(mainFBOHandler)
 			.Create(FrameBufferType::DEPTHMAP));
@@ -384,6 +384,7 @@ namespace AppEngine
 		}
 
 		mainFBO->Bind();
+		renderer->Clear();
 
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
@@ -394,9 +395,11 @@ namespace AppEngine
 		skyboxShape->Update();
 		renderer->Draw(skyboxShape->bm->GetIndexBuffer()->GetCount(), GL_TRIANGLES);
 		skyboxShape->AfterUpdate();
-		renderer->ClearDepth();
+
 		glDepthMask(GL_TRUE);
 		glDepthFunc(GL_LESS);
+
+
 
 		terrainShape->SetMainLight(mainLight->Position);
 		terrainShape->Update();
@@ -412,19 +415,6 @@ namespace AppEngine
 			}
 		}
 
-
-		//deffered
-		FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->Bind();
-		renderer->Clear();
-		for (auto& shape : deferredShapes)
-		{
-			shape->SetMainLight(mainLight->Position);
-			shape->Update();
-			int verticesCount = shape->bm->GetIndexBuffer()->GetCount();
-			renderer->Draw(verticesCount, GL_TRIANGLES);
-			shape->AfterUpdate();
-		}
-		mainFBO->Bind();
 
 		for (size_t i = 0; i < forwardShapes.size(); ++i)
 		{
@@ -461,6 +451,23 @@ namespace AppEngine
 				shape->AfterUpdate();
 			}
 		}
+
+		//deffered
+		FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->DrawBind();
+		mainFBO->ReadBind();
+		glBlitFramebuffer(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+		FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->Bind();
+		renderer->ClearColor();
+		for (auto& shape : deferredShapes)
+		{
+			shape->SetMainLight(mainLight->Position);
+			shape->Update();
+			int verticesCount = shape->bm->GetIndexBuffer()->GetCount();
+			renderer->Draw(verticesCount, GL_TRIANGLES);
+			shape->AfterUpdate();
+		}
+		mainFBO->Bind();
+
 
 		if (SSAO_LIGHT)
 		{
@@ -561,11 +568,7 @@ namespace AppEngine
 			renderer->DrawArrays(6, GL_TRIANGLES);
 			FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->AfterUpdateFrameBuffer();
 
-			FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer->ReadBind();
-			mainFBO->DrawBind();
-			glBlitFramebuffer(position.x, position.y, size.x, size.y, position.x, position.y, size.x, size.y, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 			mainFBO->Bind();
-			renderer->ClearDepth();
 		}
 		//Lights
 		if (LIGHT_OBJECTS)
@@ -584,7 +587,7 @@ namespace AppEngine
 			glEnable(GL_DEPTH_TEST);
 		}
 
-		
+
 
 		///Selected shapes
 		//renderer->ClearStencil();

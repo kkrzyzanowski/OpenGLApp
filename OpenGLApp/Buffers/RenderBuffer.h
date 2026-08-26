@@ -10,7 +10,7 @@ public:
 	void UnBind();
 	void BindRenderTarget(unsigned int renderTargetRBO);
 	void GenerateRenderBuffer();
-	void AttachStencilDepthFrameRenderBuffer();
+	void AttachDepthStencilFrameRenderBuffer();
 	void GenerateDepthRenderBuffer();
 	void GenerateDepthStencilRenderBuffer();
 	inline unsigned int GetRenderBuffer() const { return rbo; };

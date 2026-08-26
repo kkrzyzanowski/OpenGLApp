@@ -30,7 +30,7 @@ void RenderBuffer::GenerateRenderBuffer()
 }
 
 
-void RenderBuffer::AttachStencilDepthFrameRenderBuffer()
+void RenderBuffer::AttachDepthStencilFrameRenderBuffer()
 {
 	GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo));
 }
