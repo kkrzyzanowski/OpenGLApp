@@ -20,13 +20,22 @@ void LightManager::InitializeShadowProgram(std::shared_ptr<Shape> shape)
 	if (shape->IsShadowTurnOn())
 	{
 		shape->sc.CreateProgram("shadows");
+		if(glGetError() != GL_NO_ERROR) {
+			std::cerr << "Error creating shadow shader program!" << std::endl;
+			assert(false);
+		}
 		shape->sc.ActivateProgram("shadows");
+		if(glGetError() != GL_NO_ERROR) {
+			std::cerr << "Error activating shadow shader program!" << std::endl;
+			assert(false);
+		}
 		shape->sc.AddShadersToProgram(shadowShaders);
 	}
 }
 
 void LightManager::CreateShadowForLights(std::shared_ptr<Shape> shape)
 {
+	shape->sc.DisableUse();
 	for (auto& light : lights)
 	{
 		shape->sc.ActivateProgram("shadows");
@@ -47,6 +56,7 @@ void LightManager::CreateShadowForLights(std::shared_ptr<Shape> shape)
 
 void LightManager::CreateShadowForLightsTerrain(std::shared_ptr<Terrain> shape)
 {
+	shape->sc.DisableUse();
 	for (auto& light : lights)
 	{
 		shape->sc.ActivateProgram("shadows");
@@ -68,6 +78,7 @@ void LightManager::CreateShadowForLightsTerrain(std::shared_ptr<Terrain> shape)
 			ShaderTypeGenerator::LightShadowShaderGenerator(shadowShaders, shape->sc.GetCurrentProgram(), params);
 		}
 		shape->bm->BindBuffers();
+		shape->sc.DisableUse();
 		break;
 	}
 }

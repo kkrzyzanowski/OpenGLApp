@@ -5,11 +5,10 @@
 #include "..\glm\gtc\matrix_transform.hpp"
 #include "..\glm\gtc\type_ptr.hpp"
 #include "..\Buffers\UniformBuffer.h"
-#include "..\Managers\ShapeManager.h"
 #include "..\PointTranslator.h"
 #include "..\DataStructures.h"
 #include "..\Config.h"
-
+#include "..\Shapes\Shape.h"
 
 enum View
 {

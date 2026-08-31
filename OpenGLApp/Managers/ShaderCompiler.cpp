@@ -30,7 +30,6 @@ void ShaderCompiler::AddShadersToProgram(std::vector<Shader*> Shaders)
 
 void ShaderCompiler::AddShaderToProgram(Shader* shader)
 {
-	
 	GLCall(glAttachShader(m_Program.at(activeProgram), shader->GetShaderID()));
 	GLCall(glLinkProgram(m_Program.at(activeProgram)));
 	GLCall(glValidateProgram(m_Program.at(activeProgram)));

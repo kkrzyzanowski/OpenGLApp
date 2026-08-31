@@ -22,7 +22,7 @@ Terrain::Terrain(ShapesBuilder& builder) : Shape(builder)
 Terrain::Terrain(ShapesBuilder&& builder) : Shape(std::move(builder))
 {
 	ShapeName = "Terrain";
-	tp = builder._props;
+	tp = this->builder->_props;
 	unsigned int count = tp.width * tp.height;
 	squareOffsets = new glm::vec3[count];
 	LoadTerrain();

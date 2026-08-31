@@ -136,10 +136,13 @@ void ShaderTypeGenerator::InstancedTerrainShaderGenerator(std::vector<Shader*>& 
 	glm::vec3 offset = std::get<glm::vec3>(params[2]);
 	unsigned int instanceNumber = std::get<unsigned int>(params[3]);
 	bool isShadow = std::get<bool>(params[4]);
-	glm::mat4 lightSpaceMatrix = std::get<glm::mat4>(params[5]);
+	if (params.size() > 5)
+	{
+		glm::mat4 lightSpaceMatrix = std::get<glm::mat4>(params[5]);
+		shaders[0]->SetUniformMat4f("lightSpaceMatrix", lightSpaceMatrix, program);
+	}
 	shaders[0]->SetUniformMat4f("model", model, program);
 	shaders[0]->SetUniform3f("offset[" + std::to_string(instanceNumber) + "]", offset, program);
-	shaders[0]->SetUniformMat4f("lightSpaceMatrix", lightSpaceMatrix, program);
 	shaders[1]->SetUniform1i("terrainTexture", 0, program);
 	shaders[1]->SetUniform1i("shadowMap", 7, program);
 

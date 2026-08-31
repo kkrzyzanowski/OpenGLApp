@@ -26,7 +26,7 @@ void RenderBuffer::BindRenderTarget(unsigned int renderTargetRBO)
 
 void RenderBuffer::GenerateRenderBuffer()
 {
-	GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, size.x, size.y));
+	GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCREEN_WIDTH, SCREEN_HEIGHT));
 }
 
 
@@ -37,7 +37,7 @@ void RenderBuffer::AttachDepthStencilFrameRenderBuffer()
 
 void RenderBuffer::GenerateDepthRenderBuffer()
 {
-	GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, size.x, size.y));
+	GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SCREEN_WIDTH, SCREEN_HEIGHT));
 }
 
 void RenderBuffer::GenerateDepthStencilRenderBuffer()

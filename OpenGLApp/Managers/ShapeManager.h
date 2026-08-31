@@ -14,7 +14,8 @@ public:
 	static void AddShape(ShapeType type);
 	static std::vector<std::shared_ptr<Shape>> FilterShape(Shading shadingType);
 	static std::vector<std::shared_ptr<Shape>> FilterShape(std::initializer_list<Shading> shadingTypes);
-	static std::vector<std::shared_ptr<Shape>> FilterShape(bool shadow);
+	static std::vector<std::shared_ptr<Shape>> FilterShape(ShapeType type);
+	static std::vector<std::shared_ptr<Shape>> GetShapesWithShadow();
 	~ShapeManager();
 
 public:

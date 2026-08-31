@@ -76,7 +76,7 @@ static const char* CUBEBOX_BACK_PATH =			"..\\Assets\\Textures\\SkyBox\\Daylight
 
 //Effects
 
-static bool SHADOW = false;
+static bool SHADOW = true;
 static bool POSTPROCESSING_EFFECTS = false;
 static bool HDR_LIGHT = false;
 static bool GAUSSIAN_BLUR = false;

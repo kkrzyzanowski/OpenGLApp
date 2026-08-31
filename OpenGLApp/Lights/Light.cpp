@@ -24,7 +24,7 @@ Light::Light(LightBuilder& builder): Position(builder.Pos), nearPlane(builder.Ne
 	GenerateLightShape();
 	LightProjection = glm::ortho(-ortographicSize, ortographicSize, -ortographicSize, ortographicSize, nearPlane, farPlane);
 	glm::vec3 sceneCenter = glm::vec3(0.0f);
-	LightView = glm::lookAt(Position, sceneCenter, glm::vec3(0.0f, 0.0f, 1.0f));
+	LightView = glm::lookAt(Position, sceneCenter, glm::vec3(0.0f, 1.0f, 0.0f));
 	LightSpaceMatrix = LightProjection * LightView;
 	params.push_back(LightSpaceMatrix);
 	CreateModel();

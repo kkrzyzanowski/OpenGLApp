@@ -84,18 +84,28 @@ std::vector<std::shared_ptr<Shape>> ShapeManager::FilterShape(std::initializer_l
 	return filteredShapes;
 }
 
-std::vector<std::shared_ptr<Shape>> ShapeManager::FilterShape(bool shadow)
+std::vector<std::shared_ptr<Shape>> ShapeManager::FilterShape(ShapeType type)
 {  
-   static std::vector<std::shared_ptr<Shape>> filteredShapes;  
-   filteredShapes.clear();  
-   for (const auto& shape : shapes)  
-   {  
-       if (shape->IsShadowTurnOn() == shadow)  
-       {  
-           filteredShapes.push_back(shape);  
-       }  
-   }  
-   return filteredShapes;  
+	std::vector<std::shared_ptr<Shape>> filteredShapes;
+	std::copy_if(
+		shapes.begin(), shapes.end(),
+		std::back_inserter(filteredShapes),
+		[&type](const std::shared_ptr<Shape>& shape) {
+			return shape->GetType() == type;
+		});
+	return filteredShapes;
+}
+
+std::vector<std::shared_ptr<Shape>> ShapeManager::GetShapesWithShadow()
+{
+	std::vector<std::shared_ptr<Shape>> filteredShapes;
+	std::copy_if(
+		shapes.begin(), shapes.end(),
+		std::back_inserter(filteredShapes),
+		[](const std::shared_ptr<Shape>& shape) {
+			return shape->IsShadowTurnOn();
+		});
+	return filteredShapes;
 }
 
 ShapeManager::~ShapeManager()

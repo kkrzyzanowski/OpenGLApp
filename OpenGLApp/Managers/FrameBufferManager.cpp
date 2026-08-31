@@ -23,7 +23,8 @@ void FrameBufferManager::CreateFRBuffer(FrameBufferType type, std::shared_ptr<Fr
 
 void FrameBufferManager::InitializeFrameBuffers(unsigned int renderTargetFBO)
 {
-	constexpr int ANY_OF_INTEREST = MAIN | POSTPROCESSING | BLUR | HDR | DEPTHMAP;
+	constexpr int ANY_OF_INTEREST = MAIN | POSTPROCESSING | BLUR | HDR;
+	constexpr int SHADOW = DEPTHMAP;
 	for (auto& [key, val] : FRbuffer_container)
 	{
 		if (key & ANY_OF_INTEREST)
@@ -34,6 +35,14 @@ void FrameBufferManager::InitializeFrameBuffers(unsigned int renderTargetFBO)
 			val.rendererBuffer->UnBind();
 			val.rendererBuffer->AttachDepthStencilFrameRenderBuffer();
 			//val.frameBuffer->UnBind(renderTargetFBO);
+		}
+		if(key & SHADOW)
+		{
+			val.frameBuffer->Bind();
+			val.rendererBuffer->Bind();
+			val.rendererBuffer->GenerateDepthRenderBuffer();
+			val.rendererBuffer->UnBind();
+			val.rendererBuffer->AttachDepthFrameRenderBuffer();
 		}
 		if(key & GBUFFER)
 		{

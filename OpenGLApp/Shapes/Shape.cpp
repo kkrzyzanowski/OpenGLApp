@@ -179,10 +179,8 @@ glm::vec3 Shape::GetPosition()
 
 ShapeType Shape::GetType()
 {
-	return ShapeType();
+	return builder->_type;
 }
-
-
 
 void Shape::InitializePickedShape()
 {

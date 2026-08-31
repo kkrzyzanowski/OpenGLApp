@@ -5,7 +5,6 @@
 #include "Managers/FrameBufferManager.h"
 #include "PlaneView.h"
 
-
 namespace AppEngine
 {
 	// to-do do textures for framebuffer (maybe class or something like that) to prepare connection beetween framebuffers
@@ -52,7 +51,7 @@ namespace AppEngine
 			.Shader(DIFFUSE_VERT_PATH)
 			.Shader(DIFFUSE_FRAG_PATH)
 			.Shadow(false)
-			.Position(glm::vec3(0.6f, 0.12f, -3.0f))
+			.Position(glm::vec3(3.6f, 0.12f, -3.0f))
 			.Create(ShapeType::CUBE));
 
 		ShapeManager::shapes.emplace_back(shapesBuilder->ObjectState(CamView::DYNAMIC)
@@ -154,14 +153,14 @@ namespace AppEngine
 			.Texture(TEMP_TEXTURE_GRASS)
 			.Shader(TERRAIN_VERT_PATH)
 			.Shader(TERRAIN_FRAG_PATH)
-			.Shadow(true)
+			.Shadow(false)
 			.CustomProperties(tp)
 			.Create(ShapeType::TERRAIN));
 
 		std::unique_ptr<LightBuilder> lightBuilder = std::make_unique<LightBuilder>();
 
 		LightManager::lights.push_back(lightBuilder->SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f))
-			.Position(glm::vec3(2.5f, 2.5f, -2.5f))
+			.Position(glm::vec3(.5f, 1.5f, 1.0f))
 			.Create(LightType::DEFAULT));
 
 		LightManager::lights.push_back(lightBuilder->SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f))
@@ -308,7 +307,7 @@ namespace AppEngine
 		forwardShapes = ShapeManager::FilterShape({ Shading::FORWARD_SHADING, Shading::DISPLACEMENT, Shading::TEXTURE_COLOR, Shading::DISPLACEMENT,
 			Shading::ONLY_COLOR });
 		deferredShapes = ShapeManager::FilterShape(Shading::DEFFERED_SHADING);
-		shadowShapes = ShapeManager::FilterShape(true);
+		shadowShapes = ShapeManager::GetShapesWithShadow();
 
 		bool horizontal = true;
 
@@ -353,6 +352,13 @@ namespace AppEngine
 			glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 			FrameBufferManager::FRbuffer_container[DEPTHMAP].frameBuffer->Bind();
 
+			GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+
+			if (status != GL_FRAMEBUFFER_COMPLETE)
+			{
+				std::cout << "FBO error: " << status << std::endl;
+			}
+
 			renderer->ClearDepth();
 			glEnable(GL_DEPTH_TEST);
 
@@ -372,7 +378,7 @@ namespace AppEngine
 			mainFBO->Bind();
 
 			//to-do pass gui screen size
-			glViewport(0, 0, size.x, size.y);
+			glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 			renderer->ClearColor();
 			renderer->ClearDepth();
 		}
@@ -399,8 +405,6 @@ namespace AppEngine
 		glDepthMask(GL_TRUE);
 		glDepthFunc(GL_LESS);
 
-
-
 		terrainShape->SetMainLight(mainLight->Position);
 		terrainShape->Update();
 		renderer->DrawArrayInstances(terrainShape->bm->GetIndexBuffer()->GetCount(), GL_TRIANGLE_STRIP, 256);
@@ -414,7 +418,6 @@ namespace AppEngine
 				continue;
 			}
 		}
-
 
 		for (size_t i = 0; i < forwardShapes.size(); ++i)
 		{
@@ -587,8 +590,6 @@ namespace AppEngine
 			glEnable(GL_DEPTH_TEST);
 		}
 
-
-
 		///Selected shapes
 		//renderer->ClearStencil();
 		for (auto& sShape : selectedShapes)
@@ -616,8 +617,7 @@ namespace AppEngine
 			glEnable(GL_DEPTH_TEST);
 		}
 
-
-
+		renderer->ClearStencil();
 
 		// Fix for the initialization issue with FrameBufferType and bool
 		if (GAUSSIAN_BLUR)

@@ -9,29 +9,48 @@
 
 
 ShapesBuilder::ShapesBuilder(ShapesBuilder&& other) noexcept
+	: _shapes(std::move(other._shapes))
+	, _light(other._light)
+	, View(other.View)
+	, _lightType(other._lightType)
+	, _path(std::move(other._path))
+	, texturePaths(std::move(other.texturePaths))
+	, shaderPaths(std::move(other.shaderPaths))
+	, _props(std::move(other._props))
+	, _type(other._type)
+	, ShadingType(other.ShadingType)
+	, Func(std::move(other.Func))
+	, IsShadowActive(other.IsShadowActive)
+	, IsBloomActive(other.IsBloomActive)
+	, HDR(other.HDR)
 {
-	this->texturePaths = std::move(other.texturePaths);
-	this->shaderPaths = std::move(other.shaderPaths);
-	this->Pos = std::move(other.Pos);
-	this->Func = std::move(other.Func);
-	this->View = std::move(other.View);
-	this->color = std::move(other.color);
-	this->Angle = std::move(other.Angle);
-	this->Axis = std::move(other.Axis);
-	this->Type = std::move(other.Type);
-	this->ShadingType = std::move(other.ShadingType);
-	this->_path = std::move(other._path);
-	this->IsShadowActive = other.IsShadowActive;
-	this->IsBloomActive = other.IsBloomActive;
-	this->ScaleVector = other.ScaleVector;
-	this->HDR = other.HDR;
+	// move/copy pola z bazowego Builder (s¹ publiczne)
+	Pos = other.Pos;
+	Axis = other.Axis;
+	ScaleVector = other.ScaleVector;
+	Angle = other.Angle;
+	color = other.color;
+	// SourceShapeType (Builder::Type) — kopiujemy
+	Type = other.Type;
+
+	// Leave 'other' in a valid default state
+	other._light = nullptr;
 	other.texturePaths.clear();
 	other.shaderPaths.clear();
+	other._path.clear();
+	other._props = TerrainProperties();            // reset to default
+	other._type = ShapeType();                     // default-constructed
+	other.Func = ShaderFunction();                 // empty std::function
 	other.ShadingType = Shading::FORWARD_SHADING;
 	other.IsShadowActive = false;
-	other.HDR = false;
 	other.IsBloomActive = false;
+	other.HDR = false;
 	other.ScaleVector = glm::vec3(1.0f);
+	other.Pos = glm::vec3(0.0f);
+	other.Axis = glm::vec3(0.0f);
+	other.Angle = 0.0f;
+	other.color = glm::vec4(1.0f);
+	other.Type = SourceShapeType();                // safe default
 }
 
 ShapesBuilder::ShapesBuilder(const ShapesBuilder& other) noexcept
@@ -265,7 +284,3 @@ void ShapesBuilder::CheckShadingType()
 
 	}
 }
-
-
-
-

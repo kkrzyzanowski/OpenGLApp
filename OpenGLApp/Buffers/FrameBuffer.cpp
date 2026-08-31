@@ -73,12 +73,6 @@ void FrameBuffer::GenerateTexture()
 	tm->Textures[0]->CreateFrameBufferTexture();
 }
 
-void FrameBuffer::GenerateShadowTexture()
-{
-	tm->Textures.push_back(new Texture());
-	tm->Textures[0]->CreateShadowMapTexture();
-}
-
 bool FrameBuffer::CheckFrameBuffer()
 {
 	bool status = (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);

@@ -3,7 +3,7 @@
 #include <iostream>
 #include "Camera.h"
 #include "../../ImGUI/imgui_impl_glfw.h"
-
+#include "../Managers/ShapeManager.h"
 
 static Camera* camInstance;
 static GLFWcursorposfun prevCursorPosCallback = nullptr;
