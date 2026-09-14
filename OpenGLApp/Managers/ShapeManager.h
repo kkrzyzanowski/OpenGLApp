@@ -11,7 +11,8 @@ static class ShapeManager
 public:
 	ShapeManager();
 	static void InitializeShapesData(Camera* cam);
-	static void AddShape(ShapeType type);
+	static void InitializeShapeData(std::shared_ptr<Shape> shape, Camera* cam);
+	static std::shared_ptr<Shape> AddShape(ShapeType type, float position[4], float color[4], float rotation[3], float scale[3]);
 	static std::vector<std::shared_ptr<Shape>> FilterShape(Shading shadingType);
 	static std::vector<std::shared_ptr<Shape>> FilterShape(std::initializer_list<Shading> shadingTypes);
 	static std::vector<std::shared_ptr<Shape>> FilterShape(ShapeType type);

@@ -13,6 +13,7 @@ bool isSceneHovered = false;
 ImVec2 sceneSize;
 ImVec2 downPanelSize;
 ImVec2 scenePosition;
+OpenGLScene* scene = nullptr;
 std::shared_ptr<FrameBuffer> sceneFrameBuffer = nullptr;
 void SetSceneSizeAndPosition(ImVec2 size);
 
@@ -88,11 +89,11 @@ void MenuGUI::ShowEditor(bool* p_open)
 			{
 				if (ImGui::BeginTabItem("Shapes"))
 				{
-					if (ImGui::Button("Square"))
+					if (ImGui::Button("Cube"))
 						openAddDialog = true;
 					if (openAddDialog)
 					{
-						MenuGUI::CreateAddWindow(&openAddDialog);
+						MenuGUI::CreateAddWindow(&openAddDialog, scene);
 					}
 					ImGui::Button("Plane");
 					ImGui::Button("Sphere");
@@ -144,7 +145,6 @@ void MenuGUI::ShowEditor(bool* p_open)
 					{
 						EventHandler::GetInstance().HandleEvent(EventType::CLOSE_SCENE);
 
-						// do something
 					}
 					ImGui::EndTabItem();
 				}
@@ -174,11 +174,12 @@ void MenuGUI::ShowEditor(bool* p_open)
 	ImGui::End();
 }
 
-void MenuGUI::ShowScene(bool* p_open, OpenGLScene*& scene, GLFWwindow* window)
+void MenuGUI::ShowScene(bool* p_open, GLFWwindow* window)
 {
 	if (!openSceneWindow)
 	{
 		scene = new OpenGLScene(window, sceneSize, scenePosition);
+
 		openSceneWindow = true;
 
 	}
@@ -187,10 +188,17 @@ void MenuGUI::ShowScene(bool* p_open, OpenGLScene*& scene, GLFWwindow* window)
 
 }
 
-void MenuGUI::CloseScene(OpenGLScene*& scene)
+void MenuGUI::CloseScene()
 {
 	openSceneWindow = false;
 	scene->ClearScene();
+	delete scene;
+	scene = nullptr;
+}
+
+OpenGLScene* MenuGUI::GetScene()
+{
+	return scene;
 }
 
 

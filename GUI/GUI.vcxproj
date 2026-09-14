@@ -124,7 +124,6 @@
   <ItemGroup>
     <ClInclude Include="AddWindow.h" />
     <ClInclude Include="EventHandler.h" />
-    <ClInclude Include="GameWindow.h" />
     <ClInclude Include="GUIWindow.h" />
     <ClInclude Include="..\ImGUI\imconfig.h" />
     <ClInclude Include="..\ImGUI\imgui.h" />
@@ -140,7 +139,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AddWindow.cpp" />
-    <ClCompile Include="GameWindow.cpp" />
     <ClCompile Include="GUImain.cpp" />
     <ClCompile Include="GUIWindow.cpp" />
     <ClCompile Include="IconLoader.cpp" />

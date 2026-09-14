@@ -138,7 +138,7 @@ namespace AppEngine
 			.Shader(PRIMITIVE_FRAG_PATH)
 			.PathModel(TEMP_MODEL_PATH)
 			.SetShading(Shading::ONLY_COLOR)
-			.Color(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f))
+			.Color(glm::vec4(1.0f, .4f, 1.0f, 1.0f))
 			.Position(glm::vec3(3.0f, 1.0f, -4.0f))
 			.Create(ShapeType::CUSTOM));
 
@@ -328,6 +328,13 @@ namespace AppEngine
 	void OpenGLScene::SetSceneHovered(bool hovered)
 	{
 		CameraManager::GetInstance()->GetActiveCamera()->SetSceneHovered(hovered);
+	}
+
+	void OpenGLScene::ReinitializeScene(std::shared_ptr<Shape> shape)
+	{
+		ShapeManager::InitializeShapeData(shape, cam.get());
+		FrameBufferManager::PassShadowDataToShader(shape);
+		forwardShapes.push_back(shape);
 	}
 
 	std::shared_ptr<FrameBuffer> OpenGLScene::RenderScene(ImVec2 size, ImVec2 position)

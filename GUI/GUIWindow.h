@@ -46,7 +46,5 @@ public:
 	GUIWindow();
 	void RunGUIWindow(short int x, short int y);
 	~GUIWindow();
-private:
-	OpenGLScene* engineScene;
 };
 

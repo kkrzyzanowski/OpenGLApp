@@ -98,7 +98,7 @@ void GUIWindow::RunGUIWindow(short int x, short int y)
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 	EventHandler::GetInstance().subscribe(EventType::OPEN_SCENE, [&scene]() { scene = true; });
-	EventHandler::GetInstance().subscribe(EventType::CLOSE_SCENE, [this, &scene]() { MenuGUI::CloseScene(engineScene); scene = false; });
+	EventHandler::GetInstance().subscribe(EventType::CLOSE_SCENE, [this, &scene]() { MenuGUI::CloseScene(); scene = false; });
 
 	// Main loop
 	while (!glfwWindowShouldClose(window))
@@ -133,7 +133,7 @@ void GUIWindow::RunGUIWindow(short int x, short int y)
 
 		if (scene)
 		{
-			MenuGUI::ShowScene(&scene, engineScene, window);
+			MenuGUI::ShowScene(&scene, window);
 		}
 		glViewport(0, 0, display_w, display_h);
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -153,5 +153,4 @@ void GUIWindow::RunGUIWindow(short int x, short int y)
 
 GUIWindow::~GUIWindow()
 {
-	delete engineScene;
 }

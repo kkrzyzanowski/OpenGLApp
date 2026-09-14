@@ -43,6 +43,7 @@ namespace AppEngine
 		OpenGLScene(GLFWwindow* window, ImVec2 size, ImVec2 position);
 		int CreateScene() override;
 		void SetSceneHovered(bool hovered);
+		void ReinitializeScene(std::shared_ptr<Shape> shape);
 		std::shared_ptr<FrameBuffer> RenderScene(ImVec2 size, ImVec2 position);
 		void ClearScene();
 		~OpenGLScene();

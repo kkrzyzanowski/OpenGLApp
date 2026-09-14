@@ -1,9 +1,12 @@
 #include "AddWindow.h"
 #include <imgui.h>
+#include <Managers/ShapeManager.h>
+using namespace AppEngine;
 
-void MenuGUI::CreateAddWindow(bool* p_open)
+
+
+void MenuGUI::CreateAddWindow(bool* p_open, OpenGLScene* scene)
 {
-
     static bool no_titlebar = false;
     static bool no_scrollbar = false;
     static bool no_menu = false;
@@ -49,9 +52,13 @@ void MenuGUI::CreateAddWindow(bool* p_open)
     static float scale[3] = { 0.10f, 0.20f, 0.30f};
     ImGui::DragFloat4("Position", position, 0.005f);
     ImGui::ColorEdit4("Color", color);
-    ImGui::DragFloat3("Rotation", position, 0.005f);
+    ImGui::DragFloat3("Rotation", rotation, 0.005f);
+    ImGui::DragFloat3("Scale", scale, 0.005f);
     if (ImGui::Button("Save"))
     {
+        ///to-do make singleton of shapemanager
+		auto shape = ShapeManager::AddShape(ShapeType::CUBE, position, color, rotation, scale);
+		scene->ReinitializeScene(shape);
         *p_open = false;
         ImGui::End();
         return;
