@@ -86,16 +86,14 @@ std::filesystem::path MenuGUI::ShowWindowsDialog(bool* p_open, AppEngine::OpenGL
     ofn.lpstrFileTitle = NULL;
     ofn.nMaxFileTitle = 0;
     ofn.lpstrInitialDir = NULL;
-    ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+    ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
     static float color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
     static float position[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
     static float rotation[3] = { 0.0f, 0.0f, 0.0f };
     static float scale[3] = { 1.0f, 1.0f, 1.0f };
-	std::filesystem::path oldPath = std::filesystem::current_path();
 
     if (GetOpenFileName(&ofn) == TRUE)
     {
-		std::filesystem::current_path(oldPath);
         *p_open = false;
         *p_open_dialog = true;
 		return ofn.lpstrFile;
