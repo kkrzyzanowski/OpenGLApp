@@ -21,152 +21,155 @@
 #include "..\glm\gtx\rotate_vector.hpp"
 #include <mutex>
 
-class ShapesBuilder;
-
-static std::vector<long> shape_ids;
-unsigned long GenerateId();
-
-class Shape
+namespace AppEngine
 {
-public:
-	Shape(ShapesBuilder& builder);
-	Shape(ShapesBuilder&& builder);
-	Shape(const Shape&) = default;
-	virtual void Create(const GLfloat* points, unsigned int* orderIndex, unsigned int countVertices, unsigned int countIndexes, unsigned int* bufferDataSizes, unsigned int dataSize);
-	void CreateInstancedShape(const GLfloat* points, unsigned int* orderIndex, unsigned int countVertices, unsigned int countIndexes);
-	virtual void Create(const GLfloat* points, std::vector<int>& orderIndex, unsigned int countVertices, unsigned int countIndexes, unsigned int* bufferDataSizes, unsigned int dataSize);
+	class ShapesBuilder;
 
-	//shader methods
-	const ShaderCompiler GetShaderCompiler() const;
+	static std::vector<long> shape_ids;
+	unsigned long GenerateId();
 
-	//texture methods
-	Texture* GetTexture(std::string name);
-	Texture* GetTexture(unsigned int texId);
-	virtual void GenerateTextures(std::vector<Texture*>& textures);
+	class Shape
+	{
+	public:
+		Shape(ShapesBuilder& builder);
+		Shape(ShapesBuilder&& builder);
+		Shape(const Shape&) = default;
+		virtual void Create(const GLfloat* points, unsigned int* orderIndex, unsigned int countVertices, unsigned int countIndexes, unsigned int* bufferDataSizes, unsigned int dataSize);
+		void CreateInstancedShape(const GLfloat* points, unsigned int* orderIndex, unsigned int countVertices, unsigned int countIndexes);
+		virtual void Create(const GLfloat* points, std::vector<int>& orderIndex, unsigned int countVertices, unsigned int countIndexes, unsigned int* bufferDataSizes, unsigned int dataSize);
 
-	virtual glm::vec3 GetNormal() = 0;
-	virtual void DeactivateShapeBufferParts();
-	virtual void Update();
-	virtual void AfterUpdate();
+		//shader methods
+		const ShaderCompiler GetShaderCompiler() const;
 
-	virtual void ApplyShapeView(const glm::mat4& view);
-	virtual void GenerateShaders();
-	virtual void ApplyShaders();
-	virtual void GenerateVertices();
+		//texture methods
+		Texture* GetTexture(std::string name);
+		Texture* GetTexture(unsigned int texId);
+		virtual void GenerateTextures(std::vector<Texture*>& textures);
 
-	const glm::vec3 GetShapeCenterPoint() const;
-	void ApplyProjectionMatrix(const glm::mat4 proj);
-	void SetMainLight(const glm::vec3& light);
-	void SetEyeCamPos(const glm::vec3& pos);
-	const SourceShapeType GetSourceShapeType() const;
-	void RotateNormals(float rotation, glm::vec3 rotationAxis);
-	virtual void Translate();
-	void SetPosition(const glm::vec3& pos);
-	void Scale(float value);
-	void Rotate(float value);
-	void PassShaderParams(std::vector<ShaderParams> params);
-	ShapeState GetCreationState() const;
-	glm::vec3 GetPosition();
+		virtual glm::vec3 GetNormal() = 0;
+		virtual void DeactivateShapeBufferParts();
+		virtual void Update();
+		virtual void AfterUpdate();
 
-	ShapeType GetType();
-	Shading GetShading() const;
-	bool IsShadowTurnOn() const;
-	bool IsHDROn() const;
+		virtual void ApplyShapeView(const glm::mat4& view);
+		virtual void GenerateShaders();
+		virtual void ApplyShaders();
+		virtual void GenerateVertices();
 
-	void InitializePickedShape();
-	void UpdatePickedShape();
+		const glm::vec3 GetShapeCenterPoint() const;
+		void ApplyProjectionMatrix(const glm::mat4 proj);
+		void SetMainLight(const glm::vec3& light);
+		void SetEyeCamPos(const glm::vec3& pos);
+		const SourceShapeType GetSourceShapeType() const;
+		void RotateNormals(float rotation, glm::vec3 rotationAxis);
+		virtual void Translate();
+		void SetPosition(const glm::vec3& pos);
+		void Scale(float value);
+		void Rotate(float value);
+		void PassShaderParams(std::vector<ShaderParams> params);
+		ShapeState GetCreationState() const;
+		glm::vec3 GetPosition();
 
-	std::vector<glm::vec3> GetVertices(GLfloat* objectData, size_t elements, unsigned int bufferSize);
-	std::vector<std::array<glm::vec3, 3>> InitializeTriangles(size_t* indices, int indices_count, Vertices& vertices);
-	std::vector<std::array<glm::vec3, 3>> InitializeTriangles(std::vector<int>& indices, Vertices& vertices);
-	std::vector<std::vector<std::array<glm::vec3, 3>>> GetFaces(std::vector<std::array<glm::vec3, 3>>& triangles);
-	std::vector<std::array<glm::vec3, 2>> GetEdges(GLfloat* objectData);
-	void TranslatePoints(glm::mat4& mvp, Vertices& verts);
+		ShapeType GetType();
+		Shading GetShading() const;
+		bool IsShadowTurnOn() const;
+		bool IsHDROn() const;
 
-	std::vector<std::array<glm::vec3, 3>> GetTriangles() const;
-	unsigned long Id;
+		void InitializePickedShape();
+		void UpdatePickedShape();
 
+		std::vector<glm::vec3> GetVertices(GLfloat* objectData, size_t elements, unsigned int bufferSize);
+		std::vector<std::array<glm::vec3, 3>> InitializeTriangles(size_t* indices, int indices_count, Vertices& vertices);
+		std::vector<std::array<glm::vec3, 3>> InitializeTriangles(std::vector<int>& indices, Vertices& vertices);
+		std::vector<std::vector<std::array<glm::vec3, 3>>> GetFaces(std::vector<std::array<glm::vec3, 3>>& triangles);
+		std::vector<std::array<glm::vec3, 2>> GetEdges(GLfloat* objectData);
+		void TranslatePoints(glm::mat4& mvp, Vertices& verts);
 
-	//shadows for shape
-	virtual void GenerateShadow(glm::mat4& lightSpaceMatrix);
-	virtual void UpdateLight();
-
-	virtual void AddParamsToShader();
-	
-	virtual void CalculateMath();
-
-	void ApplyPendingModel();
-
-	void SetPendingOffset(const glm::vec3 point);
-
-	void SetPendingViewProj(const glm::mat4& view, const glm::mat4& proj);
+		std::vector<std::array<glm::vec3, 3>> GetTriangles() const;
+		unsigned long Id;
 
 
-	ShapeParameters shapeParams;
-	ShapeElements shapeElements;
+		//shadows for shape
+		virtual void GenerateShadow(glm::mat4& lightSpaceMatrix);
+		virtual void UpdateLight();
 
-	glm::mat4 GetModel() const { return mvp.model; };
+		virtual void AddParamsToShader();
 
-	bool Selected = false;
-	TextureManager tm;
-	ShaderCompiler sc;
-	BufferManager* bm;
-	ShaderManager* sm;
+		virtual void CalculateMath();
 
-	std::unique_ptr<ShapesBuilder> builder;
-	std::vector<ShaderParams> functionParams;
+		void ApplyPendingModel();
 
-	virtual ~Shape();
+		void SetPendingOffset(const glm::vec3 point);
 
-protected:
-	virtual void CreateModelMatrix();
-	void CreateType();
-	void GeneratePickedShaders();
-	void PrepareShaderMatricesFieldData();
+		void SetPendingViewProj(const glm::mat4& view, const glm::mat4& proj);
 
-	std::mutex transformMutex;
-	std::mutex pendingMutex;
 
-	glm::vec3 pendingOffset = glm::vec3(0.0f);
-	bool hasPendingOffset = false;
-	glm::vec3 pendingPosition = glm::vec3(0.0f);
-	bool hasPendingModel = false;
-	glm::mat4 pendingModelMatrix = glm::mat4(1.0f);
-	glm::mat4 pendingMVPMatrix = glm::mat4(1.0f);
-	bool hasPendingViewProj = false;
-	glm::mat4 pendingView = glm::mat4(1.0f);
-	glm::mat4 pendingProj = glm::mat4(1.0f);
+		ShapeParameters shapeParams;
+		ShapeElements shapeElements;
 
-	VertexManager vm;
-	
-	std::vector<std::string> paths;
+		glm::mat4 GetModel() const { return mvp.model; };
 
-	std::vector<glm::vec3> normals;
-	MVP mvp;
+		bool Selected = false;
+		TextureManager tm;
+		ShaderCompiler sc;
+		BufferManager* bm;
+		ShaderManager* sm;
 
-	glm::mat4 MVPMatrix;
-	std::string ShapeName;
-	glm::vec3 shapeCoords;
+		std::unique_ptr<ShapesBuilder> builder;
+		std::vector<ShaderParams> functionParams;
 
-	glm::vec3 insideLightPos;
-	glm::vec3 camEyePos;
+		virtual ~Shape();
 
-	Physics physics;
-	ShapeStateType* type;
-	ShapeState shapeState;
-	
-	Shape* light;
-	glm::vec3 mainLight;
-	RGB rgbCheck;
+	protected:
+		virtual void CreateModelMatrix();
+		void CreateType();
+		void GeneratePickedShaders();
+		void PrepareShaderMatricesFieldData();
 
-	StencilOutline* stencilOutline;
+		std::mutex transformMutex;
+		std::mutex pendingMutex;
 
-	ShapeType shapeType;
+		glm::vec3 pendingOffset = glm::vec3(0.0f);
+		bool hasPendingOffset = false;
+		glm::vec3 pendingPosition = glm::vec3(0.0f);
+		bool hasPendingModel = false;
+		glm::mat4 pendingModelMatrix = glm::mat4(1.0f);
+		glm::mat4 pendingMVPMatrix = glm::mat4(1.0f);
+		bool hasPendingViewProj = false;
+		glm::mat4 pendingView = glm::mat4(1.0f);
+		glm::mat4 pendingProj = glm::mat4(1.0f);
 
-	unsigned int indexesCount = 0;
-	std::vector<int> indexes;
+		VertexManager vm;
 
-	bool deffered = false;
+		std::vector<std::string> paths;
 
-	std::unique_ptr<VerticesShape> verts;
-};
+		std::vector<glm::vec3> normals;
+		MVP mvp;
+
+		glm::mat4 MVPMatrix;
+		std::string ShapeName;
+		glm::vec3 shapeCoords;
+
+		glm::vec3 insideLightPos;
+		glm::vec3 camEyePos;
+
+		Physics physics;
+		ShapeStateType* type;
+		ShapeState shapeState;
+
+		Shape* light;
+		glm::vec3 mainLight;
+		RGB rgbCheck;
+
+		StencilOutline* stencilOutline;
+
+		ShapeType shapeType;
+
+		unsigned int indexesCount = 0;
+		std::vector<int> indexes;
+
+		bool deffered = false;
+
+		std::unique_ptr<VerticesShape> verts;
+	};
+}

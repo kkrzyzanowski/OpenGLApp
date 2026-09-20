@@ -2,24 +2,25 @@
 #include "..\Shapes\Shape.h"
 #include "..\Primitive.h"
 
-class Line :
-	public Shape, public Primitive
+namespace AppEngine 
 {
-public:
-	Line(ShapesBuilder& builder);
-	Line(ShapesBuilder&& builder);
-	void Create(const GLfloat* points, unsigned int* orderIndex, unsigned int countVertices, unsigned int countIndexes, unsigned int dataSize);
-	glm::vec3 GetNormal()  override;
-	void Update() override;
-	void Translate() override;
-	void SetPoints(std::vector<glm::vec3> points) override;
-	~Line();
+	class Line : public Shape, public Primitive
+	{
+	public:
+		Line(ShapesBuilder& builder);
+		Line(ShapesBuilder&& builder);
+		void Create(const GLfloat* points, unsigned int* orderIndex, unsigned int countVertices, unsigned int countIndexes, unsigned int dataSize);
+		glm::vec3 GetNormal()  override;
+		void Update() override;
+		void Translate() override;
+		void SetPoints(std::vector<glm::vec3> points) override;
+		~Line();
 
-	std::vector<glm::vec3> points;
-protected:
-	void CreateModelMatrix() override;
-private:
-	std::vector<Shader*> shaders;
-	ShaderCompiler sm;
-};
-
+		std::vector<glm::vec3> points;
+	protected:
+		void CreateModelMatrix() override;
+	private:
+		std::vector<Shader*> shaders;
+		ShaderCompiler sm;
+	};
+}

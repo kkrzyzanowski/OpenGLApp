@@ -1,148 +1,149 @@
 #include "SkyBoxCube.h"
 #include "../Config.h"
 
-
-
-SkyBoxCube::SkyBoxCube(ShapesBuilder& builder) : Shape(builder)
+namespace AppEngine
 {
-	GLfloat g_vertex_buffer_data[] = {
-		-.5f, -.5f, .5f,//0
-		 .5f, -.5f, .5f,//1
-		1.0f,  -1.0f, -1.0f,//2
-		-1.0f, -1.0f, -1.0f,//3
-		-1.0f, 1.0f, 1.0f,// 4
-		1.0f, 1.0f, 1.0f,// 5
-		1.0f,  1.0f, -1.0f,// 6
-		-1.0f, 1.0f, -1.0f };// 7
-	unsigned int indexes[] = {
-		// Right
-	1, 2, 6,
-	6, 5, 1,
-	// Left
-	0, 4, 7,
-	7, 3, 0,
-	// Top
-	4, 5, 6,
-	6, 7, 4,
-	// Bottom
-	0, 3, 2,
-	2, 1, 0,
-	// Back
-	0, 1, 5,
-	5, 4, 0,
-	// Front
-	3, 7, 6,
-	6, 2, 3
-	};
-	CreateType();
-	Create(g_vertex_buffer_data, indexes, 12, 36, nullptr, 8);
-}
-
-SkyBoxCube::SkyBoxCube(ShapesBuilder&& builder) : Shape(std::move(builder))
-{
-	GLfloat g_vertex_buffer_data[] = {
-		-0.5f, -0.5f,  0.5f,//0
-		 0.5f, -0.5f,  0.5f,//1
-		 0.5f, -0.5f, -0.5f,//2
-		-0.5f, -0.5f, -0.5f,//3
-		-0.5f,  0.5f,  0.5f,//4
-		 0.5f,  0.5f,  0.5f,//5
-		 0.5f,  0.5f, -0.5f,//6
-		-0.5f,  0.5f, -0.5f };//7
-	unsigned int indexes[] = {
-	// Right
-	1, 2, 6,
-	6, 5, 1,
-	// Left
-	0, 4, 7,
-	7, 3, 0,
-	// Top
-	4, 5, 6,
-	6, 7, 4,
-	// Bottom
-	0, 3, 2,
-	2, 1, 0,
-	// Back
-	0, 1, 5,
-	5, 4, 0,
-	// Front
-	3, 7, 6,
-	6, 2, 3
-	};
-	CreateType();
-	Create(g_vertex_buffer_data, indexes, 12, 36, nullptr, 8);
-}
-
-void SkyBoxCube::Create(const GLfloat* points, unsigned int* orderIndex, unsigned int countVertices, unsigned int countIndexes, unsigned int* bufferDataSizes, unsigned int dataSize)
-{
-	bm->CreateBuffersOnlyVertex(points, orderIndex, countVertices, countIndexes);
-}
-
-void SkyBoxCube::GenerateShaders()
-{
-	sc.ActivateDefaultProgram();
-	sc.AddShadersToProgram(sm->shaders);
-	sc.EnableUse();
-	PrepareShaderMatricesFieldData();
-	CreateModelMatrix();
-	paths.push_back(CUBEBOX_RIGHT_PATH);
-	paths.push_back(CUBEBOX_LEFT_PATH);
-	paths.push_back(CUBEBOX_TOP_PATH);
-	paths.push_back(CUBEBOX_BOTTOM_PATH);
-	paths.push_back(CUBEBOX_FRONT_PATH);
-	paths.push_back(CUBEBOX_BACK_PATH);
-
-	shapeState = ShapeState::EXISTING;
-}
-
-void SkyBoxCube::ApplyShaders()
-{
-	cubeMapTexture = new CubeMapTexture(paths);
-	cubeMapTexture->Bind();
-	ShaderTypeGenerator::UpdateModel(sm->shaders, sc.GetCurrentProgram(), mvp.model);
-	ShaderTypeGenerator::ShaderSkyBoxGenerator(sm->shaders, sc.GetDefaultProgram());
-	cubeMapTexture->UnBind();
-}
-
-void SkyBoxCube::AfterUpdate()
-{
-	cubeMapTexture->UnBind();
-	sc.DisableUse();
-}
-
-void SkyBoxCube::CreateModelMatrix()
-{
-	this->mvp.model = glm::mat4(1.0f);
-	this->mvp.model = glm::scale(this->mvp.model, glm::vec3(1000.0f, 1000.0f, 1000.0f));
-}
-
-void SkyBoxCube::Update()
-{
-	sc.ActivateDefaultProgram();
-	sc.EnableUse();
-	cubeMapTexture->Bind();
-	ShaderTypeGenerator::UpdateModel(sm->shaders, sc.GetCurrentProgram(), mvp.model);
-	bm->BindBuffers();
-}
-void SkyBoxCube::InitializeShapeView(glm::mat4& view)
-{
-	if (shapeState == ShapeState::EXISTING)
+	SkyBoxCube::SkyBoxCube(ShapesBuilder& builder) : Shape(builder)
 	{
-		glm::vec4 cubeMapView = glm::vec4(this->mvp.view[3][0], this->mvp.view[3][1],
-			this->mvp.view[3][2], this->mvp.view[3][3]);
-		this->mvp.view = view;
-		this->mvp.view[3] = cubeMapView;
+		GLfloat g_vertex_buffer_data[] = {
+			-.5f, -.5f, .5f,//0
+			 .5f, -.5f, .5f,//1
+			1.0f,  -1.0f, -1.0f,//2
+			-1.0f, -1.0f, -1.0f,//3
+			-1.0f, 1.0f, 1.0f,// 4
+			1.0f, 1.0f, 1.0f,// 5
+			1.0f,  1.0f, -1.0f,// 6
+			-1.0f, 1.0f, -1.0f };// 7
+		unsigned int indexes[] = {
+			// Right
+		1, 2, 6,
+		6, 5, 1,
+		// Left
+		0, 4, 7,
+		7, 3, 0,
+		// Top
+		4, 5, 6,
+		6, 7, 4,
+		// Bottom
+		0, 3, 2,
+		2, 1, 0,
+		// Back
+		0, 1, 5,
+		5, 4, 0,
+		// Front
+		3, 7, 6,
+		6, 2, 3
+		};
+		CreateType();
+		Create(g_vertex_buffer_data, indexes, 12, 36, nullptr, 8);
 	}
-	else
+
+	SkyBoxCube::SkyBoxCube(ShapesBuilder&& builder) : Shape(std::move(builder))
 	{
-		this->mvp.view = view;
+		GLfloat g_vertex_buffer_data[] = {
+			-0.5f, -0.5f,  0.5f,//0
+			 0.5f, -0.5f,  0.5f,//1
+			 0.5f, -0.5f, -0.5f,//2
+			-0.5f, -0.5f, -0.5f,//3
+			-0.5f,  0.5f,  0.5f,//4
+			 0.5f,  0.5f,  0.5f,//5
+			 0.5f,  0.5f, -0.5f,//6
+			-0.5f,  0.5f, -0.5f };//7
+		unsigned int indexes[] = {
+			// Right
+			1, 2, 6,
+			6, 5, 1,
+			// Left
+			0, 4, 7,
+			7, 3, 0,
+			// Top
+			4, 5, 6,
+			6, 7, 4,
+			// Bottom
+			0, 3, 2,
+			2, 1, 0,
+			// Back
+			0, 1, 5,
+			5, 4, 0,
+			// Front
+			3, 7, 6,
+			6, 2, 3
+		};
+		CreateType();
+		Create(g_vertex_buffer_data, indexes, 12, 36, nullptr, 8);
 	}
-}
-glm::vec3 SkyBoxCube::GetNormal()
-{
-	return glm::vec3();
-}
-SkyBoxCube::~SkyBoxCube()
-{
-	delete cubeMapTexture;
+
+	void SkyBoxCube::Create(const GLfloat* points, unsigned int* orderIndex, unsigned int countVertices, unsigned int countIndexes, unsigned int* bufferDataSizes, unsigned int dataSize)
+	{
+		bm->CreateBuffersOnlyVertex(points, orderIndex, countVertices, countIndexes);
+	}
+
+	void SkyBoxCube::GenerateShaders()
+	{
+		sc.ActivateDefaultProgram();
+		sc.AddShadersToProgram(sm->shaders);
+		sc.EnableUse();
+		PrepareShaderMatricesFieldData();
+		CreateModelMatrix();
+		paths.push_back(CUBEBOX_RIGHT_PATH);
+		paths.push_back(CUBEBOX_LEFT_PATH);
+		paths.push_back(CUBEBOX_TOP_PATH);
+		paths.push_back(CUBEBOX_BOTTOM_PATH);
+		paths.push_back(CUBEBOX_FRONT_PATH);
+		paths.push_back(CUBEBOX_BACK_PATH);
+
+		shapeState = ShapeState::EXISTING;
+	}
+
+	void SkyBoxCube::ApplyShaders()
+	{
+		cubeMapTexture = new CubeMapTexture(paths);
+		cubeMapTexture->Bind();
+		ShaderTypeGenerator::UpdateModel(sm->shaders, sc.GetCurrentProgram(), mvp.model);
+		ShaderTypeGenerator::ShaderSkyBoxGenerator(sm->shaders, sc.GetDefaultProgram());
+		cubeMapTexture->UnBind();
+	}
+
+	void SkyBoxCube::AfterUpdate()
+	{
+		cubeMapTexture->UnBind();
+		sc.DisableUse();
+	}
+
+	void SkyBoxCube::CreateModelMatrix()
+	{
+		this->mvp.model = glm::mat4(1.0f);
+		this->mvp.model = glm::scale(this->mvp.model, glm::vec3(1000.0f, 1000.0f, 1000.0f));
+	}
+
+	void SkyBoxCube::Update()
+	{
+		sc.ActivateDefaultProgram();
+		sc.EnableUse();
+		cubeMapTexture->Bind();
+		ShaderTypeGenerator::UpdateModel(sm->shaders, sc.GetCurrentProgram(), mvp.model);
+		bm->BindBuffers();
+	}
+	void SkyBoxCube::InitializeShapeView(glm::mat4& view)
+	{
+		if (shapeState == ShapeState::EXISTING)
+		{
+			glm::vec4 cubeMapView = glm::vec4(this->mvp.view[3][0], this->mvp.view[3][1],
+				this->mvp.view[3][2], this->mvp.view[3][3]);
+			this->mvp.view = view;
+			this->mvp.view[3] = cubeMapView;
+		}
+		else
+		{
+			this->mvp.view = view;
+		}
+	}
+	glm::vec3 SkyBoxCube::GetNormal()
+	{
+		return glm::vec3();
+	}
+	SkyBoxCube::~SkyBoxCube()
+	{
+		delete cubeMapTexture;
+	}
 }

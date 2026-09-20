@@ -3,11 +3,15 @@
 #include "menu.h"
 #include "AddWindow.h"
 #include "EventHandler.h"
+
+#include "OpenGLScene.h" // include tutaj (cpp), bo potrzebujesz pe³nej definicji w implementacji
+#include <GLFW/glfw3.h>  // jeœli u¿ywasz bezpoœrednio typów GLFW lub funkcji
 #include <vector>
 #include <filesystem>
 #include <iostream>
 
 bool openAddDialog = false;
+bool openWindowsDialog = false;
 bool openSceneWindow = false;
 bool isSceneHovered = false;
 ImVec2 sceneSize;
@@ -15,6 +19,8 @@ ImVec2 downPanelSize;
 ImVec2 scenePosition;
 OpenGLScene* scene = nullptr;
 std::shared_ptr<FrameBuffer> sceneFrameBuffer = nullptr;
+std::string filePath;
+ShapeType type{};
 void SetSceneSizeAndPosition(ImVec2 size);
 
 void MenuGUI::ShowEditor(bool* p_open)
@@ -85,21 +91,43 @@ void MenuGUI::ShowEditor(bool* p_open)
 		{
 			propSize = ImGui::GetWindowSize();
 			propPosition = ImGui::GetWindowPos();
+
 			if (ImGui::BeginTabBar("blah"))
 			{
 				if (ImGui::BeginTabItem("Shapes"))
 				{
 					if (ImGui::Button("Cube"))
+					{
 						openAddDialog = true;
+						type = ShapeType::CUBE;
+					}
+					if (ImGui::Button("Plane"))
+					{
+						type = ShapeType::PLANE;
+						openAddDialog = true;
+					}
+					if (ImGui::Button("Sphere"))
+					{
+						type = ShapeType::SPEHERE;
+						openAddDialog = true;
+					}
+					if (ImGui::Button("Custom"))
+					{
+						//TO-DO implement window with path to object
+						type = ShapeType::CUSTOM;
+						openWindowsDialog = true;
+					}
 					if (openAddDialog)
 					{
-						MenuGUI::CreateAddWindow(&openAddDialog, scene);
+						MenuGUI::CreateAddWindow(&openAddDialog, scene, type, filePath);
 					}
-					ImGui::Button("Plane");
-					ImGui::Button("Sphere");
-					ImGui::Button("Custom");
+					else if (openWindowsDialog)
+					{
+						filePath = MenuGUI::ShowWindowsDialog(&openWindowsDialog, scene, type, &openAddDialog).string();
+					}
 					ImGui::EndTabItem();
 				}
+
 				ImGui::EndTabBar();
 			}
 		}

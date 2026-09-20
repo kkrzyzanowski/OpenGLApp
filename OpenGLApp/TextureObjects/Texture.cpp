@@ -1,203 +1,206 @@
 #include "Texture.h"
 #include "..\Rendering\Renderer.h"
 
-Texture::Texture(const std::string& path, unsigned int slot, int mode) : m_path(path), Slot(slot), m_TextureID(0), m_localBuffer(nullptr),
-m_width(0), m_height(0), m_BPP(0), canBeActive(true)
+namespace AppEngine
 {
-	//stbi_set_flip_vertically_on_load(1);
-
-	name = path.substr(path.find_last_of('/\\') + 1);
-	name = path.substr(0, path.find_last_of('.'));
-	m_localBuffer = stbi_load(path.c_str(), &m_width, &m_height, &m_BPP, 4);
-	GLCall(glGenTextures(1, &m_TextureID));
-	GLCall(glBindTexture(GL_TEXTURE_2D, m_TextureID));
-
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode));
-
-	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_localBuffer));
-	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
-	if (m_localBuffer)
-		stbi_image_free(m_localBuffer);
-}
-
-Texture::Texture(unsigned int width, unsigned int height, unsigned int slot, unsigned short colorAttachment, int dataType, TextureMode textureMode) : m_path(""), Slot(slot), m_TextureID(0), m_localBuffer(nullptr),
-m_width(width), m_height(height), m_BPP(0), m_colorAttachment(colorAttachment), m_dataType(dataType), m_mode(textureMode), canBeActive(true)
-{
-
-}
-
-Texture::~Texture()
-{
-	GLCall(glDeleteTextures(1, &m_TextureID));
-}
-
-void Texture::Bind(unsigned short slot) const
-{
-	GLCall(glActiveTexture(GL_TEXTURE0 + slot));
-	GLCall(glBindTexture(GL_TEXTURE_2D, m_TextureID));
-}
-
-void Texture::Bind() const
-{
-	if (canBeActive)
+	Texture::Texture(const std::string& path, unsigned int slot, int mode) : m_path(path), Slot(slot), m_TextureID(0), m_localBuffer(nullptr),
+		m_width(0), m_height(0), m_BPP(0), canBeActive(true)
 	{
-		GLCall(glActiveTexture(GL_TEXTURE0 + Slot));
+		//stbi_set_flip_vertically_on_load(1);
+
+		name = path.substr(path.find_last_of('/\\') + 1);
+		name = path.substr(0, path.find_last_of('.'));
+		m_localBuffer = stbi_load(path.c_str(), &m_width, &m_height, &m_BPP, 4);
+		GLCall(glGenTextures(1, &m_TextureID));
+		GLCall(glBindTexture(GL_TEXTURE_2D, m_TextureID));
+
+		GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+		GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+		GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, mode));
+		GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, mode));
+
+		GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_localBuffer));
+		GLCall(glBindTexture(GL_TEXTURE_2D, 0));
+		if (m_localBuffer)
+			stbi_image_free(m_localBuffer);
+	}
+
+	Texture::Texture(unsigned int width, unsigned int height, unsigned int slot, unsigned short colorAttachment, int dataType, TextureMode textureMode) : m_path(""), Slot(slot), m_TextureID(0), m_localBuffer(nullptr),
+		m_width(width), m_height(height), m_BPP(0), m_colorAttachment(colorAttachment), m_dataType(dataType), m_mode(textureMode), canBeActive(true)
+	{
+
+	}
+
+	Texture::~Texture()
+	{
+		GLCall(glDeleteTextures(1, &m_TextureID));
+	}
+
+	void Texture::Bind(unsigned short slot) const
+	{
+		GLCall(glActiveTexture(GL_TEXTURE0 + slot));
 		GLCall(glBindTexture(GL_TEXTURE_2D, m_TextureID));
 	}
-}
 
-void Texture::BindNoActive() const
-{
-	GLCall(glBindTexture(GL_TEXTURE_2D, m_TextureID));
-}
-
-void Texture::UnBind() const
-{
-	GLCall(glActiveTexture(GL_TEXTURE0 + Slot));
-	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
-}
-
-void Texture::CreateTexture()
-{
-	switch (m_mode)
+	void Texture::Bind() const
 	{
-	case TextureMode::TEXTURE:
-	{
-		break;
+		if (canBeActive)
+		{
+			GLCall(glActiveTexture(GL_TEXTURE0 + Slot));
+			GLCall(glBindTexture(GL_TEXTURE_2D, m_TextureID));
+		}
 	}
-	case TextureMode::FRAMEBUFFER:
+
+	void Texture::BindNoActive() const
 	{
-		CreateFrameBufferTexture();
-		break;
+		GLCall(glBindTexture(GL_TEXTURE_2D, m_TextureID));
 	}
-	case TextureMode::SHADOWMAP:
+
+	void Texture::UnBind() const
+	{
+		GLCall(glActiveTexture(GL_TEXTURE0 + Slot));
+		GLCall(glBindTexture(GL_TEXTURE_2D, 0));
+	}
+
+	void Texture::CreateTexture()
+	{
+		switch (m_mode)
+		{
+		case TextureMode::TEXTURE:
+		{
+			break;
+		}
+		case TextureMode::FRAMEBUFFER:
+		{
+			CreateFrameBufferTexture();
+			break;
+		}
+		case TextureMode::SHADOWMAP:
+		{
+			m_width = SHADOW_WIDTH;
+			m_height = SHADOW_HEIGHT;
+			CreateShadowMapTexture();
+			break;
+		}
+		case TextureMode::HDR_TEXTURE:
+		{
+			CreateHDRTexture();
+			break;
+		}
+		case TextureMode::G_BUFFER_TRANSFORM:
+		{
+			CreateHDRTexture();
+			break;
+		}
+		case TextureMode::G_BUFFER_COLOR_SPECULAR:
+		{
+			CreateColorAlphaFramebufferTexture();
+			break;
+		}
+		case TextureMode::G_BUFFER_NORMAL:
+		{
+			CreateHDRTexture();
+			break;
+		}
+		case TextureMode::ONE_COLOR:
+		{
+			Texture::CreateOneColorTexture();
+			break;
+		}
+		}
+	}
+
+	void Texture::CreateFrameBufferTexture()
+	{
+		//Slot = 20; // Use a specific slot for framebuffer textures, can be changed as needed
+		glGenTextures(1, &m_TextureID);
+		glBindTexture(GL_TEXTURE_2D, m_TextureID);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_width, m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + m_colorAttachment, GL_TEXTURE_2D, m_TextureID, 0);
+	}
+
+	void Texture::CreateShadowMapTexture()
 	{
 		m_width = SHADOW_WIDTH;
 		m_height = SHADOW_HEIGHT;
-		CreateShadowMapTexture();
-		break;
+
+		///temporary last slot on textures
+		Slot = 7;
+		///
+		glGenTextures(1, &m_TextureID);
+		glBindTexture(GL_TEXTURE_2D, m_TextureID);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER));
+		GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER));
+		GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_TextureID, 0);
 	}
-	case TextureMode::HDR_TEXTURE:
+
+	void Texture::CreateHDRTexture()
 	{
-		CreateHDRTexture();
-		break;
+		glGenTextures(1, &m_TextureID);
+		glBindTexture(GL_TEXTURE_2D, m_TextureID);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_width, m_height, 0, GL_RGBA, GL_FLOAT, NULL);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + m_colorAttachment, GL_TEXTURE_2D, m_TextureID, 0);
 	}
-	case TextureMode::G_BUFFER_TRANSFORM:
+
+	void Texture::CreateTextureForFrameBuffer()
 	{
-		CreateHDRTexture();
-		break;
+		glGenTextures(1, &m_TextureID);
+		glBindTexture(GL_TEXTURE_2D, m_TextureID);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_width, m_height, 0, GL_RGBA, m_dataType, NULL);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + m_colorAttachment, GL_TEXTURE_2D, m_TextureID, 0);
 	}
-	case TextureMode::G_BUFFER_COLOR_SPECULAR:
+
+	void Texture::CreateColorAlphaFramebufferTexture()
 	{
-		CreateColorAlphaFramebufferTexture();
-		break;
+		glGenTextures(1, &m_TextureID);
+		glBindTexture(GL_TEXTURE_2D, m_TextureID);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + m_colorAttachment, GL_TEXTURE_2D, m_TextureID, 0);
 	}
-	case TextureMode::G_BUFFER_NORMAL:
+
+	void Texture::CreateOneColorTexture()
 	{
-		CreateHDRTexture();
-		break;
+		glGenTextures(1, &m_TextureID);
+		glBindTexture(GL_TEXTURE_2D, m_TextureID);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, m_width, m_height, 0, GL_RED, GL_FLOAT, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + m_colorAttachment, GL_TEXTURE_2D, m_TextureID, 0);
 	}
-	case TextureMode::ONE_COLOR:
+
+	void Texture::CreateNoiseTexture()
 	{
-		Texture::CreateOneColorTexture();
-		break;
+		glGenTextures(1, &m_TextureID);
+		glBindTexture(GL_TEXTURE_2D, m_TextureID);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_width, m_height, 0, GL_RGBA, GL_FLOAT, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	}
-	}
-}
-
-void Texture::CreateFrameBufferTexture()
-{
-	//Slot = 20; // Use a specific slot for framebuffer textures, can be changed as needed
-	glGenTextures(1, &m_TextureID);
-	glBindTexture(GL_TEXTURE_2D, m_TextureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_width, m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + m_colorAttachment, GL_TEXTURE_2D, m_TextureID, 0);
-}
-
-void Texture::CreateShadowMapTexture()
-{
-	m_width = SHADOW_WIDTH;
-	m_height = SHADOW_HEIGHT;
-
-	///temporary last slot on textures
-	Slot = 7;
-	///
-	glGenTextures(1, &m_TextureID);
-	glBindTexture(GL_TEXTURE_2D, m_TextureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER));
-	GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
-	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_TextureID, 0);
-}
-
-void Texture::CreateHDRTexture()
-{
-	glGenTextures(1, &m_TextureID);
-	glBindTexture(GL_TEXTURE_2D, m_TextureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_width, m_height, 0, GL_RGBA, GL_FLOAT, NULL);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + m_colorAttachment, GL_TEXTURE_2D, m_TextureID, 0);
-}
-
-void Texture::CreateTextureForFrameBuffer()
-{
-	glGenTextures(1, &m_TextureID);
-	glBindTexture(GL_TEXTURE_2D, m_TextureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_width, m_height, 0, GL_RGBA, m_dataType, NULL);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + m_colorAttachment, GL_TEXTURE_2D, m_TextureID, 0);
-}
-
-void Texture::CreateColorAlphaFramebufferTexture()
-{
-	glGenTextures(1, &m_TextureID);
-	glBindTexture(GL_TEXTURE_2D, m_TextureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + m_colorAttachment, GL_TEXTURE_2D, m_TextureID, 0);
-}
-
-void Texture::CreateOneColorTexture()
-{
-	glGenTextures(1, &m_TextureID);
-	glBindTexture(GL_TEXTURE_2D, m_TextureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, m_width, m_height, 0, GL_RED, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + m_colorAttachment, GL_TEXTURE_2D, m_TextureID, 0);
-}
-
-void Texture::CreateNoiseTexture()
-{
-	glGenTextures(1, &m_TextureID);
-	glBindTexture(GL_TEXTURE_2D, m_TextureID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_width, m_height, 0, GL_RGBA, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 }

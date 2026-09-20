@@ -3,9 +3,7 @@
 #include <Managers/ShapeManager.h>
 using namespace AppEngine;
 
-
-
-void MenuGUI::CreateAddWindow(bool* p_open, OpenGLScene* scene)
+void MenuGUI::CreateAddWindow(bool* p_open, OpenGLScene* scene, ShapeType type, const std::string& filePath)
 {
     static bool no_titlebar = false;
     static bool no_scrollbar = false;
@@ -19,7 +17,6 @@ void MenuGUI::CreateAddWindow(bool* p_open, OpenGLScene* scene)
     static bool no_bring_to_front = false;
     static bool no_docking = false;
     static bool unsaved_document = false;
-
     ImGuiWindowFlags window_flags = 0;
     if (no_titlebar)        window_flags |= ImGuiWindowFlags_NoTitleBar;
     if (no_scrollbar)       window_flags |= ImGuiWindowFlags_NoScrollbar;
@@ -47,9 +44,9 @@ void MenuGUI::CreateAddWindow(bool* p_open, OpenGLScene* scene)
     }
 
     static float color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-    static float position[4] = { 0.10f, 0.20f, 0.30f, 0.44f };
-    static float rotation[3] = { 0.10f, 0.20f, 0.30f };
-    static float scale[3] = { 0.10f, 0.20f, 0.30f};
+    static float position[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    static float rotation[3] = { 0.0f, 0.0f, 0.0f };
+    static float scale[3] = { 1.0f, 1.0f, 1.0f};
     ImGui::DragFloat4("Position", position, 0.005f);
     ImGui::ColorEdit4("Color", color);
     ImGui::DragFloat3("Rotation", rotation, 0.005f);
@@ -57,7 +54,7 @@ void MenuGUI::CreateAddWindow(bool* p_open, OpenGLScene* scene)
     if (ImGui::Button("Save"))
     {
         ///to-do make singleton of shapemanager
-		auto shape = ShapeManager::AddShape(ShapeType::CUBE, position, color, rotation, scale);
+        auto shape = ShapeManager::AddShape(type, position, color, rotation, scale, filePath);
 		scene->ReinitializeScene(shape);
         *p_open = false;
         ImGui::End();
@@ -70,5 +67,44 @@ void MenuGUI::CreateAddWindow(bool* p_open, OpenGLScene* scene)
         return;
     }
     ImGui::End();
+}
+
+std::filesystem::path MenuGUI::ShowWindowsDialog(bool* p_open, AppEngine::OpenGLScene* scene, ShapeType type, bool* p_open_dialog)
+{
+    OPENFILENAME ofn;       // common dialog box structure
+    TCHAR szFile[260] = { 0 };       // if using TCHAR macros
+	HWND hWnd = GetActiveWindow(); // Get the handle of the active window
+
+    // Initialize OPENFILENAME
+    ZeroMemory(&ofn, sizeof(ofn));
+    ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = hWnd; // Set the owner window handle
+    ofn.lpstrFile = szFile;
+    ofn.nMaxFile = sizeof(szFile);
+    ofn.lpstrFilter = "Object files (*.obj)\0*.obj;\0";
+    ofn.nFilterIndex = 1;
+    ofn.lpstrFileTitle = NULL;
+    ofn.nMaxFileTitle = 0;
+    ofn.lpstrInitialDir = NULL;
+    ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+    static float color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    static float position[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    static float rotation[3] = { 0.0f, 0.0f, 0.0f };
+    static float scale[3] = { 1.0f, 1.0f, 1.0f };
+	std::filesystem::path oldPath = std::filesystem::current_path();
+
+    if (GetOpenFileName(&ofn) == TRUE)
+    {
+		std::filesystem::current_path(oldPath);
+        *p_open = false;
+        *p_open_dialog = true;
+		return ofn.lpstrFile;
+    }
+    else
+    {
+		*p_open = false;
+        *p_open_dialog = false;
+		return std::filesystem::path();
+    }
 }
 

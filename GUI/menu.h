@@ -1,9 +1,13 @@
 #pragma once
-#include <OpenGLScene.h>
+
 #ifndef MENU_API
 #define MENU_API
 #endif // !MENU_API
-using namespace AppEngine;
+
+// forward declarations zamiast includowania OpenGLScene.h
+namespace AppEngine { class OpenGLScene; }
+struct GLFWwindow;
+
 namespace MenuGUI
 {
 	MENU_API void ShowEditor(bool* p_open);
@@ -15,5 +19,5 @@ namespace MenuGUI
 	MENU_API void SceneMenu(bool* p_open);
 	MENU_API void CloseScene();
 
-	MENU_API OpenGLScene* GetScene();
+	MENU_API AppEngine::OpenGLScene* GetScene();
 }

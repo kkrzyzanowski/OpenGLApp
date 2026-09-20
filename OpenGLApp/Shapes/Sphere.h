@@ -1,19 +1,21 @@
 #pragma once
 #include "..\Shapes\Shape.h"
-class Sphere :
-	public Shape
-{
-public:
-	Sphere() = default;
-	Sphere(ShapesBuilder& builder);
-	Sphere(ShapesBuilder&& builder);
-	glm::vec3 GetNormal() override;
-	float GetRadius() const;
-	~Sphere();
-private:
-	glm::vec3 normalLight;
-	float radius;
-	/*GLfloat* vertices;
-	unsigned int* sphere_ix;*/
-};
 
+namespace AppEngine
+{
+	class Sphere : public Shape
+	{
+	public:
+		Sphere() = default;
+		Sphere(ShapesBuilder& builder);
+		Sphere(ShapesBuilder&& builder);
+		glm::vec3 GetNormal() override;
+		float GetRadius() const;
+		~Sphere();
+	private:
+		glm::vec3 normalLight;
+		float radius;
+		/*GLfloat* vertices;
+		unsigned int* sphere_ix;*/
+	};
+}

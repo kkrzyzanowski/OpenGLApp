@@ -2,79 +2,82 @@
 #include "Raycast.h"
 #include "..\Config.h"
 
-Raycast::Raycast(double xPos, double yPos, float distance, glm::mat4 projection, glm::mat4 view, glm::vec2 windowSize)
+namespace AppEngine
 {
-	this->proj = projection;
-	this->view = view;
-	rayDistance = distance;
-	x = (xPos * 2.0f) / windowSize.x  - 1.0f;
-	y = 1.0f - (yPos * 2.0f) / windowSize.y;
-	z = -1.0f;
-	ray_nds = glm::vec3(x, y, 1.0f);
-	rayStartClip = glm::vec4(x, y, -1.0f, 1.0f);
-	rayEndClip = glm::vec4(x, y, 0.0f, 1.0f);
-	CalculateMouseRay();
-}
+	Raycast::Raycast(double xPos, double yPos, float distance, glm::mat4 projection, glm::mat4 view, glm::vec2 windowSize)
+	{
+		this->proj = projection;
+		this->view = view;
+		rayDistance = distance;
+		x = (xPos * 2.0f) / windowSize.x - 1.0f;
+		y = 1.0f - (yPos * 2.0f) / windowSize.y;
+		z = -1.0f;
+		ray_nds = glm::vec3(x, y, 1.0f);
+		rayStartClip = glm::vec4(x, y, -1.0f, 1.0f);
+		rayEndClip = glm::vec4(x, y, 0.0f, 1.0f);
+		CalculateMouseRay();
+	}
 
-void Raycast::InverseToEyeCoords()
-{
-	rayStartCamera = glm::inverse(proj) * rayStartClip;
-	rayEndCamera = glm::inverse(proj) * rayEndClip;
+	void Raycast::InverseToEyeCoords()
+	{
+		rayStartCamera = glm::inverse(proj) * rayStartClip;
+		rayEndCamera = glm::inverse(proj) * rayEndClip;
 
-	rayStartCamera /= rayStartCamera.w;
-	rayEndCamera /= rayEndCamera.w;
+		rayStartCamera /= rayStartCamera.w;
+		rayEndCamera /= rayEndCamera.w;
 
-	rayStartWorld = glm::inverse(view) * rayStartCamera;
-	rayEndWorld = glm::inverse(view) * rayEndCamera;
-	//startRay = glm::vec4(startRay.x, startRay.y, -1.0f, 0.0f);
-}
+		rayStartWorld = glm::inverse(view) * rayStartCamera;
+		rayEndWorld = glm::inverse(view) * rayEndCamera;
+		//startRay = glm::vec4(startRay.x, startRay.y, -1.0f, 0.0f);
+	}
 
-void Raycast::InverseToWorldCoords()
-{
-	/*glm::vec4 worldCoords = glm::inverse(view) * startRay;
-	worldRay = glm::vec3(-worldCoords.x, -worldCoords.y, worldCoords.z);*/
-	rayDirWorld = glm::normalize(rayEndWorld - rayStartWorld);
-	origin = glm::vec3(rayStartWorld);
-	worldRay = (glm::vec3)rayDirWorld;
-	worldRayNormalized = glm::normalize(glm::vec3(rayDirWorld.x, rayDirWorld.y, rayDirWorld.z));
-	//std::cout << "Ray Direciton: " << worldRayNormalized.x << " y: " <<
-	//	worldRayNormalized.y << " z: " << worldRayNormalized.z << std::endl;
-	
-}
+	void Raycast::InverseToWorldCoords()
+	{
+		/*glm::vec4 worldCoords = glm::inverse(view) * startRay;
+		worldRay = glm::vec3(-worldCoords.x, -worldCoords.y, worldCoords.z);*/
+		rayDirWorld = glm::normalize(rayEndWorld - rayStartWorld);
+		origin = glm::vec3(rayStartWorld);
+		worldRay = (glm::vec3)rayDirWorld;
+		worldRayNormalized = glm::normalize(glm::vec3(rayDirWorld.x, rayDirWorld.y, rayDirWorld.z));
+		//std::cout << "Ray Direciton: " << worldRayNormalized.x << " y: " <<
+		//	worldRayNormalized.y << " z: " << worldRayNormalized.z << std::endl;
 
-void Raycast::CalculateMouseRay()
-{
-	InverseToEyeCoords();
-	InverseToWorldCoords();
-}
+	}
 
-bool Raycast::IntersectionInRange(float start, float end)
-{
-	glm::vec3 startPoint = GetPointFromRay(worldRayNormalized, start);
-	glm::vec3 endPoint = GetPointFromRay(worldRayNormalized, end);
-	return false;
-}
+	void Raycast::CalculateMouseRay()
+	{
+		InverseToEyeCoords();
+		InverseToWorldCoords();
+	}
 
-glm::vec3 Raycast::GetPointFromRay(glm::vec3 ray, float distance)
-{
-	return glm::vec3();
-}
+	bool Raycast::IntersectionInRange(float start, float end)
+	{
+		glm::vec3 startPoint = GetPointFromRay(worldRayNormalized, start);
+		glm::vec3 endPoint = GetPointFromRay(worldRayNormalized, end);
+		return false;
+	}
 
-glm::vec3 Raycast::GetUnnormalizedWorldDirection()
-{
-	return worldRay;
-}
-glm::vec3 Raycast::GetWorldRayDirection()
-{
-	return worldRayNormalized;
-}
+	glm::vec3 Raycast::GetPointFromRay(glm::vec3 ray, float distance)
+	{
+		return glm::vec3();
+	}
 
-glm::vec3 Raycast::GetRayOrigin() const
-{
-	return origin;
-}
+	glm::vec3 Raycast::GetUnnormalizedWorldDirection()
+	{
+		return worldRay;
+	}
+	glm::vec3 Raycast::GetWorldRayDirection()
+	{
+		return worldRayNormalized;
+	}
+
+	glm::vec3 Raycast::GetRayOrigin() const
+	{
+		return origin;
+	}
 
 
-Raycast::~Raycast()
-{
+	Raycast::~Raycast()
+	{
+	}
 }

@@ -1,12 +1,13 @@
 #include "Primitive.h"
 
-
-
-Primitive::Primitive()
+namespace AppEngine
 {
-}
+	Primitive::Primitive()
+	{
+	}
 
 
-Primitive::~Primitive()
-{
+	Primitive::~Primitive()
+	{
+	}
 }

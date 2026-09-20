@@ -1,77 +1,80 @@
 #pragma once
 #include <vector>
-enum  ShapeType
-{
-	TRIANGLE, PLANE, CUBE, SPEHERE, SKYBOX, LINE, TERRAIN, CUSTOM
-};
-enum LightType
-{
-	DEFAULT = 0,
-	DIRECTIONAL = 1,
-	POINT = 2,
-	SPOTLIGHT = 3,
-	NONELIGHT = 4,
-};
 
-enum SourceShapeType
+namespace AppEngine
 {
-	SHAPE = 0,
-	LIGHT = 1,
-	PARTICLE = 2,
-	PRIMITIVE = 3,
-	NO_TYPE
-};
+	enum ShapeType
+	{
+		TRIANGLE, PLANE, CUBE, SPEHERE, SKYBOX, LINE, TERRAIN, CUSTOM
+	};
+	enum LightType
+	{
+		DEFAULT = 0,
+		DIRECTIONAL = 1,
+		POINT = 2,
+		SPOTLIGHT = 3,
+		NONELIGHT = 4,
+	};
 
-enum Shading
-{
-	FORWARD_SHADING  = 1u << 0,
-	DEFFERED_SHADING = 1u << 1,
-	ONLY_COLOR		 = 1u << 2,
-	TEXTURE_COLOR	 = 1u << 3,
-	DISPLACEMENT	 = 1u << 4,
-	CUBEMAP			 = 1u << 5,
-	HDR_SHADING		 = 1u << 6,
-	BLOOM			 = 1u << 7,
-}; // by bytes to-do
+	enum SourceShapeType
+	{
+		SHAPE = 0,
+		LIGHT = 1,
+		PARTICLE = 2,
+		PRIMITIVE = 3,
+		NO_TYPE
+	};
 
-enum class CamView
-{
-	STATIC = 0, DYNAMIC = 1, MOVABLE = 2
-};
+	enum Shading
+	{
+		FORWARD_SHADING = 1u << 0,
+		DEFFERED_SHADING = 1u << 1,
+		ONLY_COLOR = 1u << 2,
+		TEXTURE_COLOR = 1u << 3,
+		DISPLACEMENT = 1u << 4,
+		CUBEMAP = 1u << 5,
+		HDR_SHADING = 1u << 6,
+		BLOOM = 1u << 7,
+	}; // by bytes to-do
 
-enum class ShapeState
-{
-	CREATING, EXISTING, NOT_EXISTING
-};
+	enum class CamView
+	{
+		STATIC = 0, DYNAMIC = 1, MOVABLE = 2
+	};
 
-enum Direction
-{
-	UP, DOWN, LEFT, RIGHT, FORWARD, BACKWARD
-};
-enum FrameBufferType
-{
-	GAUSSIAN_HORIZONTAL = 1 << 0, // 1
-	BLUR = 1 << 1, // 2
-	HDR = 1 << 2, // 4
-	DEPTHMAP = 1 << 3, // 8
-	GBUFFER = 1 << 4, // 16
-	POSTPROCESSING = 1 << 5, // 32
-	COLOR = 1 << 6, // 64
-	SSAO = 1 << 7, // 128
-	SSAO_LIGHTNING = 1 << 8, // 256
-	MAIN = 1 << 9, // 512
+	enum class ShapeState
+	{
+		CREATING, EXISTING, NOT_EXISTING
+	};
 
-	// keep vertical as zero if your code relies on casting bool -> 0/1,
-	// but prefer defining an explicit flag instead (see note below)
-	GAUSSIAN_VERTICAL = 0
-};
+	enum Direction
+	{
+		UP, DOWN, LEFT, RIGHT, FORWARD, BACKWARD
+	};
+	enum FrameBufferType
+	{
+		GAUSSIAN_HORIZONTAL = 1 << 0, // 1
+		BLUR = 1 << 1, // 2
+		HDR = 1 << 2, // 4
+		DEPTHMAP = 1 << 3, // 8
+		GBUFFER = 1 << 4, // 16
+		POSTPROCESSING = 1 << 5, // 32
+		COLOR = 1 << 6, // 64
+		SSAO = 1 << 7, // 128
+		SSAO_LIGHTNING = 1 << 8, // 256
+		MAIN = 1 << 9, // 512
 
-enum class ShaderFunctionType
-{
-	SHADER_FUNC_BLOOM, SHADER_FUNC_HDR, SHADER_FUNC_LIGHT_DIFFUSE, SHADER_FUNC_DIFFUSE, SHADER_FUNC_PICKING, SHADER_FUNC_DISPLACEMENT,
-	SHADER_FUNC_INSTANCED_TERRAIN, SHADER_FUNC_LIGHT_SHADOW, SHADER_FUNC_GBUFFER, SHADER_FUNC_FINAL_BLOOM, SHADER_FUNC_UPDATE_BLOOM,
-	SHADER_FUNC_UPDATE_MODEL, SHADER_FUNC_UPDATE_COLOR, SHADER_FUNC_UPDATE_COLOR_NO_ALPHA, SHADER_FUNC_UPDATE_TEXTURE,
-	SHADER_FUNC_PASS_LIGHT_MATRIX_DATA, SHADER_FUNC_UPDATE_MODEL_WITH_COLOR, SHADER_FUNC_UPDATE_MODEL_COLOR_AND_TEXTURE,
-	SHADER_FUNC_UPDATE_LIGHTNING_HDR, NO_SHADER_FUNCTION
-};
+		// keep vertical as zero if your code relies on casting bool -> 0/1,
+		// but prefer defining an explicit flag instead (see note below)
+		GAUSSIAN_VERTICAL = 0
+	};
 
+	enum class ShaderFunctionType
+	{
+		SHADER_FUNC_BLOOM, SHADER_FUNC_HDR, SHADER_FUNC_LIGHT_DIFFUSE, SHADER_FUNC_DIFFUSE, SHADER_FUNC_PICKING, SHADER_FUNC_DISPLACEMENT,
+		SHADER_FUNC_INSTANCED_TERRAIN, SHADER_FUNC_LIGHT_SHADOW, SHADER_FUNC_GBUFFER, SHADER_FUNC_FINAL_BLOOM, SHADER_FUNC_UPDATE_BLOOM,
+		SHADER_FUNC_UPDATE_MODEL, SHADER_FUNC_UPDATE_COLOR, SHADER_FUNC_UPDATE_COLOR_NO_ALPHA, SHADER_FUNC_UPDATE_TEXTURE,
+		SHADER_FUNC_PASS_LIGHT_MATRIX_DATA, SHADER_FUNC_UPDATE_MODEL_WITH_COLOR, SHADER_FUNC_UPDATE_MODEL_COLOR_AND_TEXTURE,
+		SHADER_FUNC_UPDATE_LIGHTNING_HDR, NO_SHADER_FUNCTION
+	};
+}

@@ -14,70 +14,72 @@
 #include "../DataStructures.h"
 #include "../Builders/FrameBufferBuilder.h"
 
-class FrameBuffer
+namespace AppEngine
 {
-public:
-	FrameBuffer();
-	FrameBuffer(FrameBufferBuilder& builder);
-	void Bind();
-	void ReadBind();
-	void DrawBind();
-	static void UnBind(unsigned int renderTargetFBO);
-	void GenerateTexture();
-	void GenerateShadowTexture();
-	bool CheckFrameBuffer();
-	void UnBindDrawBuffers();
-	void BindDrawBuffers();
-	void InitializeShaders();
-	void ExecuteShader();
-	void UpdateFrameBuffer();
-	void SetRenderTarget(unsigned int renderTargetFBO);
+	class FrameBuffer
+	{
+	public:
+		FrameBuffer();
+		FrameBuffer(FrameBufferBuilder& builder);
+		void Bind();
+		void ReadBind();
+		void DrawBind();
+		static void UnBind(unsigned int renderTargetFBO);
+		void GenerateTexture();
+		void GenerateShadowTexture();
+		bool CheckFrameBuffer();
+		void UnBindDrawBuffers();
+		void BindDrawBuffers();
+		void InitializeShaders();
+		void ExecuteShader();
+		void UpdateFrameBuffer();
+		void SetRenderTarget(unsigned int renderTargetFBO);
 
-	void AfterUpdateFrameBuffer();
+		void AfterUpdateFrameBuffer();
 
-	void AddTexturesToBuffer(std::vector<Texture*>& textures, FrameBufferType type);
-	void AddTexturesToBuffer(std::vector<Texture*>&& textures);
+		void AddTexturesToBuffer(std::vector<Texture*>& textures, FrameBufferType type);
+		void AddTexturesToBuffer(std::vector<Texture*>&& textures);
 
 
-	Texture* GetFramebufferTexture(unsigned int slot = 0);
-	std::vector<Texture*> GetFramebufferTextures();
-	IndexBuffer* GetIndexBuffer() const;
-	unsigned int GetFrameBuffer() const;
-	glm::vec2 GetSize() const;
+		Texture* GetFramebufferTexture(unsigned int slot = 0);
+		std::vector<Texture*> GetFramebufferTextures();
+		IndexBuffer* GetIndexBuffer() const;
+		unsigned int GetFrameBuffer() const;
+		glm::vec2 GetSize() const;
 
-	void DrawBuffers(unsigned short colorAtachhment);
-	void DrawBuffers(FrameBufferType type);
-	void SetFunctionShader(FrameBufferType type);
-	void AddParams(ShaderParams param);
-	void UpdateParams(ShaderParams param, std::string& name);
-	void AddShaders(const std::vector<const char*>& paths);
-	void AddShaders(std::vector<Shader*>& shaders);
-	std::vector<Shader*> GetFrameBufferShaders();
+		void DrawBuffers(unsigned short colorAtachhment);
+		void DrawBuffers(FrameBufferType type);
+		void SetFunctionShader(FrameBufferType type);
+		void AddParams(ShaderParams param);
+		void UpdateParams(ShaderParams param, std::string& name);
+		void AddShaders(const std::vector<const char*>& paths);
+		void AddShaders(std::vector<Shader*>& shaders);
+		std::vector<Shader*> GetFrameBufferShaders();
 
-	~FrameBuffer();
+		~FrameBuffer();
 
-private:
+	private:
 
-	void InitializeBufferScreenCoords();
-	unsigned int texColorBuffer;
-	unsigned int fbo;
-	unsigned int ftbo;
-	unsigned int renderTargetFBO;
-	
-	glm::vec2 size;
+		void InitializeBufferScreenCoords();
+		unsigned int texColorBuffer;
+		unsigned int fbo;
+		unsigned int ftbo;
+		unsigned int renderTargetFBO;
 
-	RenderBuffer* rbo;
-	ShaderManager* sm;
-	ShaderCompiler sc;
-	VertexArray* va;
-	VertexBuffer* vb;
-	VertexBufferLayout* layout;
-	IndexBuffer* ib;
-	std::unique_ptr<BufferManager> bm;
-	std::vector<ShaderParams> params;
-	ShaderFunction func;
-	FrameBufferType type;
-	TextureManager* tm;
+		glm::vec2 size;
 
-};
+		RenderBuffer* rbo;
+		ShaderManager* sm;
+		ShaderCompiler sc;
+		VertexArray* va;
+		VertexBuffer* vb;
+		VertexBufferLayout* layout;
+		IndexBuffer* ib;
+		std::unique_ptr<BufferManager> bm;
+		std::vector<ShaderParams> params;
+		ShaderFunction func;
+		FrameBufferType type;
+		TextureManager* tm;
 
+	};
+}

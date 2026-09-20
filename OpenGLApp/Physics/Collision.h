@@ -1,17 +1,21 @@
 #pragma once
 #include <vector>
 #include "..\Shapes\Shape.h"
-class Collision
+
+namespace AppEngine
 {
-public:
+	class Collision
+	{
+	public:
 
-	Collision();
-	void AddShapeCollision(Shape* shape);
-	void RemoveShapeCollision(std::string& id);
-	bool CheckCollision();
-	bool CheckShapeCollision();
-	~Collision();
+		Collision();
+		void AddShapeCollision(Shape* shape);
+		void RemoveShapeCollision(std::string& id);
+		bool CheckCollision();
+		bool CheckShapeCollision();
+		~Collision();
 
-	std::vector<std::shared_ptr<Shape>> objects;
-};
+		std::vector<std::shared_ptr<Shape>> objects;
+	};
+}
 

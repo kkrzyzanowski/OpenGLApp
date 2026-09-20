@@ -4,54 +4,56 @@
 #include "Stb_image_reader.h"
 #include "../Config.h"
 
-enum TextureMode
+namespace AppEngine
 {
-	TEXTURE, FRAMEBUFFER, SHADOWMAP, HDR_TEXTURE, G_BUFFER_TRANSFORM, G_BUFFER_COLOR_SPECULAR, G_BUFFER_NORMAL, ONE_COLOR
-};
+	enum TextureMode
+	{
+		TEXTURE, FRAMEBUFFER, SHADOWMAP, HDR_TEXTURE, G_BUFFER_TRANSFORM, G_BUFFER_COLOR_SPECULAR, G_BUFFER_NORMAL, ONE_COLOR
+	};
 
-class Texture
-{
-public:
-	Texture(const std::string& path, unsigned int slot, int mode = GL_CLAMP_TO_EDGE);
-	Texture(unsigned int width = SCREEN_WIDTH, unsigned int height = SCREEN_HEIGHT, unsigned int slot = 0, unsigned short colorAttachment = 0, int colorMode = GL_FLOAT, TextureMode textureMode = TextureMode::TEXTURE);
-	~Texture();
-	void Bind(unsigned short slot) const;
-	virtual void Bind() const;
-	void BindNoActive() const;
-	virtual void UnBind() const;
+	class Texture
+	{
+	public:
+		Texture(const std::string& path, unsigned int slot, int mode = GL_CLAMP_TO_EDGE);
+		Texture(unsigned int width = SCREEN_WIDTH, unsigned int height = SCREEN_HEIGHT, unsigned int slot = 0, unsigned short colorAttachment = 0, int colorMode = GL_FLOAT, TextureMode textureMode = TextureMode::TEXTURE);
+		~Texture();
+		void Bind(unsigned short slot) const;
+		virtual void Bind() const;
+		void BindNoActive() const;
+		virtual void UnBind() const;
 
-	void CreateTexture();
-	void CreateFrameBufferTexture();
-	void CreateShadowMapTexture();
-	void CreateHDRTexture();
-	void CreateTextureForFrameBuffer();
-	void CreateColorAlphaFramebufferTexture();
-	void CreateOneColorTexture();
+		void CreateTexture();
+		void CreateFrameBufferTexture();
+		void CreateShadowMapTexture();
+		void CreateHDRTexture();
+		void CreateTextureForFrameBuffer();
+		void CreateColorAlphaFramebufferTexture();
+		void CreateOneColorTexture();
 
-	void CreateNoiseTexture();
+		void CreateNoiseTexture();
 
-	inline int GetWidth() const { return m_width; }
-	inline int GetHeight() const { return m_height; }
-	inline unsigned int GetTextureID() const { return m_TextureID; }
-	inline unsigned int GetDepthTextureID() const { return m_DepthTextureID; }
-	inline std::string GetTextureName() const { return name; }
-	inline bool CanBeActive() const { return canBeActive; }
-	inline void SetActive(bool active) { canBeActive = active; }
-	unsigned int Slot;
-protected:
-	int m_width;
-	int m_height;
-	int m_BPP;
-	std::string m_path;
-	unsigned int m_TextureID;
-	unsigned int m_DepthTextureID;
-	std::string name;
-	unsigned char* m_localBuffer;
-	TextureMode m_mode;
-	unsigned short m_colorAttachment;
-	unsigned short m_dataType;
-	bool canBeActive;
-private:
-	
-};
+		inline int GetWidth() const { return m_width; }
+		inline int GetHeight() const { return m_height; }
+		inline unsigned int GetTextureID() const { return m_TextureID; }
+		inline unsigned int GetDepthTextureID() const { return m_DepthTextureID; }
+		inline std::string GetTextureName() const { return name; }
+		inline bool CanBeActive() const { return canBeActive; }
+		inline void SetActive(bool active) { canBeActive = active; }
+		unsigned int Slot;
+	protected:
+		int m_width;
+		int m_height;
+		int m_BPP;
+		std::string m_path;
+		unsigned int m_TextureID;
+		unsigned int m_DepthTextureID;
+		std::string name;
+		unsigned char* m_localBuffer;
+		TextureMode m_mode;
+		unsigned short m_colorAttachment;
+		unsigned short m_dataType;
+		bool canBeActive;
+	private:
 
+	};
+}

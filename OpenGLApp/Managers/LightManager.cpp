@@ -4,91 +4,126 @@
 #include "../Shapes/Shape.h";
 #include "../Shapes/Terrain.h"
 
-std::vector<std::shared_ptr<Light>> LightManager::lights;
-std::vector<Shader*> shadowShaders;
-LightManager::LightManager()
+namespace AppEngine
 {
-	InitializeShadowShaders();
-}
-
-LightManager::~LightManager()
-{
-}
-
-void LightManager::InitializeShadowProgram(std::shared_ptr<Shape> shape)
-{
-	if (shape->IsShadowTurnOn())
+	std::vector<std::shared_ptr<Light>> LightManager::lights;
+	std::vector<Shader*> shadowShaders;
+	LightManager::LightManager()
 	{
-		shape->sc.CreateProgram("shadows");
-		if(glGetError() != GL_NO_ERROR) {
-			std::cerr << "Error creating shadow shader program!" << std::endl;
-			assert(false);
-		}
-		shape->sc.ActivateProgram("shadows");
-		if(glGetError() != GL_NO_ERROR) {
-			std::cerr << "Error activating shadow shader program!" << std::endl;
-			assert(false);
-		}
-		shape->sc.AddShadersToProgram(shadowShaders);
+		InitializeShadowShaders();
 	}
-}
 
-void LightManager::CreateShadowForLights(std::shared_ptr<Shape> shape)
-{
-	shape->sc.DisableUse();
-	for (auto& light : lights)
+	LightManager::~LightManager()
 	{
-		shape->sc.ActivateProgram("shadows");
-		if (glGetError() != GL_NO_ERROR) {
-			std::cerr << "Error activating shadow shader program!" << std::endl;
-			assert(false);
-		}
-		shape->sc.EnableUse();
-		auto params = light->GetParams();
-		params.push_back(shape->GetModel());
-		params.push_back(glm::vec3(0.0f));
-		params.push_back(unsigned int(0));
-		ShaderTypeGenerator::LightShadowShaderGenerator(shadowShaders, shape->sc.GetCurrentProgram(), params);
-		shape->bm->BindBuffers();
-		break;
 	}
-}
 
-void LightManager::CreateShadowForLightsTerrain(std::shared_ptr<Terrain> shape)
-{
-	shape->sc.DisableUse();
-	for (auto& light : lights)
+	void LightManager::InitializeShadowProgram(std::shared_ptr<Shape> shape)
 	{
-		shape->sc.ActivateProgram("shadows");
-		if (glGetError() != GL_NO_ERROR) {
-			std::cerr << "Error activating shadow shader program!" << std::endl;
-			assert(false);
-		}
-		shape->sc.EnableUse();
-		auto params = light->GetParams();
-		glm::vec3* squareOffsets = shape->GetSqareOffsets();
-		TerrainProperties tp = shape->GetTerrainProperties();
-		params.push_back(shape->GetModel());
-		params.push_back(squareOffsets[0]);
-		params.push_back(unsigned int(0));
-		for (unsigned int i = 0; i < tp.width * tp.height; i++)
+		if (shape->IsShadowTurnOn())
 		{
-			params[2] = squareOffsets[i];
-			params[3] = i;
-			ShaderTypeGenerator::LightShadowShaderGenerator(shadowShaders, shape->sc.GetCurrentProgram(), params);
+			shape->sc.CreateProgram("shadows");
+			if (glGetError() != GL_NO_ERROR) {
+				std::cerr << "Error creating shadow shader program!" << std::endl;
+				assert(false);
+			}
+			shape->sc.ActivateProgram("shadows");
+			if (glGetError() != GL_NO_ERROR) {
+				std::cerr << "Error activating shadow shader program!" << std::endl;
+				assert(false);
+			}
+			shape->sc.AddShadersToProgram(shadowShaders);
 		}
-		shape->bm->BindBuffers();
-		shape->sc.DisableUse();
-		break;
 	}
-}
 
-void LightManager::ApplyHDRLightParams(std::shared_ptr<Shape> shape, std::vector<ShaderParams>& params)
-{
-	if (shape->IsHDROn())
+	void LightManager::CreateShadowForLights(std::shared_ptr<Shape> shape)
+	{
+		shape->sc.DisableUse();
+		for (auto& light : lights)
+		{
+			shape->sc.ActivateProgram("shadows");
+			if (glGetError() != GL_NO_ERROR) {
+				std::cerr << "Error activating shadow shader program!" << std::endl;
+				assert(false);
+			}
+			shape->sc.EnableUse();
+			auto params = light->GetParams();
+			params.push_back(shape->GetModel());
+			params.push_back(glm::vec3(0.0f));
+			params.push_back(unsigned int(0));
+			ShaderTypeGenerator::LightShadowShaderGenerator(shadowShaders, shape->sc.GetCurrentProgram(), params);
+			shape->bm->BindBuffers();
+			break;
+		}
+	}
+
+	void LightManager::CreateShadowForLightsTerrain(std::shared_ptr<Terrain> shape)
+	{
+		shape->sc.DisableUse();
+		for (auto& light : lights)
+		{
+			shape->sc.ActivateProgram("shadows");
+			if (glGetError() != GL_NO_ERROR) {
+				std::cerr << "Error activating shadow shader program!" << std::endl;
+				assert(false);
+			}
+			shape->sc.EnableUse();
+			auto params = light->GetParams();
+			glm::vec3* squareOffsets = shape->GetSqareOffsets();
+			TerrainProperties tp = shape->GetTerrainProperties();
+			params.push_back(shape->GetModel());
+			params.push_back(squareOffsets[0]);
+			params.push_back(unsigned int(0));
+			for (unsigned int i = 0; i < tp.width * tp.height; i++)
+			{
+				params[2] = squareOffsets[i];
+				params[3] = i;
+				ShaderTypeGenerator::LightShadowShaderGenerator(shadowShaders, shape->sc.GetCurrentProgram(), params);
+			}
+			shape->bm->BindBuffers();
+			shape->sc.DisableUse();
+			break;
+		}
+	}
+
+	void LightManager::ApplyHDRLightParams(std::shared_ptr<Shape> shape, std::vector<ShaderParams>& params)
+	{
+		if (shape->IsHDROn())
+		{
+			std::vector<SimpleLight> simpleLights;
+			shape->sc.EnableUse();
+			for (size_t i = 0; i < lights.size(); ++i)
+			{
+				SimpleLight light;
+				light.color = lights[i]->GetColor();
+				light.position = lights[i]->Position;
+				light.slot = unsigned short(0);
+				light.lightNumber = i;
+				simpleLights.push_back(light);
+			}
+			params.push_back(simpleLights);
+		}
+	}
+
+	void LightManager::PassLightDataToShape(std::shared_ptr<Shape> shape)
+	{
+		for (auto& light : lights)
+		{
+			shape->functionParams.push_back(shape->IsShadowTurnOn());
+			if (shape->IsShadowTurnOn())
+				shape->functionParams.push_back(light->LightSpaceMatrix);
+			break;
+		}
+	}
+
+	void LightManager::InitializeShadowShaders()
+	{
+		shadowShaders.push_back(new Shader(SHADOW_VERT_PATH));
+		shadowShaders.push_back(new Shader(SHADOW_FRAG_PATH));
+	}
+
+	void LightManager::AddLightsToFrameBuffer(std::shared_ptr<FrameBuffer> frameBuffer)
 	{
 		std::vector<SimpleLight> simpleLights;
-		shape->sc.EnableUse();
 		for (size_t i = 0; i < lights.size(); ++i)
 		{
 			SimpleLight light;
@@ -98,38 +133,6 @@ void LightManager::ApplyHDRLightParams(std::shared_ptr<Shape> shape, std::vector
 			light.lightNumber = i;
 			simpleLights.push_back(light);
 		}
-		params.push_back(simpleLights);
+		frameBuffer->AddParams(simpleLights);
 	}
-}
-
-void LightManager::PassLightDataToShape(std::shared_ptr<Shape> shape)
-{
-	for (auto& light : lights)
-	{
-		shape->functionParams.push_back(shape->IsShadowTurnOn());
-		if (shape->IsShadowTurnOn())
-			shape->functionParams.push_back(light->LightSpaceMatrix);
-		break;
-	}
-}
-
-void LightManager::InitializeShadowShaders()
-{
-	shadowShaders.push_back(new Shader(SHADOW_VERT_PATH));
-	shadowShaders.push_back(new Shader(SHADOW_FRAG_PATH));
-}
-
-void LightManager::AddLightsToFrameBuffer(std::shared_ptr<FrameBuffer> frameBuffer)
-{
-	std::vector<SimpleLight> simpleLights;
-	for (size_t i = 0; i < lights.size(); ++i)
-	{
-		SimpleLight light;
-		light.color = lights[i]->GetColor();
-		light.position = lights[i]->Position;
-		light.slot = unsigned short(0);
-		light.lightNumber = i;
-		simpleLights.push_back(light);
-	}
-	frameBuffer->AddParams(simpleLights);
 }

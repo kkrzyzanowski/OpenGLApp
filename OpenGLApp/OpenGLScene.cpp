@@ -177,6 +177,7 @@ namespace AppEngine
 		mainLight = LightManager::lights[0].get();
 
 
+#pragma region FrameBufferCreation
 
 		std::unique_ptr<FrameBufferBuilder> frameBufferBuilder = std::make_unique<FrameBufferBuilder>();
 
@@ -259,6 +260,8 @@ namespace AppEngine
 		FrameBufferManager::InitializeFrameBuffers(mainFBOHandler);
 		LightManager::AddLightsToFrameBuffer(FrameBufferManager::FRbuffer_container[GBUFFER].frameBuffer);
 		LightManager::AddLightsToFrameBuffer(FrameBufferManager::FRbuffer_container[SSAO_LIGHTNING].frameBuffer);
+
+#pragma endregion
 
 		/// generate samples for SSAO
 		KernelSamplerGenerator kernelSampler;

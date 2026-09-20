@@ -1,21 +1,23 @@
 #pragma once
 #include "..\Shapes\Shape.h"
 
-class Cube: public Shape
+namespace AppEngine
 {
-public:
-	Cube(ShapesBuilder& builder);
-	Cube(ShapesBuilder&& builder);
-	Cube(const Cube&) = default;
-	Cube(Cube&&) = default;
-	Cube& operator=(const Cube&) = default;
-	Cube& operator=(Cube&&) = default;
-	glm::vec3 GetNormal() override;
-	~Cube();
-private:
-	
-	/*template <typename Matrix, typename ... glm::mat4>
-	void TransformateShape(Matrix arg, glm::mat4&... rest);*/
-	void GenerateTextures(std::vector<Texture*>& textures) override;
-};
+	class Cube : public Shape
+	{
+	public:
+		Cube(ShapesBuilder& builder);
+		Cube(ShapesBuilder&& builder);
+		Cube(const Cube&) = default;
+		Cube(Cube&&) = default;
+		Cube& operator=(const Cube&) = default;
+		Cube& operator=(Cube&&) = default;
+		glm::vec3 GetNormal() override;
+		~Cube();
+	private:
 
+		/*template <typename Matrix, typename ... glm::mat4>
+		void TransformateShape(Matrix arg, glm::mat4&... rest);*/
+		void GenerateTextures(std::vector<Texture*>& textures) override;
+	};
+}
