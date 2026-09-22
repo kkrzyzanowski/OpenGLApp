@@ -319,7 +319,7 @@ namespace AppEngine
 		return faces;
 	}
 
-	std::vector<std::array<glm::vec3, 3>> Shape::InitializeTriangles(size_t* indices, int indices_count, Vertices& vertices)
+	std::vector<std::array<glm::vec3, 3>> Shape::InitializeTriangles(unsigned int* indices, int indices_count, Vertices& vertices)
 	{
 		std::vector<std::array<glm::vec3, 3>> triangles;
 

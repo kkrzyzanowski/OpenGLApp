@@ -18,7 +18,7 @@
 #include "../Config.h"
 #include "..\Rendering\Renderer.h"
 #include "VerticesCreator.h"
-#include "..\glm\gtx\rotate_vector.hpp"
+#include "glm\gtx\rotate_vector.hpp"
 #include <mutex>
 
 namespace AppEngine
@@ -79,7 +79,7 @@ namespace AppEngine
 		void UpdatePickedShape();
 
 		std::vector<glm::vec3> GetVertices(GLfloat* objectData, size_t elements, unsigned int bufferSize);
-		std::vector<std::array<glm::vec3, 3>> InitializeTriangles(size_t* indices, int indices_count, Vertices& vertices);
+		std::vector<std::array<glm::vec3, 3>> InitializeTriangles(unsigned int* indices, int indices_count, Vertices& vertices);
 		std::vector<std::array<glm::vec3, 3>> InitializeTriangles(std::vector<int>& indices, Vertices& vertices);
 		std::vector<std::vector<std::array<glm::vec3, 3>>> GetFaces(std::vector<std::array<glm::vec3, 3>>& triangles);
 		std::vector<std::array<glm::vec3, 2>> GetEdges(GLfloat* objectData);

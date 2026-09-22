@@ -3,7 +3,7 @@
 #include <map>
 #include <memory>
 #include "..\Enums.h"
-#include "..\glm\glm.hpp"
+#include "glm\glm.hpp"
 
 namespace AppEngine
 {

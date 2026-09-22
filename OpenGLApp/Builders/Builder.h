@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
-#include "..\glm\glm.hpp"
-#include "..\glm\gtc\type_ptr.hpp"
+#include "glm\glm.hpp"
+#include "glm\gtc\type_ptr.hpp"
 #include "..\Enums.h"
 
 namespace AppEngine {

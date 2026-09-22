@@ -1,8 +1,8 @@
 #pragma once
-#include "..\glm\glm.hpp"
-#include "..\glm\gtc\matrix_transform.hpp"
-#include "..\glm\gtc\type_ptr.hpp"
-#include "..\Rendering\Renderer.h"
+#include "glm\glm.hpp"
+#include "glm\gtc\matrix_transform.hpp"
+#include "glm\gtc\type_ptr.hpp"
+#include "Rendering\Renderer.h"
 
 namespace AppEngine
 {

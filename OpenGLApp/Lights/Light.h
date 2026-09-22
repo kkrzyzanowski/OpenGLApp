@@ -1,9 +1,9 @@
 #pragma once
 
 #include "..\Managers\ShaderCompiler.h"
-#include "..\glm\glm.hpp"
-#include "..\glm\gtc\matrix_transform.hpp"
-#include "..\glm\gtc\type_ptr.hpp"
+#include "glm\glm.hpp"
+#include "glm\gtc\matrix_transform.hpp"
+#include "glm\gtc\type_ptr.hpp"
 
 #include "../Shapes/VerticesCreator.h"
 #include "../Managers/BufferManager.h"

@@ -33,7 +33,7 @@
 #include "SSAO/KernelSamplerGenerator.h"
 #include "ThreadPool.h"
 #include "RendererScreen.h"
-#include "../ImGUI/imgui.h"
+#include "imgui.h"
 
 namespace AppEngine
 {

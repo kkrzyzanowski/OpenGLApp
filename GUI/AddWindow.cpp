@@ -81,7 +81,7 @@ std::filesystem::path MenuGUI::ShowWindowsDialog(bool* p_open, AppEngine::OpenGL
 	ofn.hwndOwner = hWnd; // Set the owner window handle
     ofn.lpstrFile = szFile;
     ofn.nMaxFile = sizeof(szFile);
-    ofn.lpstrFilter = "Object files (*.obj)\0*.obj;\0";
+    ofn.lpstrFilter = static_cast<LPCWSTR>(L"Object files (*.obj)\0*.obj;\0");
     ofn.nFilterIndex = 1;
     ofn.lpstrFileTitle = NULL;
     ofn.nMaxFileTitle = 0;

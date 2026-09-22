@@ -1,9 +1,9 @@
 #include "VerticesCreator.h"
 #include <cmath>
 #include <vector>
-#include "..\glm\glm.hpp"
-#include "..\glm\gtc\matrix_transform.hpp"
-#include "..\glm\gtc\type_ptr.hpp"
+#include "glm\glm.hpp"
+#include "glm\gtc\matrix_transform.hpp"
+#include "glm\gtc\type_ptr.hpp"
 
 VerticesShape* CreateSphere(int rings, int sectors, unsigned short bufferSize, float radius)
 {
@@ -11,7 +11,7 @@ VerticesShape* CreateSphere(int rings, int sectors, unsigned short bufferSize, f
 		unsigned int pointsCount = sectors * rings * (bufferSize);
 		unsigned int indexesValue = (rings - 1) * (sectors) * 6;
 		float* vertices = new float[pointsCount];
-		size_t* sphere_ix = new size_t[indexesValue];
+		unsigned int* sphere_ix = new unsigned int[indexesValue];
 
 		float const S = 1.0f / (float)(sectors);
 		float const R = 1.0f / (float)(rings - 1);

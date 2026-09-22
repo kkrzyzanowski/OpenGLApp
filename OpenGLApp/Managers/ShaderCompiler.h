@@ -25,7 +25,7 @@ namespace AppEngine
 		void BindBlockData(const char* blockName);
 	private:
 		void UniformBinder(unsigned int program);
-		std::unordered_map<const char*, unsigned int> m_Program;
+		std::unordered_map<std::string, unsigned int> m_Program;
 		const char* activeProgram;
 		unsigned int uniformBlockIndex;
 	};
