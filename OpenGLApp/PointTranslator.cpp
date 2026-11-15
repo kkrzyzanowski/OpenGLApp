@@ -1,9 +1,9 @@
 #include "PointTranslator.h"
 #include "Config.h"
 
-PointTranslator::PointTranslator()
+PointTranslator::PointTranslator(float sizeX, float sizeY)
 {
-	viewPort = glm::vec4(0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT);
+	viewPort = glm::vec2(sizeX, sizeY);
 }
 
 void PointTranslator::SetMousePoint(double x, double y)
@@ -12,10 +12,10 @@ void PointTranslator::SetMousePoint(double x, double y)
 	MousePointPx.y = y;
 }
 
-void PointTranslator::CalculateScaledMousePoint()
+void PointTranslator::CalculateScaledToNDCMousePoint()
 {
-	ScaledMousePoint.x = ((MousePointPx.x * 2.0f) / SCREEN_WIDTH) - 1.0f;
-	ScaledMousePoint.y = 1.0f - (MousePointPx.y * 2.0f) / SCREEN_HEIGHT;
+	ScaledMousePoint.x = ((MousePointPx.x * 2.0f) / viewPort.x) - 1.0f;
+	ScaledMousePoint.y = 1.0f - (MousePointPx.y * 2.0f) / viewPort.y;
 }
 
 glm::vec3 PointTranslator::GetWorldPoint()

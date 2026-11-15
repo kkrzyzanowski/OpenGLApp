@@ -5,12 +5,15 @@ LRESULT  MessageController::MessageHandler(HWND hWnd, UINT msg, WPARAM wParam, L
 	switch (msg)
 	{
 	case WM_CLOSE:
-
+	{
 		PostQuitMessage(69);
 		break;
+	}
 	case WM_KILLFOCUS:
+	{
 		keyboard.ClearState();
 		break;
+	}
 	case WM_KEYDOWN:
 	case WM_SYSKEYDOWN:
 		if (!lParam & 0x40000000 || keyboard.IsRepeating())
@@ -25,13 +28,17 @@ LRESULT  MessageController::MessageHandler(HWND hWnd, UINT msg, WPARAM wParam, L
 		}
 		break;
 	case WM_KEYUP:
+	{
 		keyboard.OnKeyReleased(static_cast<unsigned char>(wParam));
 		keyboard.ChangeRepeating();
 		break;
+	}
 	case WM_MOUSEMOVE:
+	{
 		const POINTS pt = MAKEPOINTS(lParam);
 		mouse.OnMouseMove(pt.x, pt.y);
 		break;
+	}
 	case WM_LBUTTONDOWN:
 	{
 		const POINTS point = MAKEPOINTS(lParam);

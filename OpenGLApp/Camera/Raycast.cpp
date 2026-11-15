@@ -52,8 +52,8 @@ namespace AppEngine
 
 	bool Raycast::IntersectionInRange(float start, float end)
 	{
-		glm::vec3 startPoint = GetPointFromRay(worldRayNormalized, start);
-		glm::vec3 endPoint = GetPointFromRay(worldRayNormalized, end);
+		glm::vec3 startPoint = GetPointFromRay(rayDirWorld, start);
+		glm::vec3 endPoint = GetPointFromRay(rayDirWorld, end);
 		return false;
 	}
 
@@ -68,7 +68,7 @@ namespace AppEngine
 	}
 	glm::vec3 Raycast::GetWorldRayDirection()
 	{
-		return worldRayNormalized;
+		return rayDirWorld;
 	}
 
 	glm::vec3 Raycast::GetRayOrigin() const

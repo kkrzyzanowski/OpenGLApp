@@ -26,8 +26,10 @@ namespace AppEngine
 	glm::vec3 previousModelPos;
 	glm::vec3 previousDirection;
 	glm::vec3 storedIntersectedPoint;
+	glm::vec3 dragPlanePoint;
+	glm::vec3 dragCamDirection;
 	glm::vec3 storedObjectPosition;
-
+	glm::mat4 camLocalSpace;
 	bool lbuttonDown;
 	double mx, my;
 
@@ -35,7 +37,7 @@ namespace AppEngine
 	void mouseButtonCallback(GLFWwindow* window, int button, int action, int mode);
 	void hover_callback(GLFWwindow* window, double xpos, double ypos);
 
-	bool RayCastDetection(glm::vec3 rayOrigin, glm::vec3 rayDirection, const Triangles& triangles, glm::vec3& intersectedPoint);
+	bool RayCastDetection(glm::vec3 rayOrigin, glm::vec3 rayDirection, const Triangles& triangles, glm::vec3& intersectedPoint, float& t);
 	void ObjectPicking(int mx, int my, std::vector<std::shared_ptr<Shape>>& shapes);
 	glm::vec3 GetIntersection(glm::vec3 rayOrigin, glm::vec3 rayDirection, glm::vec3 planeNormal, glm::vec3 planePoint);
 
@@ -54,6 +56,7 @@ namespace AppEngine
 		camView = glm::mat4(1.0f);
 		lbuttonDown = false;
 		stateCam = CameraState::INACTIVE;
+		camLocalSpace = glm::mat4(1.0f);
 	}
 
 	void Camera::CreateView(glm::vec3(&vecArray)[3], float radius, GLFWwindow* window)
@@ -98,7 +101,10 @@ namespace AppEngine
 	void Camera::CameraMove()
 	{
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		{ 
 			camPos += speed * deltaTime * camTarget;
+			camLocalSpace = glm::translate(camLocalSpace, speed * deltaTime * camTarget);
+		}
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 			camPos -= speed * deltaTime * camTarget;
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
@@ -162,28 +168,36 @@ namespace AppEngine
 				proj = camInstance->GetProjection();
 				view = camInstance->GetView();
 
-				PointTranslator mp;
+				PointTranslator mp(windowSize.x, windowSize.y);
 				mp.proj = proj;
 				mp.view = view;
-				float x = (mx * 2.0f) / windowSize.x - 1.0f;
 				mp.SetMousePoint(mx, my);
-				mp.CalculateScaledMousePoint();
-
+				mp.CalculateScaledToNDCMousePoint();
+				float x = ((mx - windowPos.x) / sceneSize.x) * windowSize.x;
+				float y = ((my - windowPos.y) / sceneSize.y) * windowSize.y;
 				for (auto& shape : ShapeManager::shapes)
 				{
 					if (shape->Selected)
 					{
-						camInstance->mouseRayCast = new Raycast(mx, my, 1000.0f, camInstance->GetProjection(), camInstance->GetView(), windowSize);
+						camInstance->mouseRayCast = new Raycast(x, y, 1000.0f, camInstance->GetProjection(), camInstance->GetView(), windowSize);
 						glm::vec3 startPoint = camInstance->mouseRayCast->GetRayOrigin();
-						glm::vec3 startDir = camInstance->mouseRayCast->GetWorldRayDirection();
+						glm::vec3 mouseRayDir = camInstance->mouseRayCast->GetWorldRayDirection();
 						glm::vec3 intersectedDragPoint;
-
-						if (RayCastDetection(startPoint, startDir, shape->GetTriangles(), intersectedDragPoint))
+						float t;
+						float planeDenominator = glm::dot(dragCamDirection, mouseRayDir);
+						if (std::abs(planeDenominator) > 0.0001f)
 						{
+							intersectedDragPoint = GetIntersection(
+								startPoint,
+								mouseRayDir,
+								dragCamDirection,
+								dragPlanePoint);
 							glm::vec3 offset = intersectedDragPoint - storedIntersectedPoint;
 							shape->SetPendingOffset(offset);
 							storedIntersectedPoint = intersectedDragPoint;
 						}
+
+						delete camInstance->mouseRayCast;
 					}
 				}
 			}
@@ -210,11 +224,17 @@ namespace AppEngine
 			{
 				glm::vec3 startPoint = camInstance->mouseRayCast->GetRayOrigin();
 				glm::vec3 startDir = camInstance->mouseRayCast->GetWorldRayDirection();
-				bool detected = RayCastDetection(startPoint, startDir, shape->GetTriangles(), storedIntersectedPoint);
+				float t;
+				bool detected = RayCastDetection(startPoint, startDir, shape->GetTriangles(), storedIntersectedPoint, t);
 				if (detected)
 				{
 					std::cout << "Clicked" << std::endl;
 					shape->Selected = true;
+					if (action == GLFW_PRESS)
+					{
+						dragPlanePoint = storedIntersectedPoint;
+						dragCamDirection = glm::normalize(camInstance->GetCamTarget());
+					}
 				}
 				else
 				{
@@ -397,7 +417,7 @@ namespace AppEngine
 	/// <param name="intersectedPoint"></param>
 	/// <returns></returns>
 
-	bool RayCastDetection(glm::vec3 rayOrigin, glm::vec3 rayDirection, const Triangles& triangles, glm::vec3& intersectedPoint)
+	bool RayCastDetection(glm::vec3 rayOrigin, glm::vec3 rayDirection, const Triangles& triangles, glm::vec3& intersectedPoint, float& t)
 	{
 		for (Triangle triangle : triangles)
 		{
@@ -428,7 +448,7 @@ namespace AppEngine
 			if (v < 0.0f || v + u > 1.0f)
 				continue;
 
-			float t = f * glm::dot(edge2, q);
+			t = f * glm::dot(edge2, q);
 
 			if (t > 0.0001f)
 			{
@@ -442,8 +462,8 @@ namespace AppEngine
 
 	glm::vec3 GetIntersection(glm::vec3 rayOrigin, glm::vec3 rayDirection, glm::vec3 planeNormal, glm::vec3 planePoint)
 	{
-		float dotProd = glm::dot(planeNormal, planePoint);
-		float t = (dotProd - glm::dot(planeNormal, rayOrigin) / glm::dot(planeNormal, rayDirection));
+		float t = (glm::dot(planeNormal, planePoint) - glm::dot(planeNormal, rayOrigin)) /
+			glm::dot(planeNormal, rayDirection);
 		return rayOrigin + t * rayDirection;
 	}
 }

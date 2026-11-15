@@ -12,10 +12,10 @@ public:
 	glm::mat4 view;
 
 	glm::vec3 perspectivePointPos;
-	glm::vec4 viewPort;
-	PointTranslator();
+	glm::vec2 viewPort;
+	PointTranslator(float sizeX, float sizeY);
 	void SetMousePoint(double x, double y);
-	void CalculateScaledMousePoint();
+	void CalculateScaledToNDCMousePoint();
 	glm::vec3 GetWorldPoint();
 	
 	
