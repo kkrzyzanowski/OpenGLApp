@@ -37,9 +37,9 @@ namespace AppEngine
 
 					for (int i = 0; i < planeTriangles; i++)
 					{
-						glm::vec3 v1 = plane->shapeElements.triangles[i][0];
-						glm::vec3 v2 = plane->shapeElements.triangles[i][1];
-						glm::vec3 v3 = plane->shapeElements.triangles[i][2];
+						glm::vec3 v1 = plane->shapeElements.vertices[plane->shapeElements.triangles[i][0]];
+						glm::vec3 v2 = plane->shapeElements.vertices[plane->shapeElements.triangles[i][1]];
+						glm::vec3 v3 = plane->shapeElements.vertices[plane->shapeElements.triangles[i][2]];
 
 						glm::vec3 vNormal = plane->shapeParams.normals[i];
 

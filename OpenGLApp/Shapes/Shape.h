@@ -79,13 +79,17 @@ namespace AppEngine
 		void UpdatePickedShape();
 
 		std::vector<glm::vec3> GetVertices(GLfloat* objectData, size_t elements, unsigned int bufferSize);
-		std::vector<std::array<glm::vec3, 3>> InitializeTriangles(unsigned int* indices, int indices_count, Vertices& vertices);
-		std::vector<std::array<glm::vec3, 3>> InitializeTriangles(std::vector<int>& indices, Vertices& vertices);
-		std::vector<std::vector<std::array<glm::vec3, 3>>> GetFaces(std::vector<std::array<glm::vec3, 3>>& triangles);
+		inline std::vector<glm::vec3> GetAllVertices()
+		{
+			return shapeElements.vertices;
+		}
+		std::vector<std::array<unsigned int, 3>> InitializeTriangles(unsigned int* indices, int indices_count, Vertices& vertices);
+		std::vector<std::array<unsigned int, 3>> InitializeTriangles(std::vector<int>& indices, Vertices& vertices);
+		std::vector<std::vector<std::array<unsigned int, 3>>> GetFaces(std::vector<std::array<unsigned int, 3>>& triangles);
 		std::vector<std::array<glm::vec3, 2>> GetEdges(GLfloat* objectData);
 		void TranslatePoints(glm::mat4& mvp, Vertices& verts);
 
-		std::vector<std::array<glm::vec3, 3>> GetTriangles() const;
+		std::vector<std::array<unsigned int, 3>> GetTriangles() const;
 		unsigned long Id;
 
 

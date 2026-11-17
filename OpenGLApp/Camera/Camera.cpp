@@ -37,7 +37,7 @@ namespace AppEngine
 	void mouseButtonCallback(GLFWwindow* window, int button, int action, int mode);
 	void hover_callback(GLFWwindow* window, double xpos, double ypos);
 
-	bool RayCastDetection(glm::vec3 rayOrigin, glm::vec3 rayDirection, const Triangles& triangles, glm::vec3& intersectedPoint, float& t);
+	bool RayCastDetection(glm::vec3 rayOrigin, glm::vec3 rayDirection, const Triangles& triangles, const Vertices& vertices, glm::vec3& intersectedPoint, float& t);
 	void ObjectPicking(int mx, int my, std::vector<std::shared_ptr<Shape>>& shapes);
 	glm::vec3 GetIntersection(glm::vec3 rayOrigin, glm::vec3 rayDirection, glm::vec3 planeNormal, glm::vec3 planePoint);
 
@@ -225,7 +225,7 @@ namespace AppEngine
 				glm::vec3 startPoint = camInstance->mouseRayCast->GetRayOrigin();
 				glm::vec3 startDir = camInstance->mouseRayCast->GetWorldRayDirection();
 				float t;
-				bool detected = RayCastDetection(startPoint, startDir, shape->GetTriangles(), storedIntersectedPoint, t);
+				bool detected = RayCastDetection(startPoint, startDir, shape->GetTriangles(), shape->GetAllVertices(), storedIntersectedPoint, t);
 				if (detected)
 				{
 					std::cout << "Clicked" << std::endl;
@@ -417,13 +417,13 @@ namespace AppEngine
 	/// <param name="intersectedPoint"></param>
 	/// <returns></returns>
 
-	bool RayCastDetection(glm::vec3 rayOrigin, glm::vec3 rayDirection, const Triangles& triangles, glm::vec3& intersectedPoint, float& t)
+	bool RayCastDetection(glm::vec3 rayOrigin, glm::vec3 rayDirection, const Triangles& triangles, const Vertices& vertices, glm::vec3& intersectedPoint, float& t)
 	{
 		for (Triangle triangle : triangles)
 		{
-			glm::vec3 v0 = triangle[0];
-			glm::vec3 v1 = triangle[1];
-			glm::vec3 v2 = triangle[2];
+			glm::vec3 v0 = vertices[triangle[0]];
+			glm::vec3 v1 = vertices[triangle[1]];
+			glm::vec3 v2 = vertices[triangle[2]];
 
 			glm::vec3 edge1, edge2;
 			glm::vec3 h, s, q;

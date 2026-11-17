@@ -146,7 +146,6 @@ namespace AppEngine
 		translationMatrix = glm::translate(translationMatrix, pendingOffset);
 		mvp.model = translationMatrix * mvp.model;
 		TranslatePoints(translationMatrix, shapeElements.vertices);
-		shapeElements.triangles = InitializeTriangles(verts->Indexes, verts->IndexesCount, shapeElements.vertices);
 		pendingOffset = glm::vec3(0.0f);
 	}
 
@@ -267,15 +266,15 @@ namespace AppEngine
 	}
 
 
-	std::vector<std::vector<std::array<glm::vec3, 3>>> Shape::GetFaces(std::vector<std::array<glm::vec3, 3>>& triangles)
+	std::vector<std::vector<std::array<unsigned int, 3>>> Shape::GetFaces(std::vector<std::array<unsigned int, 3>>& triangles)
 	{
-		std::vector<std::vector<std::array<glm::vec3, 3>>> faces;
-		std::vector<std::array<glm::vec3, 3>> triangleUnused;
-		for (std::array<glm::vec3, 3> triangle : triangles)
+		std::vector<std::vector<std::array<unsigned int, 3>>> faces;
+		std::vector<std::array<unsigned int, 3>> triangleUnused;
+		for (std::array<unsigned int, 3> triangle : triangles)
 		{
 			bool match = false;
 			size_t matchedIndex = 0;
-			for (std::array<glm::vec3, 3> ut : triangleUnused)
+			for (std::array<unsigned int, 3> ut : triangleUnused)
 			{
 				for (int i = 0; i < 3; i++)
 				{
@@ -283,15 +282,15 @@ namespace AppEngine
 					{
 						for (int k = 0, vertexMatch = 0; k < 3; k++)
 						{
-							if (triangle[i][k] == ut[j][k])
+							if (shapeElements.vertices[triangle[i]][k] == shapeElements.vertices[ut[j]][k])
 							{
 								vertexMatch++;
 								if (vertexMatch > 1 && triangle[i] != ut[j])
 								{
 									match = true;
-									std::vector <std::array<glm::vec3, 3>> face = { triangle, ut };
+									std::vector <std::array<unsigned int, 3>> face = { triangle, ut };
 									faces.push_back(face);
-									std::vector<std::array<glm::vec3, 3>>::iterator itr = std::find(triangleUnused.begin(), triangleUnused.end(), ut);
+									std::vector<std::array<unsigned int, 3>>::iterator itr = std::find(triangleUnused.begin(), triangleUnused.end(), ut);
 									matchedIndex = std::distance(triangleUnused.begin(), itr);
 									break;
 								}
@@ -319,24 +318,24 @@ namespace AppEngine
 		return faces;
 	}
 
-	std::vector<std::array<glm::vec3, 3>> Shape::InitializeTriangles(unsigned int* indices, int indices_count, Vertices& vertices)
+	std::vector<std::array<unsigned int, 3>> Shape::InitializeTriangles(unsigned int* indices, int indices_count, Vertices& vertices)
 	{
-		std::vector<std::array<glm::vec3, 3>> triangles;
+		std::vector<std::array<unsigned int, 3>> triangles;
 
 		for (int i = 0; i < indices_count; i += 3)
 		{
-			std::array<glm::vec3, 3> vertex = { vertices[indices[i]], vertices[indices[i + 1]], vertices[indices[i + 2]] };
+			std::array<unsigned int, 3> vertex = { indices[i], indices[i + 1], indices[i + 2] };
 			triangles.push_back(vertex);
 		}
 		return triangles;
 	}
 
-	std::vector<std::array<glm::vec3, 3>> Shape::InitializeTriangles(std::vector<int>& indices, Vertices& vertices)
+	std::vector<std::array<unsigned int, 3>> Shape::InitializeTriangles(std::vector<int>& indices, Vertices& vertices)
 	{
-		std::vector<std::array<glm::vec3, 3>> triangles;
+		std::vector<std::array<unsigned int, 3>> triangles;
 		for (int i = 0; i < indices.size(); i += 3)
 		{
-			std::array<glm::vec3, 3> vertex = { vertices[indices[i]], vertices[indices[i + 1]], vertices[indices[i + 2]] };
+			std::array<unsigned int, 3> vertex = { indices[i], indices[i + 1], indices[i + 2] };
 			triangles.push_back(vertex);
 		}
 		return triangles;
@@ -352,7 +351,6 @@ namespace AppEngine
 		}
 		return vertices;
 	}
-
 
 	std::vector<std::array<glm::vec3, 2>> Shape::GetEdges(GLfloat* objectData)
 	{

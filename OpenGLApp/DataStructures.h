@@ -19,9 +19,9 @@ namespace AppEngine
 
 	typedef std::vector<glm::vec3> Vertices;
 	typedef std::vector<std::array<glm::vec3, 2>> Edges;
-	typedef std::vector<std::array<glm::vec3, 3>> Triangles;
-	typedef std::vector<std::vector<std::array<glm::vec3, 3>>> Faces;
-	typedef std::array<glm::vec3, 3> Triangle;
+	typedef std::vector<std::array<unsigned int, 3>> Triangles;
+	typedef std::vector<std::vector<std::array<unsigned int, 3>>> Faces;
+	typedef std::array<unsigned int, 3> Triangle;
 
 	struct MVP
 	{
